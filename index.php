@@ -1,6 +1,5 @@
 <?php
 include_once "check_token.php";
-
 ?>
 
 <!DOCTYPE html>
