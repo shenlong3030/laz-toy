@@ -291,7 +291,7 @@ function printProducts($products) {
                     echo '<td class="image on">'.$thumb.'</td>';
                 } else {
                     echo '<td class="image1 link">'.$imgs[$i].'</td>';
-                    echo '<td class="image1 thumb">'.$thumb.'</td>';
+                    echo '<td class="image1 thumb on">'.$thumb.'</td>';
                 }
             }
         }

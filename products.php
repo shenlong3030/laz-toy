@@ -39,11 +39,11 @@ require_once('_main_functions.php');
     
     <input id="cbshowthumbnail" type="checkbox" name="showthumbnail" value="1" checked="checked"> I Show thumbnail
     
-    <input id="cbshowshopsku" type="checkbox" name="showshopsku" value="1" "<?php $_GET["showshopsku"] ? "checked='checked'" : "" ?>">Show shopsku
+    <input id="cbshowshopsku" type="checkbox" name="showshopsku" value="1" checked="1>Show shopsku
     
-    <input id="cbshowall" type="checkbox" name="showall" value="1" "<?php $_GET["showshopsku"] ? "checked='checked'" : "" ?>">Show all
+    <input id="cbshowall" type="checkbox" name="showall" value="1" checked="1">Show all
     
-    <input id="cbfulledit" type="checkbox" name="fulledit" value="1" "<?php $_GET["showshopsku"] ? "checked='checked'" : "" ?>">Edit mode
+    <input id="cbfulledit" type="checkbox" name="fulledit" value="1">Edit mode
     <br>
     
     <textarea class="nowrap search skus" name="skus" placeholder="Input SKUs separated by line" rows="20" cols="50"><?php echo implode("\n", $skus);?></textarea><br>
