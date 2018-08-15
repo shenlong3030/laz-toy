@@ -74,13 +74,6 @@ $byskus = $_GET['byskus'] ? $_GET['byskus'] : 0;
 $input = val($_GET['skus']);
 $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
-$options = array(
-    "showthumbnail" => $_GET['showthumbnail'] ? $_GET['showthumbnail'] : 0,
-    "showall" => $_GET['showall'] ? $_GET['showall'] : 0,
-    "showshopsku" => $_GET['showshopsku'] ? $_GET['showshopsku'] : 0,
-    "fulledit" => $_GET['fulledit'] ? $_GET['fulledit'] : 0,
-);
-
 echo '<table id="myTable" class="tablesorter" border="1">';
 echo '<thead><tr>';
     echo '<th>&#x25BC</th>';
@@ -94,24 +87,20 @@ echo '<thead><tr>';
 echo '</tr></thead>';
 echo '<tbody>';
 
-for($i=0; $i<$limit; $i+=500) {
-    $list = null;
-    if($byskus) {
-        foreach($skus as $sku) {
-            $items = getProducts($accessToken, $sku, $i + $offset, $status);
-            if(count($items)) {
-                $list[] = $items[0];
-            }
+$list = null;
+if($byskus) {
+    foreach($skus as $sku) {
+        $item = getProduct($accessToken, $sku);
+        if($item) {
+            $list[] = $item;
         }
-    } else {
-        $list = getProducts($accessToken, $q, $i + $offset, $status);
-        //var_dump($list);
     }
+} else {
+    $list = getProducts($accessToken, $q, $status);
+}
 
-    if(count($list)) {
-        printProducts($list, $i, $options);
-    }
-
+if(count($list)) {
+    printProducts($list);
 }
 
 echo '</tbody>';

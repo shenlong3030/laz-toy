@@ -159,17 +159,19 @@ function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "")
 //####################################################################
 
 //status: all, live, inactive, deleted, image-missing, pending, rejected, sold-out
-function getProducts($accessToken, $q = '', $offset = 0, $status = 'sold-out', $skulist = null){
+function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = null){
+    $pagesize = 100;
+
     $c = getClient();
     $request = new LazopRequest('/products/get','GET');
     $request->addApiParam('filter', $status);
     if(strlen($q)) {
         $request->addApiParam('search',$q);
     }
-    $request->addApiParam('offset', $offset);
-    $request->addApiParam('limit','500');
+    $request->addApiParam('offset', 0);
+    $request->addApiParam('limit', $pagesize);
     //$request->addApiParam('create_after','2010-01-01T00:00:00+0800');
-    //$request->addApiParam('update_after','2010-01-01T00:00:00+0800');
+    $request->addApiParam('update_after','2010-01-01T00:00:00+0800');
     $request->addApiParam('options','1');
     
     // filter by SKU
@@ -178,12 +180,46 @@ function getProducts($accessToken, $q = '', $offset = 0, $status = 'sold-out', $
     }
     
     $response = $c->execute($request, $accessToken);
-    //echo $response;
+    //myvar_dump($response);
     $response = json_decode($response, true);
     
     $products = array();
     if($response["code"] == "0") {
         $products = $response["data"]["products"];
+
+        while(count($products) < $response["data"]["total_products"]) {
+            $nextpage = getProductsPaging($accessToken, $q, $status, count($products), $pagesize);
+            $products = array_merge($products, $nextpage);
+        }
+    } else {
+        myvar_dump($response);
+    }
+    
+    return $products;
+}
+
+function getProductsPaging($accessToken, $q, $status, $offset, $limit){
+    $c = getClient();
+    $request = new LazopRequest('/products/get','GET');
+    $request->addApiParam('filter', $status);
+    if(strlen($q)) {
+        $request->addApiParam('search',$q);
+    }
+    $request->addApiParam('offset', $offset);
+    $request->addApiParam('limit', $limit);
+    //$request->addApiParam('create_after','2010-01-01T00:00:00+0800');
+    $request->addApiParam('update_after','2010-01-01T00:00:00+0800');
+    $request->addApiParam('options','1');
+    
+    $response = $c->execute($request, $accessToken);
+    //myvar_dump($response);
+    $response = json_decode($response, true);
+    
+    $products = array();
+    if($response["code"] == "0") {
+        $products = $response["data"]["products"];
+    } else {
+        myvar_dump($response);
     }
     
     return $products;
@@ -191,7 +227,7 @@ function getProducts($accessToken, $q = '', $offset = 0, $status = 'sold-out', $
 
 function getProduct($accessToken, $sku){
     $skulist = array($sku);
-    $list = getProducts($accessToken, '', 0, 'all', $skulist);
+    $list = getProducts($accessToken, '', 'all', $skulist);
     
     if(count($list) == 1) {
         return $list[0];
@@ -200,7 +236,7 @@ function getProduct($accessToken, $sku){
     }
 }
 
-function printProducts($products, $offset = 0, $options) {
+function printProducts($products) {
     foreach($products as $index=>$product) {
         $GLOBALS['count'] += 1;
         
@@ -578,11 +614,9 @@ function prepareProductForUpdating($product) {
 }
 
 function setPrimaryCategory($accessToken, $sku, $category) {
-    $skulist = array($sku);
-    $list = getProducts($accessToken, '', 0, 'all', $skulist);
+    $product = getProduct($accessToken, $sku);
     
-    if(count($list) == 1) {
-        $product = $list[0];
+    if($product) {
         $product['PrimaryCategory'] = $category;
         $product['Skus'] = $product['skus'];
         unset($product['skus']);
@@ -785,12 +819,9 @@ function cloneProduct($accessToken, $sku, $inputdata, $preview = 1) {
     $skuprefix = $inputdata['skuprefix'];
     $newName = $inputdata['newname'];
     
-    $skulist = array($sku);
-    $list = getProducts($accessToken, '', 0, 'all', $skulist);
+    $product = getProduct($accessToken, $sku);
 
-    if(count($list) == 1) {
-        $product = $list[0];
-        
+    if($product) {     
         $product['Attributes'] = $product['attributes'];
         $product['Skus'] = $product['skus'];
         $product['PrimaryCategory'] = $product['primary_category'];
@@ -931,11 +962,9 @@ function cloneProduct($accessToken, $sku, $inputdata, $preview = 1) {
 function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
     $createdSkus = array();
     foreach($srcSkus as $index => $sku) {
-        $skulist = array($sku);
-        $list = getProducts($accessToken, '', 0, 'all', $skulist);
+        $product = getProduct($accessToken, $sku);
         
-        if(count($list) == 1) {
-            $product = $list[0];
+        if($product) {
             $product = prepareProductForCreating($product);
             
             $backupimages = $product['Skus'][0]['Images'];
@@ -979,20 +1008,18 @@ function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
 // options[] = 3 : copy desc + short desc
 // options[] = 4 : copy size, weight
 function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
-    $list = getProducts($accessToken, '', 0, 'all', array($sourcesku));
-    //var_dump($srcdict);
-    
-    if(count($list) == 0) {
+
+    $srcproduct = getProduct($accessToken, $sourcesku);
+    if(!$srcproduct) {
         echo "<h2>Wrong source SKU</h2>";
         return;
     }
-    $srcproduct = $list[0];
     
     // chia thành các mảng nhỏ 20item
     $chunks = array_chunk($skus, 20);
     
     foreach($chunks as $chunk) {
-        $list = getProducts($accessToken, '', 0, 'all', $chunk);
+        $list = getProducts($accessToken, '', 'all', $chunk);
 
         foreach($list as $product) {
                 // fix key name
