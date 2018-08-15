@@ -306,15 +306,16 @@ function printProducts($products) {
         
         if(is_array($imgs)) {
             for($i=0; $i<8; $i++){
-                $imgs[$i] = preg_replace('/(-catalog)/i', '', $imgs[$i]);
-                $tmp = $imgs[$i];
-                $thumb = '<a tabindex="-1" target="_blank" href="'.$tmp.'"><img border="0" src="'.$tmp.'" height="100"></a>';
+                $thumbLink = $imgs[$i];
+                $fullLink = preg_replace('/(-catalog)/i', '', $thumbLink);
+                
+                $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img border="0" src="'.$thumbLink.'" height="50"></a>';
                 
                 if($i == 0) {
-                    echo '<td class="image">'.$imgs[$i].'</td>';
+                    echo '<td class="image">'.$fullLink.'</td>';
                     echo '<td class="image on">'.$thumb.'</td>';
                 } else {
-                    echo '<td class="image1 link">'.$imgs[$i].'</td>';
+                    echo '<td class="image1 link">'.$fullLink.'</td>';
                     echo '<td class="image1 thumb on">'.$thumb.'</td>';
                 }
             }

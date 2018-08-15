@@ -74,7 +74,7 @@ $byskus = $_GET['byskus'] ? $_GET['byskus'] : 0;
 $input = val($_GET['skus']);
 $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
-echo '<table id="myTable" class="tablesorter" border="1">';
+echo '<table id="myTable" class="tablesorter" border="1" style="width:100%">';
 echo '<thead><tr>';
     echo '<th>&#x25BC</th>';
     echo '<th>&#x25BC</th>';
