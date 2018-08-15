@@ -38,14 +38,19 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
 <div class="menu">
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=all&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Tất cả</a>
 <?php if($GLOBALS['status']=='all') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>   
+
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=pending&needfull=1">Đơn hàng mới</a>
 <span class="count" id="pending"></span>
+
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=ready_to_ship&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đơn hàng SS giao đi</a>
 <span class="count" id="ready_to_ship"></span>
+
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=shipped&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đơn hàng đang đi phát</a>
 <?php if($GLOBALS['status']=='shipped') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
+
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=canceled&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đơn hàng huỷ</a>
 <?php if($GLOBALS['status']=='canceled') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
+
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?offset=0&limit=500&status=delivered&sortby=updated_at&shopid=&needfull=0<?php echo $GLOBALS['shopid']?>">Đơn hàng phát thành công</a>
 <?php if($GLOBALS['status']=='delivered') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
 </div>
@@ -63,13 +68,10 @@ include "nav.php";
 echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif; height:400px; overflow:auto;'>";
 echo "<p><b>10 đơn hàng bị huỷ gần đây nhất<b></p>";
 echo '<table border="1"><tbody>';
-$dict = getOrders($GLOBALS['accessToken'], 'canceled', 0, 10, $sortBy);
-echo '<br>';
-$cOrders = $dict['data']['orders'];
-usort($cOrders, function($a, $b) {
-    return $b['updated_at'] <=> $a['updated_at'];
-});
-printOrders($cOrders , 0, $needFullOrderInfo, $status);
+
+$list = getOrders($accessToken, 'canceled', 0, 10, $sortBy);
+printOrders($list , 0, $needFullOrderInfo, $status);
+
 echo '</tbody></table></div><hr>';
 //========================================================================
 
@@ -78,50 +80,35 @@ echo '</tbody></table></div><hr>';
 echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif;'>";
 echo '<table border="1"><tbody>';
 
+$list = null;
 if($status == 'all') {
     // get pending orders
-    $pOrders = array();
-    for($i=0; $i<$limit; $i+=100) {
-        $dict = getOrders($accessToken, "pending", $i, 100, $sortBy);
-        $pOrders = array_merge($pOrders, $dict['data']['orders']);
-        if($dict['data']['count'] < 100) {
-            break; // nothing more to get, stop getOrders
-        }
-    }
-    //var_dump($pOrders);
+    $pendingOrders = getAllOrders($accessToken, "pending", $sortBy);
+    $readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy);
     
-    // get ready_to_ship orders
-    $rOrders = array();
-    for($i=0; $i<$limit; $i+=100) {
-        $dict = getOrders($accessToken, "ready_to_ship", $i, 100, $sortBy);
-        $rOrders = array_merge($rOrders, $dict['data']['orders']);
-        if($dict['data']['count'] < 100) {
-            break; // nothing more to get, stop getOrders
-        }
-    }
-    //var_dump($rOrders);
-    
-    $allOrders = array_merge($pOrders, $rOrders);
-    usort($allOrders, function($a, $b) {
+    $list = array_merge($pendingOrders, $readyOrders);
+
+    // resort merged list
+    usort($list, function($a, $b) {
         return $b['created_at'] <=> $a['created_at'];
     });
-
-    $GLOBALS['count'] += count($allOrders);
-    printOrders($allOrders, 0, $needFullOrderInfo, $status);
+} elseif($status == 'pending' || $status == 'ready_to_ship' || $status == 'shipped') {
+    $list = getAllOrders($accessToken, $status, $sortBy);
 } else {
-    $orders = array();
+    $list = array();
     for($i=0; $i<$limit; $i+=100) {
-        $dict = getOrders($accessToken, $status, $i + $offset, 100, $sortBy);
-        //var_dump($dict);
-        
-        $orders = array_merge($orders, $dict['data']['orders']);
-        if($dict['data']['count'] < 100) {
-            break; // nothing more to get, stop getOrders
+        $nextlist = getOrders($accessToken, $status, $i, 100, $sortBy);
+        $list = array_merge($list, $nextlist);
+
+        if(count($nextlist) < 100) {
+            break;
         }
     }
-    $GLOBALS['count'] += count($orders);
-    printOrders($orders, 0, $needFullOrderInfo, $status);
 }
+
+$GLOBALS['count'] = count($list);
+printOrders($list, 0, $needFullOrderInfo, $status);
+
 echo '</tbody></table><br><hr>';
 echo "</div>";
 //========================================================================

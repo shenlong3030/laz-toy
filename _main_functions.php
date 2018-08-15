@@ -30,6 +30,22 @@ function getOrderLinkPostfix(){
     return $postfix;
 }
 
+// valid status : pending, canceled, ready_to_ship, delivered, returned, shipped and failed
+function getAllOrders($accessToken, $status = 'pending', $sortBy = 'created_at'){
+    $limit = 1000;
+
+    $list = array();
+    for($i=0; $i<$limit; $i+=100) {
+        $nextlist = getOrders($accessToken, $status, $i, 100, $sortBy);
+        $list = array_merge($list, $nextlist);
+
+        if(count($nextlist) < 100) {
+            break;
+        }
+    }
+    return $list;
+}
+
 function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100, $sortBy = 'created_at'){
     $c = getClient();
     $request = getRequest('/orders/get','GET');
@@ -43,8 +59,16 @@ function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100,
     $request->addApiParam('limit', $limit);
     $request->addApiParam('sort_by', $sortBy);
     $response = json_decode($c->execute($request, $accessToken), true);
-    //var_dump($response);
-    return $response;
+    //myvar_dump($response);
+
+    $list = array();
+    if($response["code"] == "0") {
+        $list = $response['data']['orders'];
+    } else {
+        myvar_dump($response);
+    }
+
+    return $list;
 }
 
 function getOrderItems($accessToken, $orderId){
