@@ -808,7 +808,13 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
                 $value = $data["colors"][$index];
                 $product = setColorForProduct($product, $value);
             }
-            
+
+            if(isset($data["qty"][$index])) {
+                // setPriceForProduct
+                $value = $data["qty"][$index];
+                $product = setQtyForProduct($product, $value);
+            }
+
             //myvar_dump($product['Attributes']['color_family']);
             
             if(isset($data["images"][$index])) {
@@ -820,7 +826,7 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
             
             if(!intval($preview)) {
                 $r = saveProduct($accessToken, $product);
-                usleep(500000);
+                usleep(100000);
             } else {
                 myecho("PREVIEWING ...");
                 $r = array(
@@ -1054,7 +1060,6 @@ function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
 // options[] = 3 : copy desc + short desc
 // options[] = 4 : copy size, weight
 function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
-
     $srcproduct = getProduct($accessToken, $sourcesku);
     if(!$srcproduct) {
         echo "<h2>Wrong source SKU</h2>";

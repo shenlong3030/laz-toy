@@ -40,6 +40,9 @@ $input = val($_POST['col'][3]);
 $prices = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][4]);
+$qty = array_filter(explode("\n", str_replace("\r", "", $input)));
+
+$input = val($_POST['col'][5]);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 $imageindex = val($_POST['imageindex'], 1);
 
@@ -54,6 +57,7 @@ $preview = val($_POST['preview']);
      <th>Names</th>
      <th>Colors <br><a target="_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-colors.html">Valid colors</a></th>
      <th>Prices</th>
+     <th>Quantity</th>
      <th>Images >> Start index (1-8) <input size="3" type="text" name="imageindex" value="<?php echo val($imageindex);?>"></th>
     </tr>
     <tbody>
@@ -62,6 +66,7 @@ $preview = val($_POST['preview']);
             <td><textarea class="nowrap" name="col[]" rows="20" cols="50"><?php echo implode("\n", $names);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $colors);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $prices);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $qty);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="50"><?php echo implode("\n", $images);?></textarea></td>
         </tr>
     </tbody>
@@ -78,7 +83,8 @@ $data = array(
     "colors" => $colors,
     "prices" => $prices,
     "images" => $images,
-    "imageindex" => $imageindex
+    "imageindex" => $imageindex,
+    "qty" => $qty
 );
 
 if(!empty($skus)) {
