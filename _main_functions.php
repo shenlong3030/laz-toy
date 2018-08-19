@@ -1081,13 +1081,13 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
                 }
                 
                 // copy images
-                if(in_array(1, $options)) {
+                if(in_array("1", $options)) {
                     //echo "<hr>1<hr>";
                     $product['Skus'][0]['Images'] = $srcproduct['skus'][0]['Images'];
                 }
                 
                 // copy prices
-                if(in_array(2, $options)) {
+                if(in_array("2", $options)) {
                     //echo "<hr>2<hr>";
                     $product['Skus'][0]['price'] = $srcproduct['skus'][0]['price'];
                     $product['Skus'][0]['special_price'] = $srcproduct['skus'][0]['special_price'];
@@ -1096,14 +1096,14 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
                 }
                 
                 // copy desc
-                if(in_array(3, $options)) {
+                if(in_array("3", $options)) {
                     //echo "<hr>3<hr>";
                     $product['Attributes']['short_description'] = $srcproduct['attributes']['short_description'];
                     $product['Attributes']['description'] = $srcproduct['attributes']['description'];
                 }
                 
                 // copy size, weight, package content
-                if(in_array(4, $options)) {
+                if(in_array("4", $options)) {
                     //echo "<hr>4<hr>";
                     $product['Skus'][0]['package_width'] = $srcproduct['skus'][0]['package_width'];
                     $product['Skus'][0]['package_height'] = $srcproduct['skus'][0]['package_height'];
@@ -1126,9 +1126,12 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
                 $request = new LazopRequest('/product/update');
                 $request->addApiParam('payload', $payload);
                 
-                $res = $c->execute($request, $accessToken);
-                
-                //myvar_dump($res);
+                $response = json_decode($c->execute($request, $accessToken), true);
+                if($response["code"] == "0") {
+                    myecho("success");
+                } else {
+                    myvar_dump($response);
+                }
             }
 
         // sleep 0.5s
