@@ -59,9 +59,9 @@ Clone:<br>
 <table>
     <tbody>
         <tr>
-            <td>Colors</td>
+            <td>Colors<br><a target="_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-colors.html">Color list</a></td>
             <td>Models<br>Left crop <input size="3" type="text" name="lcropmodel" value="<?php echo val($lcropmodel);?>">words
-            <br><a target=""_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-model-mobile-phone.html">Model list</a></td>
+            <br><a target="_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-model-mobile-phone.html">Model list</a></td>
             <td>Image links</td>
         </tr>
         <tr>
