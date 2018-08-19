@@ -149,9 +149,16 @@ if($sku) {
     <input type="submit" value="Update prices"/>
     </form>
 <hr>
-    Weight: <?php echo $weight;?><br>
-    Size: <?php echo $h;?> x <?php echo $w;?> x <?php echo $l;?><br>
-    Content: <?php echo $content;?><br>
+    <form action="update.php" method="POST" name="pricesForm" target="responseIframe">
+    <input type="hidden" name="sku" value="<?php echo $sku;?>" />
+
+    Weight: <input type="text" name="weight" value="<?php echo $weight;?>" /><br>
+    Packing Size: <input type="text" name="size_h" size="10" value="<?php echo $h;?>" /> 
+    x <input type="text" name="size_w" size="10" value="<?php echo $w;?>" /> 
+    x <input type="text" name="size_l" size="10" value="<?php echo $l;?>" /><br>
+    Packing Content: <input type="text" name="content" size="70" value="<?php echo $content;?>" /><br>
+    <input type="submit" value="Update weight, size, content"/>
+    </form>
 <hr>
     <h3>Short description:</h3>
     <form action="update.php" method="POST" name="shortdescForm" target="responseIframe">

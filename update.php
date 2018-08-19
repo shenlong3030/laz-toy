@@ -25,6 +25,11 @@ $shortdesc = $_POST['shortdesc'] ? $_POST['shortdesc'] : '';
 $desc = $_POST['desc'] ? $_POST['desc'] : '';
 $brand = $_POST['brand'] ? $_POST['brand'] : '';
 
+$weight = $_POST['weight'] ? $_POST['weight'] : '';
+$size_h = $_POST['size_h'] ? $_POST['size_h'] : '';
+$size_w = $_POST['size_w'] ? $_POST['size_w'] : '';
+$size_l = $_POST['size_l'] ? $_POST['size_l'] : '';
+$content = $_POST['content'] ? $_POST['content'] : '';
 
 if($accessToken && $sku) {
     $response = 0;
@@ -81,6 +86,10 @@ if($accessToken && $sku) {
         } elseif($brand) {
             //echo "i9";
             $product = setBrandForProduct($product, $brand);
+        } elseif($weight) {
+            $product = setPackageWeightForProduct($product, $weight);
+            $product = setPackageSizeForProduct($product, $size_h, $size_w, $size_l);
+            $product = setPackageContentForProduct($product, $content);
         }
 
         //var_dump($price, $sale_price);

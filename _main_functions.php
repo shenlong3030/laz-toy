@@ -767,6 +767,23 @@ function setDescriptionForProduct($product, $value) {
     return $product;
 }
 
+function setPackageWeightForProduct($product, $value) {
+    $product['Skus'][0]['package_weight'] = $value;
+    return $product;
+}
+
+function setPackageSizeForProduct($product, $h, $w, $l) {
+    $product['Skus'][0]['package_height'] = $h;
+    $product['Skus'][0]['package_width'] = $w;
+    $product['Skus'][0]['package_length'] = $l;
+    return $product;
+}
+
+function setPackageContentForProduct($product, $value) {
+    $product['Skus'][0]['package_content'] = $value;
+    return $product;
+}
+
 function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
     $savedimages = array();
     $success = array();
