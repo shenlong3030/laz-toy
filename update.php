@@ -56,7 +56,7 @@ if($accessToken && $sku) {
         } elseif (is_numeric($qty)){
             //echo "i2";
             $response = updateQuantity($accessToken, $sku, $qty);
-        } elseif ($price) {
+        } elseif ($price || $sale_price) {
             //echo "i3";
             $response = updatePrices($accessToken, $sku, $price, $sale_price);
         } elseif($category) {

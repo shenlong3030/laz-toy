@@ -556,6 +556,10 @@ function updatePrices($accessToken, $sku, $price, $sale_price, $fromdate = "2018
     $pricePayload = '';
     $salePayload = '';
     
+    if(empty($price)) {
+        $price = intval($sale_price) * 1.3;
+    }
+
     if($sale_price) {
         $salePayload = '<SalePrice>'.$sale_price.'</SalePrice><SaleStartDate>'.$fromdate.'</SaleStartDate><SaleEndDate>'.$todate.'</SaleEndDate>';
     }
