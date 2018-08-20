@@ -29,6 +29,26 @@ require_once('_main_functions.php');
     
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
+
+<?php
+$count = 0;
+
+// Pay no attention to this statement.
+// It's only needed if timezone in php.ini is not set correctly.
+date_default_timezone_set("UTC");
+    
+$offset = $_GET['offset'] ? $_GET['offset'] : 0;
+$limit = $_GET['limit'] ? $_GET['limit'] : 500;
+$status = $_GET['status'] ? $_GET['status'] : 'sold-out';
+
+$q = $_GET['q'] ? $_GET['q'] : '';
+$byskus = $_GET['byskus'] ? $_GET['byskus'] : 0;
+
+$input = val($_GET['skus']);
+$skus = array_filter(explode("\n", str_replace("\r", "", $input)));
+
+?>
+
 <body>
     <iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe>
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
@@ -53,27 +73,8 @@ require_once('_main_functions.php');
     </form>
     <div class=".next-tabs-bar"><input type="text" id="myNameInput" placeholder="Filter name"><input type="text" id="myQuantityInput" placeholder="Filter quantity"></div>
     <div class="mainContent">
+
 <?php
-//ini_set('display_startup_errors', 1);
-//ini_set('display_errors', 1);
-//error_reporting(-1);
-
-$count = 0;
-
-// Pay no attention to this statement.
-// It's only needed if timezone in php.ini is not set correctly.
-date_default_timezone_set("UTC");
-    
-$offset = $_GET['offset'] ? $_GET['offset'] : 0;
-$limit = $_GET['limit'] ? $_GET['limit'] : 500;
-$status = $_GET['status'] ? $_GET['status'] : 'sold-out';
-
-$q = $_GET['q'] ? $_GET['q'] : '';
-$byskus = $_GET['byskus'] ? $_GET['byskus'] : 0;
-
-$input = val($_GET['skus']);
-$skus = array_filter(explode("\n", str_replace("\r", "", $input)));
-
 echo '<table id="myTable" class="tablesorter" border="1" style="width:100%">';
 echo '<thead><tr>';
     echo '<th>&#x25BC</th>';
