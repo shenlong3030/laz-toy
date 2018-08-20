@@ -748,7 +748,7 @@ function setCategoryForProduct($product, $category) {
 }
 
 function setColorForProduct($product, $color) {
-    $product['Attributes']['color_family'] = $color;
+    $product['Skus'][0]['color_family'] = $color;
     return $product;
 }
 
