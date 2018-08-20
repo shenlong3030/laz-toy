@@ -11,11 +11,6 @@
 .on {
     display: table-cell!important;
 }
-.nav {
-    position:absolute;
-    right:0;
-    top:0;
-}
 .menu a { padding-left: 4em; }
 .menu .count {color: red;}
 .contentlist .order { padding-left: 1em; padding-right: 1em;}
@@ -23,10 +18,6 @@
 .contentlist tr.canceled p.canceled {visibility: visible;}
 .contentlist tr.canceled {background-color: lightgray;}
 .contentlist tr.ready_to_ship td.index {background-color:gold;}
-.mainContent {
-    height: 650px;
-    overflow: auto;
-}
 .nowrap {
     white-space: nowrap;
 }

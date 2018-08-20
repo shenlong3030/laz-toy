@@ -28,8 +28,24 @@ require_once('_main_functions.php');
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     
     <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
 
+    <style>
+    .nav{
+      margin: 0;
+      padding: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      background-color: #FFF;
+      width: 100%;
+      z-index: 10;
+    }
+    .mainContent{
+      margin-top: 150px;
+    }
+    </style>
+</head>
 <?php
 $count = 0;
 
@@ -50,6 +66,7 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 ?>
 
 <body>
+    <div class="nav">
     <iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe>
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
     Search <input class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
@@ -72,6 +89,9 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
     <input type="submit">
     </form>
     <div class=".next-tabs-bar"><input type="text" id="myNameInput" placeholder="Filter name"><input type="text" id="myQuantityInput" placeholder="Filter quantity"></div>
+    
+    </div>
+
     <div class="mainContent">
 
 <?php
