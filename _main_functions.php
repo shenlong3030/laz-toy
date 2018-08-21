@@ -222,7 +222,7 @@ function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = nul
     return $products;
 }
 
-function getProductsPaging($accessToken, $q, $status, $offset, $limit){
+function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_products=null){
     $c = getClient();
     $request = new LazopRequest('/products/get','GET');
     $request->addApiParam('filter', $status);
@@ -241,6 +241,7 @@ function getProductsPaging($accessToken, $q, $status, $offset, $limit){
     
     $products = array();
     if($response["code"] == "0") {
+        $total_products = $response["data"]["total_products"];
         $products = $response["data"]["products"];
     } else {
         myvar_dump($response);
@@ -282,9 +283,9 @@ function printProducts($products) {
         
         echo '<tr>';
         //visible 
-        echo '<td class="sku on">'.$sellersku.'</td>';
+        echo '<td class="sku on padding">'.$sellersku.'</td>';
         // hidden
-        echo '<td class="sku off">'.$shopsku.'</td>';
+        echo '<td class="sku off padding">'.$shopsku.'</td>';
         $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
         
         $qtyForm = '<form action="update.php" method="POST" name="qtyForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="qty" type="text" size="4" value="'.$qty.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
@@ -294,7 +295,7 @@ function printProducts($products) {
         $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="80" value="'.$name.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
         
         echo '<td>'.$reservedTxt.$qtyForm.'</td>';
-        echo '<td class="name on">'.$nameLink.'</td>';
+        echo '<td class="name on padding">'.$nameLink.'</td>';
         echo '<td class="name">'.$nameForm.'</td>';
         echo '<td></td>';                   // $variation cell
         

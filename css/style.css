@@ -21,3 +21,12 @@
 .nowrap {
     white-space: nowrap;
 }
+.padding,
+.pagenumber {
+	padding: 5px;
+}
+.pagenumber.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: default;
+}
