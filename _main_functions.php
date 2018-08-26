@@ -312,13 +312,8 @@ function printProducts($products) {
                 
                 $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img border="0" src="'.$thumbLink.'" height="50"></a>';
                 
-                if($i == 0) {
-                    echo '<td class="image">'.$fullLink.'</td>';
-                    echo '<td class="image on">'.$thumb.'</td>';
-                } else {
-                    echo '<td class="image1 link">'.$fullLink.'</td>';
-                    echo '<td class="image1 thumb on">'.$thumb.'</td>';
-                }
+                echo '<td class="image thumb on">'.$thumb.'</td>';
+                echo '<td class="image link">'.$fullLink.'</td>';
             }
         }
         //echo '<td>'.($offset + $index + 1).'</td>';

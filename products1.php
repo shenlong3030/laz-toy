@@ -148,11 +148,11 @@ $(function(){
     $('.image').toggleClass('on');
   });
   $('#cbshowall').change(function(){
-      if($('#cbshowthumbnail').is(":checked")) {
-          $('.image1.thumb').toggleClass('on');
-      } else {
-          $('.image1.link').toggleClass('on');
-      }
+      // if($('#cbshowthumbnail').is(":checked")) {
+      //     $('.image1.thumb').toggleClass('on');
+      // } else {
+      //     $('.image1.link').toggleClass('on');
+      // }
   });
   $('#cbbyskus').change(function(){
     $('.search').toggleClass('on');
