@@ -65,7 +65,7 @@ Clone:<br>
             <td>Image links</td>
         </tr>
         <tr>
-            <td><textarea name="col[]" rows="20" cols="10"><?php echo implode("\n", $colors);?></textarea></td>
+            <td><textarea name="col[]" rows="20" cols="30"><?php echo implode("\n", $colors);?></textarea></td>
             <td><textarea name="col[]" rows="20" cols="30"><?php echo implode("\n", $models);?></textarea></td>
             <td><textarea style="white-space: nowrap;" name="col[]" rows="20" cols="80"><?php echo implode("\n", $images);?></textarea></td>
         </tr>

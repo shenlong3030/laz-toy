@@ -280,6 +280,7 @@ function printProducts($products) {
         $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
         $imgs = $sku['Images'];
         //$variation = $sku['_compatible_variation_'];
+        $color = $product['skus'][0]['color_family'];
         
         echo '<tr>';
         //visible 
@@ -297,14 +298,18 @@ function printProducts($products) {
         echo '<td>'.$reservedTxt.$qtyForm.'</td>';
         echo '<td class="name on padding">'.$nameLink.'</td>';
         echo '<td class="name">'.$nameForm.'</td>';
-        echo '<td></td>';                   // $variation cell
+        echo '<td>'.$color.'</td>';
         
         // hidden 
         echo '<td class="price">'.$priceForm.'</td>';
         // visible
         echo '<td class="price on">'.$price1.'</td>';
         echo '<td class="price on">'.$price2.'</td>';
-        
+
+        // bootstrap (need bootstrap css and bootstraptoggle css + js)
+        $status = ($sku['Status'] == "active") ? "checked" : "";
+        echo '<td><input id="'. $sellersku .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
+
         if(is_array($imgs)) {
             for($i=0; $i<8; $i++){
                 $thumbLink = $imgs[$i];
@@ -316,14 +321,7 @@ function printProducts($products) {
                 echo '<td class="image link">'.$fullLink.'</td>';
             }
         }
-        //echo '<td>'.($offset + $index + 1).'</td>';
-        $color = $sku['Status'] == 'inactive' ? ' style="color:red"' : '';
-        //echo '<td'.$color.'>'.$sku['Status'].'</td>';
-        
-        // bootstrap (need bootstrap css and bootstraptoggle css + js)
-        $status = ($sku['Status'] == "active") ? "checked" : "";
-        echo '<td><input id="'. $sellersku .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
-        
+
         echo '</tr>';
     }
 }
@@ -407,9 +405,14 @@ function createProduct($accessToken, $product) {
     $c = getClient();
     $request = new LazopRequest('/product/create');
     $request->addApiParam('payload', $payload);
-    $res = $c->execute($request, $accessToken);
+
+    $res = json_decode($c->execute($request, $accessToken), true);
+    if($res["code"] == "0") {
+        myecho("success");
+    } else {
+        myvar_dump($res);
+    }
     
-    //myvar_dump($res);
     return $res;
 }
 

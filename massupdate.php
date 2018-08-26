@@ -55,7 +55,7 @@ $preview = val($_POST['preview']);
     <tr>
      <th>SKUs</th>
      <th>Names</th>
-     <th>Colors <br><a target="_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-colors.html">Valid colors</a></th>
+     <th>Colors</th>
      <th>Prices</th>
      <th>Quantity</th>
      <th>Images >> Start index (1-8) <input size="3" type="text" name="imageindex" value="<?php echo val($imageindex);?>"></th>
