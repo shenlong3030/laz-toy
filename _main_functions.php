@@ -556,7 +556,7 @@ function updatePrices($accessToken, $sku, $price, $sale_price, $fromdate = "2018
     $salePayload = '';
     
     if(empty($price)) {
-        $price = intval($sale_price) * 1.3;
+        $price = intval($sale_price) * 1.2;
     }
 
     if($sale_price) {
@@ -825,7 +825,7 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
             
             if(!intval($preview)) {
                 $r = saveProduct($accessToken, $product);
-                usleep(100000);
+                usleep(50000);
             } else {
                 myecho("PREVIEWING ...");
                 $r = array(
