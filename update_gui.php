@@ -67,6 +67,7 @@ if($sku) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>UPDATE</title>
     <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
+
     <script src="//code.jquery.com/jquery-1.11.1.js"></script>
     <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
     <!-- bxSlider Javascript file -->
@@ -74,9 +75,32 @@ if($sku) {
     <script src="./js/jquery.tablesorter.min.js"></script>
     
     <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <style>
+    .nav{
+      margin: 0;
+      padding: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      background-color: #FFF;
+      width: 100%;
+      z-index: 10;
+    }
+    .mainContent{
+      margin-top: 50px;
+    }
+    </style>
+
 </head>
 <body>
+    <div class="nav">
     <iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe>
+    </div>
+    
+    <div class="mainContent">
+
     <h1>Update product</h1>
     
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
@@ -178,7 +202,7 @@ if($sku) {
     
     <?php echo $desc;?>
     
-    
+    </div>
 <?php
 
 // Pay no attention to this statement.
