@@ -4,7 +4,7 @@ require_once('_main_functions.php');
 
 //require_once('src/show_errors.php');
 
-$sku = isset($_POST["sku"]) ? $_POST["sku"] : "";
+$sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
 $category = "";
 $images = array();
 $weight = "";

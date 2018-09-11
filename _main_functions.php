@@ -306,6 +306,9 @@ function printProducts($products) {
         echo '<td class="price on">'.$price1.'</td>';
         echo '<td class="price on">'.$price2.'</td>';
 
+        $link = "http://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
+        echo '<td><a target="_blank" href="'.$link.'" class="fa fa-edit" style="color:red"></a></td>';
+
         // bootstrap (need bootstrap css and bootstraptoggle css + js)
         $status = ($sku['Status'] == "active") ? "checked" : "";
         echo '<td><input id="'. $sellersku .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';

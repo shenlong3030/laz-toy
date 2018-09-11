@@ -14,6 +14,8 @@ require_once('_main_functions.php');
     
     <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/x-icon" href="./ico/product.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <script src="//code.jquery.com/jquery-1.11.1.js"></script>
     <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
     <!-- bxSlider Javascript file -->
