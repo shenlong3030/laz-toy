@@ -10,7 +10,7 @@ require_once('_main_functions.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo "LAZADA sp"; ?></title>
+    <title>PRODUCTS</title>
     
     <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/x-icon" href="./ico/product.ico" />

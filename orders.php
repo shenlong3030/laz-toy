@@ -23,7 +23,7 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php $status = $_GET['status'] ? $_GET['status'] : 'pending'; echo "LAZ ĐH $status";?></title>
+    <title>ORDERS</title>
     <link rel="shortcut icon" type="image/x-icon" href="./ico/cart.ico" />
     <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
     <script src="//code.jquery.com/jquery-1.11.1.js"></script>

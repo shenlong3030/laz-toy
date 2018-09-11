@@ -6,7 +6,7 @@ include_once "check_token.php";
 <!DOCTYPE html>
 <html>
 <head>
-  <title>LAZADA Toys</title>
+  <title>EXTRA</title>
   <link rel="shortcut icon" type="image/x-icon" href="./ico/extra.ico" />
 </head>
 
