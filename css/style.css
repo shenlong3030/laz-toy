@@ -29,3 +29,6 @@
   pointer-events: none;
   cursor: default;
 }
+.grouped {
+	background-color: #EEE;
+}

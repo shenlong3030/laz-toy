@@ -262,70 +262,71 @@ function getProduct($accessToken, $sku){
 }
 
 function printProducts($products) {
-    foreach($products as $index=>$product) {
+    foreach($products as $product) {
         $GLOBALS['count'] += 1;
         
         //var_dump($product);
         $attrs = $product['attributes'];
         $name = $attrs['name'];
-        
-        $sku = $product['skus'][0];
-        $price1 = $sku['price'];
-        $price2 = $sku['special_price'];
-        $qty = $sku['quantity'];
-        $reservedStock = $sku['ReservedStock'];
-        $url = $sku['Url'];
-        $sellersku = $sku['SellerSku'];
-        $shopsku = $sku['ShopSku'];
-        $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
-        $imgs = $sku['Images'];
-        //$variation = $sku['_compatible_variation_'];
-        $color = $product['skus'][0]['color_family'];
-        
-        echo '<tr>';
-        //visible 
-        echo '<td class="sku on padding">'.$sellersku.'</td>';
-        // hidden
-        echo '<td class="sku off padding">'.$shopsku.'</td>';
-        $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
-        
-        $qtyForm = '<form action="update.php" method="POST" name="qtyForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="qty" type="text" size="4" value="'.$qty.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
-        
-        $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="price" type="text" size="8" value="'.$price1.'"/>--><input name="sale_price" type="text" size="8" value="'.$price2.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
-        
-        $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="80" value="'.$name.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
-        
-        echo '<td>'.$reservedTxt.$qtyForm.'</td>';
-        echo '<td class="name on padding">'.$nameLink.'</td>';
-        echo '<td class="name">'.$nameForm.'</td>';
-        echo '<td>'.$color.'</td>';
-        
-        // hidden 
-        echo '<td class="price">'.$priceForm.'</td>';
-        // visible
-        echo '<td class="price on">'.$price1.'</td>';
-        echo '<td class="price on">'.$price2.'</td>';
 
-        $link = "http://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
-        echo '<td><a target="_blank" href="'.$link.'" class="fa fa-edit" style="color:red"></a></td>';
+        foreach($product['skus'] as $index=>$sku) {
+            $price1 = $sku['price'];
+            $price2 = $sku['special_price'];
+            $qty = $sku['quantity'];
+            $reservedStock = $sku['ReservedStock'];
+            $url = $sku['Url'];
+            $sellersku = $sku['SellerSku'];
+            $shopsku = $sku['ShopSku'];
+            $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
+            $imgs = $sku['Images'];
+            //$variation = $sku['_compatible_variation_'];
+            $color = $sku['color_family'];
 
-        // bootstrap (need bootstrap css and bootstraptoggle css + js)
-        $status = ($sku['Status'] == "active") ? "checked" : "";
-        echo '<td><input id="'. $sellersku .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
+            echo '<tr'. ($index?' class="grouped"':'') .'>';
+            //visible 
+            echo '<td class="sku on padding">'. ($index?"<i class='fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
+            // hidden
+            echo '<td class="sku off padding">'.$shopsku.'</td>';
+            $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
+            
+            $qtyForm = '<form action="update.php" method="POST" name="qtyForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="qty" type="text" size="4" value="'.$qty.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
+            
+            $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="price" type="text" size="8" value="'.$price1.'"/>--><input name="sale_price" type="text" size="8" value="'.$price2.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
+            
+            $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="80" value="'.$name.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
+            
+            echo '<td>'.$reservedTxt.$qtyForm.'</td>';
+            echo '<td class="name on padding">'.$nameLink.'</td>';
+            echo '<td class="name">'.$nameForm.'</td>';
+            echo '<td>'.$color.'</td>';
+            
+            // hidden 
+            echo '<td class="price">'.$priceForm.'</td>';
+            // visible
+            echo '<td class="price on">'.$price1.'</td>';
+            echo '<td class="price on">'.$price2.'</td>';
 
-        if(is_array($imgs)) {
-            for($i=0; $i<8; $i++){
-                $thumbLink = $imgs[$i];
-                $fullLink = preg_replace('/(-catalog)/i', '', $thumbLink);
-                
-                $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img border="0" src="'.$thumbLink.'" height="50"></a>';
-                
-                echo '<td class="image thumb on">'.$thumb.'</td>';
-                echo '<td class="image link">'.$fullLink.'</td>';
+            $link = "http://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
+            echo '<td><a target="_blank" href="'.$link.'" class="fa fa-edit" style="color:red"></a></td>';
+
+            // bootstrap (need bootstrap css and bootstraptoggle css + js)
+            $status = ($sku['Status'] == "active") ? "checked" : "";
+            echo '<td><input id="'. $sellersku .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
+
+            if(is_array($imgs)) {
+                for($i=0; $i<8; $i++){
+                    $thumbLink = $imgs[$i];
+                    $fullLink = preg_replace('/(-catalog)/i', '', $thumbLink);
+                    
+                    $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img border="0" src="'.$thumbLink.'" height="50"></a>';
+                    
+                    echo '<td class="image thumb on">'.$thumb.'</td>';
+                    echo '<td class="image link">'.$fullLink.'</td>';
+                }
             }
-        }
 
-        echo '</tr>';
+            echo '</tr>';
+        }
     }
 }
 
