@@ -71,8 +71,24 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
     <div class="nav">
     <div class="control-bar-2">
         <iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe>
-
     </div>
+    <?php 
+      $currentLink = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; 
+      $bareLink = strtok($currentLink, '?');
+      $linkSoldout = $bareLink . '?status=sold-out';
+      $linkRejected = $bareLink . '?status=rejected';
+      $linkAll = $bareLink . '?status=all';
+      $linkInactive = $bareLink . '?status=inactive';
+      $linkPending = $bareLink . '?status=pending';
+      $linkImageMissing = $bareLink . '?status=image-missing';
+      echo "<a class='padding' href='$linkAll'>Tất cả</a>";
+      echo "<a class='padding' href='$linkSoldout'>Hết hàng</a>";
+      echo "<a class='padding' href='$linkRejected'>Bị từ chối</a>";
+      echo "<a class='padding' href='$linkInactive'>Đang tắt</a>";
+      echo "<a class='padding' href='$linkPending'>Đang chờ duyệt</a>";
+      echo "<a class='padding' href='$linkImageMissing'>Thiếu ảnh</a>";
+    ?> 
+    
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
     Search <input class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
     <input type="hidden" name="status" value="all">
@@ -95,7 +111,7 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
     <div class="mainContent">
 
 <?php
-echo '<table id="myTable" class="tablesorter" border="1" style="width:100%">';
+echo '<table id="myTable" class="tablesorter" border="1" style="width:120%">';
 echo '<thead><tr>';
     echo '<th>&#x25BC</th>';
     echo '<th>&#x25BC</th>';

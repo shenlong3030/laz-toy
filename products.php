@@ -97,7 +97,7 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
     <div class="mainContent">
 
 <?php
-echo '<table id="myTable" class="tablesorter" border="1" style="width:100%">';
+echo '<table id="myTable" class="tablesorter" border="1" style="width:120%">';
 echo '<thead><tr>';
     echo '<th>&#x25BC</th>';
     echo '<th>&#x25BC</th>';

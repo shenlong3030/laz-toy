@@ -280,7 +280,9 @@ function printProducts($products) {
             $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
             $imgs = $sku['Images'];
             //$variation = $sku['_compatible_variation_'];
-            $color = $sku['color_family'];
+            $variation = $sku['_compatible_variation_'];
+            //$variation = str_replace('AIS Lava', '', $variation);
+            //$variation = str_replace('Not Specified', '', $variation);
 
             echo '<tr'. ($index?' class="grouped"':'') .'>';
             //visible 
@@ -298,7 +300,7 @@ function printProducts($products) {
             echo '<td>'.$reservedTxt.$qtyForm.'</td>';
             echo '<td class="name on padding">'.$nameLink.'</td>';
             echo '<td class="name">'.$nameForm.'</td>';
-            echo '<td>'.$color.'</td>';
+            echo '<td>'.$variation.'</td>';
             
             // hidden 
             echo '<td class="price">'.$priceForm.'</td>';
