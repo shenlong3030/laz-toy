@@ -152,7 +152,7 @@ echo '</table><br><hr>';
 $(function(){
     
   // sort column 0
-  //$('#myTable').tablesorter();
+  $('#myTable').tablesorter();
   //$("#myTable").tablesorter( {sortList: [[0,0]]} );
 
   $('#cbshowshopsku').change(function(){

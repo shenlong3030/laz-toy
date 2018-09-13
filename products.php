@@ -137,7 +137,8 @@ $(function(){
     
 
   $('#myTable').tablesorter();
-  $("#myTable").tablesorter( {sortList: [[0,0]]} );
+  //$("#myTable").tablesorter( {sortList: [[0,0]]} );
+  
   $('#cbshowshopsku').change(function(){
     $('.sku').toggleClass('on');
   });
