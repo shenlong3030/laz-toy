@@ -112,12 +112,7 @@ echo '<tbody>';
 
 $list = null;
 if($byskus) {
-    foreach($skus as $sku) {
-        $item = getProduct($accessToken, $sku);
-        if($item) {
-            $list[] = $item;
-        }
-    }
+    $list = getProducts($accessToken, "", $status, $skus);
 } else {
     $list = getProducts($accessToken, $q, $status);
 }

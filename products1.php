@@ -127,12 +127,7 @@ echo '<tbody>';
 $list = null;
 $total = 0;
 if($byskus) {
-    foreach($skus as $sku) {
-        $item = getProduct($accessToken, $sku);
-        if($item) {
-            $list[] = $item;
-        }
-    }
+    $list = getProducts($accessToken, "", $status, $skus);
 } else {
     $list = getProductsPaging($accessToken, $q, $status, $offset, $limit, $total);
 }
