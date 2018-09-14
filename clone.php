@@ -52,14 +52,13 @@ $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 Source SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><br>
 New SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"> Append time()<input type="checkbox" name="appendtime" checked="1" value="1" <?php if($appendtime) echo "checked=1"?> ><br> 
 New name: <input type="text" name="name" size="80" value="<?php echo $newName?>"><br>
-Clone:<br>
-    <input type="radio" name="cloneby" value="original" checked="checked"> Original<br>
-    <input type="radio" name="cloneby" value="color"> With colors (associated with source SKU)<br>
-    <input type="radio" name="cloneby" value="model"> With models (associated with source SKU)<br>
+Options:<br>
+    <input type="radio" name="cloneby" value="color">Add colors (associated with source SKU)<br>
+    <input type="radio" name="cloneby" value="model">Add models (associated with source SKU)<br>
 <table>
     <tbody>
         <tr>
-            <td>Colors<br><a target="_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-colors.html">Color list</a></td>
+            <td>Colors<br></td>
             <td>Models<br>Left crop <input size="3" type="text" name="lcropmodel" value="<?php echo val($lcropmodel);?>">words
             <br><a target="_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-model-mobile-phone.html">Model list</a></td>
             <td>Image links</td>
@@ -87,7 +86,7 @@ $inputdata = array(
     );
 
 if($cloneby) {
-    $dict = cloneProduct($accessToken, $sku, $inputdata, $preview);
+    $dict = addAssociatedProduct($accessToken, $sku, $inputdata, $preview);
 } else {
     echo "<br><br>Please select options<br><br>";   
 }

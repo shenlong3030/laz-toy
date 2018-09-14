@@ -871,7 +871,7 @@ function saveProduct($accessToken, $product) {
 // Clone region
 //####################################################################
 
-function cloneProduct($accessToken, $sku, $inputdata, $preview = 1) {
+function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
     $cloneby = $inputdata['cloneby'];
     $skuprefix = $inputdata['skuprefix'];
     $newName = $inputdata['newname'];
@@ -890,40 +890,40 @@ function cloneProduct($accessToken, $sku, $inputdata, $preview = 1) {
 
         $created = array();
         if($cloneby == 'original') {
-            // set new sku
-            $newSku = '';
-            if(!empty($skuprefix)) {
-                $newSku = $skuprefix;
-            } else {
-                preg_match('/(.+\.v)([1-9][0-9]*)/', $sku, $matches);
+            // // set new sku
+            // $newSku = '';
+            // if(!empty($skuprefix)) {
+            //     $newSku = $skuprefix;
+            // } else {
+            //     preg_match('/(.+\.v)([1-9][0-9]*)/', $sku, $matches);
             
-                if(count($matches)) {
-                    $newSku = $matches[1].($matches[2]+1);
-                } else {
-                    $newSku = $sku.'.v1';
-                }
-            }
-            if($inputdata["appendtime"]) {
-                $newSku .= '.' . time();
-            }
+            //     if(count($matches)) {
+            //         $newSku = $matches[1].($matches[2]+1);
+            //     } else {
+            //         $newSku = $sku.'.v1';
+            //     }
+            // }
+            // if($inputdata["appendtime"]) {
+            //     $newSku .= '.' . time();
+            // }
 
-            $product['Skus'][0]['SellerSku'] = $newSku;
+            // $product['Skus'][0]['SellerSku'] = $newSku;
             
-            // set new product name
-            if(!empty($newName)) {
-                $product['Attributes']["name"] = $newName;
-            }
+            // // set new product name
+            // if(!empty($newName)) {
+            //     $product['Attributes']["name"] = $newName;
+            // }
             
-            if(!intval($preview)) {
-                createProduct($accessToken, $product);
-            } else {
-                myecho("PREVIEWING ...");
-            }
+            // if(!intval($preview)) {
+            //     createProduct($accessToken, $product);
+            // } else {
+            //     myecho("PREVIEWING ...");
+            // }
             
-            // store to print
-            $created["sku"][] = $newSku;
-            $created["name"][] = $product['Attributes']["name"];
-            $created["img"][] = $product['Skus'][0]['Images'];
+            // // store to print
+            // $created["sku"][] = $newSku;
+            // $created["name"][] = $product['Attributes']["name"];
+            // $created["img"][] = $product['Skus'][0]['Images'];
         } else {
             $product['AssociatedSku'] = $sku;
             
