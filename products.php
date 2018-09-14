@@ -56,7 +56,6 @@ $count = 0;
 date_default_timezone_set("UTC");
     
 $offset = $_GET['offset'] ? $_GET['offset'] : 0;
-$limit = $_GET['limit'] ? $_GET['limit'] : 500;
 $status = $_GET['status'] ? $_GET['status'] : 'sold-out';
 
 $q = $_GET['q'] ? $_GET['q'] : '';
@@ -73,7 +72,6 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
     Search <input class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
     <input type="hidden" name="status" value="all">
-    <input type="hidden" name="limit" value="5000">
     <input type="hidden" name="offset" value="0">
     
     <input id="cbshowthumbnail" type="checkbox" name="showthumbnail" value="1" checked="checked"> I Show thumbnail
@@ -112,9 +110,9 @@ echo '<tbody>';
 
 $list = null;
 if($byskus) {
-    $list = getProducts($accessToken, "", $status, $skus);
+    $list = getProducts($GLOBALS["accessToken"], "", $status, $skus);
 } else {
-    $list = getProducts($accessToken, $q, $status);
+    $list = getProducts($GLOBALS["accessToken"], $q, $status);
 }
 
 if(count($list)) {

@@ -184,18 +184,17 @@ function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "")
 
 //status: all, live, inactive, deleted, image-missing, pending, rejected, sold-out
 function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = null){
-    $pagesize = 100;
-
+    $limitPerQuery = '50';
     $c = getClient();
     $request = new LazopRequest('/products/get','GET');
     $request->addApiParam('filter', $status);
     if(strlen($q)) {
         $request->addApiParam('search',$q);
     }
-    $request->addApiParam('offset', 0);
-    $request->addApiParam('limit', $pagesize);
-    //$request->addApiParam('create_after','2010-01-01T00:00:00+0800');
-    $request->addApiParam('update_after','2010-01-01T00:00:00+0800');
+    $request->addApiParam('offset', '0');
+    $request->addApiParam('limit', $limitPerQuery);
+    $request->addApiParam('create_after','2010-01-01T00:00:00+0800');
+    //$request->addApiParam('update_after','2010-01-01T00:00:00+0800');
     $request->addApiParam('options','1');
     
     // filter by SKU
@@ -203,16 +202,14 @@ function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = nul
         $request->addApiParam('sku_seller_list',json_encode($skulist));
     }
     
-    $response = $c->execute($request, $accessToken);
-    //myvar_dump($response);
-    $response = json_decode($response, true);
-    
+    $response = json_decode($c->execute($request, $accessToken), true);
+
     $products = array();
     if($response["code"] == "0") {
         $products = $response["data"]["products"];
 
-        while(count($products) < $response["data"]["total_products"]) {
-            $nextpage = getProductsPaging($accessToken, $q, $status, count($products), $pagesize);
+        while(count($products) < (int)$response["data"]["total_products"]) {
+            $nextpage = getProductsPaging($accessToken, $q, $status, count($products), $limitPerQuery);
             $products = array_merge($products, $nextpage);
         }
     } else {
@@ -229,16 +226,14 @@ function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_p
     if(strlen($q)) {
         $request->addApiParam('search',$q);
     }
-    $request->addApiParam('offset', $offset);
-    $request->addApiParam('limit', $limit);
-    //$request->addApiParam('create_after','2010-01-01T00:00:00+0800');
-    $request->addApiParam('update_after','2010-01-01T00:00:00+0800');
+    $request->addApiParam('offset', (string)$offset);
+    $request->addApiParam('limit', (string)$limit);
+    $request->addApiParam('create_after','2010-01-01T00:00:00+0800');
+    //$request->addApiParam('update_after','2010-01-01T00:00:00+0800');
     $request->addApiParam('options','1');
-    
-    $response = $c->execute($request, $accessToken);
-    //myvar_dump($response);
-    $response = json_decode($response, true);
-    
+
+    $response = json_decode($c->execute($request, $accessToken), true);
+
     $products = array();
     if($response["code"] == "0") {
         $total_products = $response["data"]["total_products"];
