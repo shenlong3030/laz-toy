@@ -284,7 +284,7 @@ function printProducts($products) {
             //$variation = str_replace('AIS Lava', '', $variation);
             //$variation = str_replace('Not Specified', '', $variation);
 
-            echo '<tr'. ($index?' class="grouped"':'') .'>';
+            echo '<tr'. (count($product['skus']) > 1 ? ' class="grouped"' : '') .'>';
             //visible 
             echo '<td class="sku on padding">'. ($index?"<i class='fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
             // hidden
