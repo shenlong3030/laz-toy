@@ -37,22 +37,22 @@ $delsource = val($_POST['delsource']);
 
 <body>
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-<table>
-    <tbody>
-        <tr>
-            <td>Source SKUs</td>
-            <td>New SKUs (optional), if leave empty, new sku will be {sourcesku.V{number}}</td>
-        </tr>
-        <tr>
-            <td><textarea name="col[]" rows="20" cols="50"><?php echo implode("\n", $srcSkus);?></textarea></td>
-            <td><textarea name="col[]" rows="20" cols="50"><?php echo implode("\n", $newSkus);?></textarea></td>
-        </tr>
-    </tbody>
-</table>
-<input type="checkbox" name="delsource" value="1">Delete source SKUs after cloning<br>
-<br><br>
-
-<input type="submit"><hr>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Source SKUs</td>
+                    <td>New SKUs (optional), if leave empty, new sku will be {sourcesku.V{number}}</td>
+                </tr>
+                <tr>
+                    <td><textarea name="col[]" rows="20" cols="50"><?php echo implode("\n", $srcSkus);?></textarea></td>
+                    <td><textarea name="col[]" rows="20" cols="50"><?php echo implode("\n", $newSkus);?></textarea></td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="checkbox" name="delsource" value="1">Delete source SKUs after cloning<br>
+        <br><br>
+        <input type="submit"><hr>
+    </form>
 <?php
 
 if(!empty($srcSkus)) {

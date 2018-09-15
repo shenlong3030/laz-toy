@@ -1013,32 +1013,52 @@ function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
 
 function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
     $createdSkus = array();
-    foreach($srcSkus as $index => $sku) {
-        $product = getProduct($accessToken, $sku);
-        
-        if($product) {
-            $product = prepareProductForCreating($product);
-            
-            $backupimages = $product['Skus'][0]['Images'];
+    $needDelSkus = array();
+    $products = getProducts($accessToken, '', 'all', $srcSkus);
+
+    foreach($products as $index => $product) {
+        $product = prepareProductForCreating($product);
+
+        $associatedSku = "";
+        foreach($product['Skus'] as $index=>$dict) {
+            $sku = $dict["SellerSku"];
+
+            // GENERATE new SKU
             $newSku = '';
             // set new sku
             if(isset($newSkus[$index])) {
                 $newSku = $newSkus[$index];
             } else {
-                preg_match('/(.+\.v)([1-9][0-9]*)/', $sku, $matches);
+                // add postfix Vx to newSku
+                preg_match('/(.+\.v)([1-9][0-9]*)/i', $sku, $matches);
                 if(count($matches)) {
                     $newSku = $matches[1].(trim($matches[2])+1);
                 } else {
                     $newSku = trim($sku).'.v1';
                 }
-                
-                $createdSkus[] = $newSku;
-                $product['Skus'][0]['SellerSku'] = $newSku;
+            }
+        
+            // SAVE associatedSku
+            if($index == 0) {
+                $associatedSku = $newSku;
             }
 
-            createProduct($accessToken, $product);
-        } else {
-            myecho("Wrong sku : " + $sku, __FUNCTION__);
+            // create product with only 1 SKU
+            $product['Skus'] = array(
+                    0 => $dict
+                    );
+            $product['AssociatedSku'] = $associatedSku;
+            $product = setSkuForProduct($product, $newSku);
+
+            $res = createProduct($accessToken, $product);
+            if($res["code"] == "0") {
+                // SAVE CREATED SKU
+                $createdSkus[] = $newSku;
+
+                // SAVE old SKU need to be deleted
+                $needDelSkus[] = $sku;
+            }
+            usleep(100000);
         }
     }
     
@@ -1050,7 +1070,10 @@ function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
     
     if($delsource) {
         echo '<hr><h3>Delete source SKUs</h3>';
-        delProducts($accessToken, $srcSkus);
+        foreach($needDelSkus as $item) {
+            echo $item, '<br>';
+        }
+        delProducts($GLOBALS["accessToken"], $needDelSkus);
     }
 }
 
