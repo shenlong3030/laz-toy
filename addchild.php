@@ -11,7 +11,7 @@ require_once('_main_functions.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CLONE</title>
+    <title>ADD CHILD</title>
     <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
     <script src="//code.jquery.com/jquery-1.11.1.js"></script>
     <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
@@ -49,12 +49,12 @@ $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 <body>
     <iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe>
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-Source SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><br>
-New SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"> Append time()<input type="checkbox" name="appendtime" checked="1" value="1" <?php if($appendtime) echo "checked=1"?> ><br> 
-New name: <input type="text" name="name" size="80" value="<?php echo $newName?>"><br>
+Parent SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><br>
+Child SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"> Append time()<input type="checkbox" name="appendtime" checked="1" value="1" <?php if($appendtime) echo "checked=1"?> ><br> 
+New child name: <input type="text" name="name" size="80" value="<?php echo $newName?>"><br>
 Options:<br>
-    <input type="radio" name="cloneby" value="color">Add colors (associated with source SKU)<br>
-    <input type="radio" name="cloneby" value="model">Add models (associated with source SKU)<br>
+    <input type="radio" name="cloneby" value="color">Add by colors (associated with source SKU)<br>
+    <input type="radio" name="cloneby" value="model">Add by models (associated with source SKU)<br>
 <table>
     <tbody>
         <tr>

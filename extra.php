@@ -17,9 +17,9 @@ include_once "check_token.php";
 <a target="_blank" href="/lazop/products.php?status=sold-out">Danh sách sản phẩm</href><br/>
 <a target="_blank" href="/lazop/products1.php?status=sold-out">Danh sách sản phẩm (Paging)</href><br/>
 <hr> 
-<a target="_blank" href="/lazop/clone.php">Clone SP</href><br/>
 <a target="_blank" href="/lazop/massclone.php">Mass clone SP</href><br/>
 <a target="_blank" href="/lazop/create.php">Tạo SP</href><br/>
+<a target="_blank" href="/lazop/addchild.php">Tạo SP con</href><br/>
 <a target="_blank" href="/lazop/update_gui.php">Cập nhật SP</href><br/>
 <a target="_blank" href="/lazop/massupdate.php">Mass update</href><br/>
 <hr> 
