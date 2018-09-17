@@ -2,19 +2,16 @@
 
 // $caller can be: __FUNCTION__ , __FILE__ , __LINE__
 function myecho($val, $caller="") {
-    echo "<p>";
-
+    echo "<br>";
     if(!empty($caller)) {
         echo $caller, "() ";
     }
-    
-    echo $val, "</p>";
+    echo $val;
 }
 
 function myvar_dump($val) {
     echo "<br>";
     var_dump($val);
-    echo "<br>";
 }
 
 function htmlLinkImage($url, $width=100, $height=100) {
