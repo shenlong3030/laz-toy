@@ -24,8 +24,8 @@ include_once "check_token.php";
 		    }
 		    return "";
 		}
-		function eraseCookie(name) {   
-		    document.cookie = name+'=; Max-Age=-99999999;';  
+		function deleteCookie( name ) {
+		  	document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 		}
 		function showToken(){
 			prompt("Copy token to clipboard: Ctrl+C, Enter", getCookie("access_token"));
