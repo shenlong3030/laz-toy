@@ -184,6 +184,11 @@ function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "")
 
 //status: all, live, inactive, deleted, image-missing, pending, rejected, sold-out
 function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = null){
+    if(count($skulist) > 100) {
+        myecho("<h1>ERROR: max number of SKU per request = 100</h1>");
+        exit();
+    }
+
     $limitPerQuery = '50';
     $c = getClient();
     $request = new LazopRequest('/products/get','GET');
@@ -411,7 +416,9 @@ function createProduct($accessToken, $product) {
     if($res["code"] == "0") {
         myecho("success");
     } else {
-        myvar_dump($res);
+        myecho("CREATE FAILED: ");
+        echo $product['Skus'][0]['SellerSku'];
+        var_dump($res);
     }
     
     return $res;
@@ -1074,6 +1081,55 @@ function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
             echo $item, '<br>';
         }
         delProducts($GLOBALS["accessToken"], $needDelSkus);
+    }
+}
+
+function massCloneToShop($accessToken, $srcSkus, $dest_token, $sku_prefix) {
+    $createdSkus = array();
+    $products = getProducts($accessToken, '', 'all', $srcSkus);
+
+    foreach($products as $index => $product) {
+        $product = prepareProductForCreating($product);
+
+        $associatedSku = "";
+        foreach($product['Skus'] as $index=>$dict) {
+            $sku = $dict["SellerSku"];
+            if(empty($sku)) {
+                myecho("Can not clone empty SKU");
+                continue;
+            }
+
+            // GENERATE new SKU
+            $newSku = !empty($sku_prefix) ? ($sku_prefix . $sku) : $sku;
+        
+            // SAVE associatedSku
+            if($index == 0) {
+                $associatedSku = $newSku;
+            }
+
+            // create product with only 1 SKU
+            $product['Skus'] = array(
+                    0 => $dict
+                    );
+            $product['AssociatedSku'] = $associatedSku;
+            $product = setSkuForProduct($product, $newSku);
+
+            $res = createProduct($dest_token, $product);
+            if($res["code"] == "0") {
+                // SAVE CREATED SKU
+                $createdSkus[] = $newSku;
+            } else {
+                echo " SORUCE SKU: ";
+                echo $sku;
+            }
+            usleep(100000);
+        }
+    }
+    
+    // print new SKUs
+    echo '<hr><h3>Cloned SKUs</h3>';
+    foreach($createdSkus as $item) {
+        echo $item, '<br>';
     }
 }
 
