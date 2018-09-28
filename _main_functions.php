@@ -534,7 +534,7 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
         }
         
         foreach($created["sku"] as $index => $sku) {
-            echo "<br>",$sku, htmlLinkImages($created["imgs"][$index]);
+            echo "<br>", $created["name"][$index], " # ", $sku, htmlLinkImages($created["imgs"][$index]);
         }
     } else {
         myecho("Wrong SKU", __FUNCTION__);
