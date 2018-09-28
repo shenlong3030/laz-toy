@@ -28,6 +28,7 @@
   opacity: 0.5;
   pointer-events: none;
   cursor: default;
+  color: red;
 }
 .grouped {
 	background-color: #EEE;

@@ -56,7 +56,7 @@ $count = 0;
 date_default_timezone_set("UTC");
     
 $offset = $_GET['offset'] ? $_GET['offset'] : 0;
-$limit = $_GET['limit'] ? $_GET['limit'] : 50;
+$limit = $_GET['limit'] ? $_GET['limit'] : 100;
 $status = $_GET['status'] ? $_GET['status'] : 'sold-out';
 
 $q = $_GET['q'] ? $_GET['q'] : '';
@@ -70,7 +70,7 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 <body>
     <div class="nav">
     <div class="control-bar-2">
-        <iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe>
+        <iframe id="responseIframe" name="responseIframe" width="100%" height="30"></iframe>
     </div>
     <?php 
       $currentLink = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; 
@@ -92,7 +92,6 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
     Search <input class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
     <input type="hidden" name="status" value="all">
-    <input type="hidden" name="limit" value="50">
     <input type="hidden" name="offset" value="0">
     
     <input id="cbshowthumbnail" type="checkbox" name="showthumbnail" value="1" checked="checked"> I Show thumbnail
@@ -126,16 +125,23 @@ echo '<tbody>';
 
 $list = null;
 $total = 0;
+$token = $GLOBALS["accessToken"];
 if($byskus) {
-    $list = getProducts($GLOBALS["accessToken"], "", $status, $skus);
+    $list = getProducts($token, "", $status, $skus);
+    $pagecount = 1;
+    $total = count($list);
+} elseif ($limit == "no") {
+    $list = getProducts($token, $q, $status, null);
+    $pagecount = 1;
+    $total = count($list);
 } else {
-    $list = getProductsPaging($GLOBALS["accessToken"], $q, $status, $offset, $limit, $total);
+    $list = getProductsPaging($token, $q, $status, $offset, $limit, $total);
+    $pagecount = ceil($total/$limit);
 }
 
 if(count($list)) {
     printProducts($list);
 }
-$pagecount = ceil($total/$limit);
 
 echo '</tbody>';
 echo '</table><br><hr>';
@@ -244,24 +250,32 @@ function getQueryStringLimitValue() {
     return value ? value : <?php echo $limit;?>;
 }
 
-    setTimeout(function(){
-        var pagecount = <?php echo $pagecount;?>;
-        
-        for (var i = 0; i < pagecount; i++) {
-          var newLink = $("<a />", {
-              class : "pagenumber",
-              name : "link",
-              href : getURLWithNewQueryString("offset", i*getQueryStringLimitValue()),
-              text : (i+1)
-          });
-          if(getQueryStringOffsetValue() == i*getQueryStringLimitValue()) {
-            newLink.addClass('disabled');
-          }
-          $('.control-bar-1').append(newLink);
-        }
+setTimeout(function(){
+    var pagecount = <?php echo $pagecount;?>;
+    
+    for (var i = 0; i < pagecount; i++) {
+      var newLink = $("<a />", {
+          class : "pagenumber",
+          name : "link",
+          href : getURLWithNewQueryString("offset", i*getQueryStringLimitValue()),
+          text : (i+1)
+      });
+      if(getQueryStringOffsetValue() == i*getQueryStringLimitValue()) {
+        newLink.addClass('disabled');
+      }
+      $('.control-bar-1').append(newLink);
+    }
 
-        $('#count').text("<?php echo count($list)." of ".$total; ?>");
-    }, 1000);
+    var showAllLink = $("<a />", {
+          class : "pagenumber",
+          name : "link",
+          href : getURLWithNewQueryString("limit", "no"),
+          text : "ALL"
+      });
+    $('.control-bar-1').append(showAllLink);
+
+    $('#count').text("<?php echo count($list)." of ".$total; ?>");
+}, 1000);
 </script>
 </div>
 </body>
