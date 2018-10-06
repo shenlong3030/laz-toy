@@ -1152,31 +1152,42 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
         $list = getProducts($accessToken, '', 'all', $chunk);
 
         foreach($list as $product) {
-                // fix key name
-                $product['Skus'] = $product['skus'];
+                $product = prepareProductForUpdating($product);
                 
-                // unset old key name
-                unset($product['attributes']);
-                unset($product['skus']);
-                
-                // if special_price = 0, cause error
-                if(empty($product['Skus'][0]['special_price'])) {
-                    $product['Skus'][0]['special_price'] = $product['Skus'][0]['price'] - 1000;
-                }
-                
-                // copy images
-                if(in_array("1", $options)) {
-                    //echo "<hr>1<hr>";
-                    $product['Skus'][0]['Images'] = $srcproduct['skus'][0]['Images'];
-                }
-                
-                // copy prices
-                if(in_array("2", $options)) {
-                    //echo "<hr>2<hr>";
-                    $product['Skus'][0]['price'] = $srcproduct['skus'][0]['price'];
-                    $product['Skus'][0]['special_price'] = $srcproduct['skus'][0]['special_price'];
-                    $product['Skus'][0]['special_to_date'] = $srcproduct['skus'][0]['special_to_date'];
-                    $product['Skus'][0]['special_from_date'] = $srcproduct['skus'][0]['special_from_date'];
+                $size = count($product['Skus']);
+                for($i=0; $i<$size; $i++) {
+                    $dict = &$product['Skus'][$i];
+                    $sku = $dict["SellerSku"];
+
+                    // if special_price = 0, cause error
+                    if(empty($dict['special_price'])) {
+                        $dict['special_price'] = $dict['price'] - 1000;
+                    }
+
+                    // copy images
+                    if(in_array("1", $options)) {
+                        echo "<hr>1<hr>";
+                        $dict['Images'] = $srcproduct['skus'][0]['Images'];
+                    }
+
+                    // copy prices
+                    if(in_array("2", $options)) {
+                        //echo "<hr>2<hr>";
+                        $dict['price'] = $srcproduct['skus'][0]['price'];
+                        $dict['special_price'] = $srcproduct['skus'][0]['special_price'];
+                        $dict['special_to_date'] = $srcproduct['skus'][0]['special_to_date'];
+                        $dict['special_from_date'] = $srcproduct['skus'][0]['special_from_date'];
+                    }
+
+                    // copy size, weight, package content
+                    if(in_array("4", $options)) {
+                        //echo "<hr>4<hr>";
+                        $dict['package_width'] = $srcproduct['skus'][0]['package_width'];
+                        $dict['package_height'] = $srcproduct['skus'][0]['package_height'];
+                        $dict['package_length'] = $srcproduct['skus'][0]['package_length'];
+                        $dict['package_weight'] = $srcproduct['skus'][0]['package_weight'];
+                        $dict['package_content'] = $srcproduct['skus'][0]['package_content'];
+                    }
                 }
                 
                 // copy desc
@@ -1185,17 +1196,7 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
                     $product['Attributes']['short_description'] = $srcproduct['attributes']['short_description'];
                     $product['Attributes']['description'] = $srcproduct['attributes']['description'];
                 }
-                
-                // copy size, weight, package content
-                if(in_array("4", $options)) {
-                    //echo "<hr>4<hr>";
-                    $product['Skus'][0]['package_width'] = $srcproduct['skus'][0]['package_width'];
-                    $product['Skus'][0]['package_height'] = $srcproduct['skus'][0]['package_height'];
-                    $product['Skus'][0]['package_length'] = $srcproduct['skus'][0]['package_length'];
-                    $product['Skus'][0]['package_weight'] = $srcproduct['skus'][0]['package_weight'];
-                    $product['Skus'][0]['package_content'] = $srcproduct['skus'][0]['package_content'];
-                }
-                
+
                 //var_dump($product);
                 
                 // create XML payload from $product
