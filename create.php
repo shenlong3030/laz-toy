@@ -96,7 +96,7 @@ Create options:<br>
             <td>Name</td>
             <td>Branch</td>
             <td>Color</td>
-            <td>Model<br>Left crop <input size="3" type="text" name="lcropmodel" value="<?php echo val($lcropmodel);?>">words</td>
+            <td>Model<br>Left crop <input size="3" type="text" name="lcropmodel" value="<?php echo val($lcropmodel);?>">words<br><a target="_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-model-mobile-phone.html">Model list</a></td>
             <td>Qty</td>
             <td>Group</td>
             <td>Images</td>
