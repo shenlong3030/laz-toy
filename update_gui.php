@@ -5,6 +5,7 @@ require_once('_main_functions.php');
 //require_once('src/show_errors.php');
 
 $sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
+
 $category = "";
 $images = array();
 $weight = "";
@@ -55,7 +56,7 @@ if($sku) {
     }
 }
 
-
+$addChildLink = "http://$_SERVER[HTTP_HOST]/lazop/addchild.php?sku=$sku&name=$name";
 
 
 ?>
@@ -104,9 +105,11 @@ if($sku) {
     <h1>Update product</h1>
     
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-    Source SKU: <input type="text" name="sku" size="70" value="<?php echo $sku?>"/><br>
-    <input type="submit" value="Get info"/>
+    Source SKU: <input type="text" name="sku" size="70" value="<?php echo $sku?>"/>
+    <input type="submit" value="Reload"/>
     </form>
+
+    <a style="color:red" href="<?php echo $addChildLink?>" target="_blank">Add Child</a>
 <hr>
     <form action="update.php" method="POST" name="nameForm" target="responseIframe">
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
