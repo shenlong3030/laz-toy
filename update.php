@@ -31,6 +31,8 @@ $size_w = $_POST['size_w'] ? $_POST['size_w'] : '';
 $size_l = $_POST['size_l'] ? $_POST['size_l'] : '';
 $content = $_POST['content'] ? $_POST['content'] : '';
 
+$video = $_REQUEST['video'] ? $_REQUEST['video'] : '';
+
 if($accessToken && $sku) {
     $response = 0;
     /*    
@@ -90,6 +92,8 @@ if($accessToken && $sku) {
             $product = setPackageWeightForProduct($product, $weight);
             $product = setPackageSizeForProduct($product, $size_h, $size_w, $size_l);
             $product = setPackageContentForProduct($product, $content);
+        } elseif($video) {
+            $product = setProductVideo($product, $video);
         }
 
         //var_dump($price, $sale_price);

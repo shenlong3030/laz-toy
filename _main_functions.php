@@ -1,6 +1,8 @@
 <?php
 require_once('src/ArrayToXML.php');
 require_once('src/helper.php');
+require_once('./_migrate_image_functions.php');
+require_once('./_product_internal_functions.php');
 
 function isLazadaImage($url) {
     return preg_match("/slatic.net/i", $url);
@@ -338,65 +340,7 @@ function printProduct($product) {
     echo "<br>";
 }
 
-//####################################################################
-// Migrate images region
-//####################################################################
 
-// return migrated image url or ERROR MESSAGE
-function migrateImage($accessToken, $imageUrl, $retry = 3) {
-    $output = '';
-    
-    if(!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-        return "Invalid URL: " + $imageUrl;
-    }
-    
-    $c = getClient();
-    $request = getRequest('/image/migrate');
-
-    $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Image><Url>'.$imageUrl.'</Url></Image></Request>';
-    
-    $request->addApiParam('payload',$payload);
-    $response = $c->execute($request, $accessToken);
-    $response = json_decode($response, true);
-    
-    if($response['code'] == '0') {
-        $output = $response['data']['image']['url'];
-        myecho("", __FUNCTION__);
-    } else {
-        if($retry) {
-            sleep(3);
-            $output = migrateImage($accessToken, $imageUrl, $retry-1);
-        } else {
-            $output = $response['message'];
-            myecho("Migrate failed, URL: " . $imageUrl, __FUNCTION__);
-        }
-    }
-
-    return $output;
-}
-
-// return migrated images
-function migrateImages($accessToken, $images, &$savedimages = null) {
-    $output = array();
-
-    foreach($images as $url) {
-        if(isLazadaImage($url)) {
-            $output[] = $url;
-        } else {
-            if(!isset($savedimages[$url])) {
-                $savedimages[$url] = migrateImage($accessToken, $url);  
-                sleep(1);
-            }
-            
-            // only output valid URL
-            if(filter_var($savedimages[$url], FILTER_VALIDATE_URL)) {
-                $output[] = $savedimages[$url];
-            }
-        }
-    }
-    
-    return $output;
-}
 
 //####################################################################
 // Create products region
@@ -622,32 +566,6 @@ function updateImages($accessToken, $sku, $images, &$savedimages = null) {
 //####################################################################
 // Update product (call product/update)
 //####################################################################
-
-function prepareProductForCreating($product) {
-    $product = prepareProductForUpdating($product);
-    
-    // clear all images before creating
-    //$product['Skus'][0]['Images'] = array();
-    
-    // force active product
-    $product['Skus'][0]['Status'] = "active";
-    
-    return $product;
-}
-
-function prepareProductForUpdating($product) {
-    // fix keyName
-    $product['Attributes'] = $product['attributes'];
-    $product['Skus'] = $product['skus'];
-    $product['PrimaryCategory'] = $product['primary_category'];
-    
-    // remove wrong keyName
-    unset($product['attributes']);
-    unset($product['skus']);
-    unset($product['primary_category']);
-    
-    return $product;
-}
 
 function setPrimaryCategory($accessToken, $sku, $category) {
     $product = getProduct($accessToken, $sku);
@@ -881,76 +799,38 @@ function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
     $product = getProduct($accessToken, $sku);
 
     if($product) {     
-        $product['Attributes'] = $product['attributes'];
-        $product['Skus'] = $product['skus'];
-        $product['PrimaryCategory'] = $product['primary_category'];
-        unset($product['attributes']);
-        unset($product['skus']);
-        unset($product['primary_category']);
-        
+        $product = prepareProductForCreating($product);
         $backupimages = $product['Skus'][0]['Images'];
 
         $created = array();
         if($cloneby == 'original') {
-            // // set new sku
-            // $newSku = '';
-            // if(!empty($skuprefix)) {
-            //     $newSku = $skuprefix;
-            // } else {
-            //     preg_match('/(.+\.v)([1-9][0-9]*)/', $sku, $matches);
-            
-            //     if(count($matches)) {
-            //         $newSku = $matches[1].($matches[2]+1);
-            //     } else {
-            //         $newSku = $sku.'.v1';
-            //     }
-            // }
-            // if($inputdata["appendtime"]) {
-            //     $newSku .= '.' . time();
-            // }
-
-            // $product['Skus'][0]['SellerSku'] = $newSku;
-            
-            // // set new product name
-            // if(!empty($newName)) {
-            //     $product['Attributes']["name"] = $newName;
-            // }
-            
-            // if(!intval($preview)) {
-            //     createProduct($accessToken, $product);
-            // } else {
-            //     myecho("PREVIEWING ...");
-            // }
-            
-            // // store to print
-            // $created["sku"][] = $newSku;
-            // $created["name"][] = $product['Attributes']["name"];
-            // $created["img"][] = $product['Skus'][0]['Images'];
+            //... do nothing
         } else {
-            $product['AssociatedSku'] = $sku;
+            $product = setProductAssociatedSku($product, $sku);
             
+            $values;
             if($cloneby == 'color') {
                 $values = $inputdata["colors"];
             } else {
                 $values = $inputdata["models"];
             }
             
-            $savedimages = array();
+            $cache = array();
+            $time = substr(time(), -4);
             foreach($values as $index => $value) {
                 if($cloneby == 'color') {
-                    $product['Skus'][0]['color_family'] = $value;
+                    $product = setProductColor($product, $value);
                 } else {
-                    $product['Skus'][0]['compatibility_by_model'] = $value;
+                    $product = setProductModel($product, $value);
                 }
                 
-                // set new product name
+                // set NAME
                 if(!empty($newName)) {
-                    $product['Attributes']["name"] = $newName;
+                    $product = setProductName($product, $newName);
                 }
                 
-                // create newSku and save in array
+                // set SKU
                 $newSku = ( !empty($skuprefix) ? $skuprefix : $sku);
-                
                 if($cloneby == 'color') {
                     $newSku = $newSku . '.' . vn_urlencode($value);
                 } else {
@@ -964,34 +844,30 @@ function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
                     }
                     $newSku = $newSku . '.' . vn_urlencode($model);
                 }
-                
-                $newSku = strtoupper($newSku);
-                
                 if($inputdata["appendtime"]) {
-                    $newSku .= '.' . time();
+                    $newSku .= '.' . $time;
+                }
+                $newSku = strtoupper($newSku);
+                $product['Skus'][0]['SellerSku'] = $newSku;
+                $product = setProductSku($product, $newSku);
+                
+                if(isset($inputdata["qtys"][$index])) {
+                    $qty = $inputdata["qtys"][$index];
+                    $product = setProductQuantity($product, $qty);
                 }
 
-                $product['Skus'][0]['SellerSku'] = $newSku;
-                
+                if(isset($inputdata["prices"][$index])) {
+                    $price = $inputdata["prices"][$index];
+                    $product = setProductPrice($product, $price);
+                }
+
                 // set images
                 if(isset($inputdata["images"][$index])) {
-                    // slit images
-                    $images = $inputdata["images"][$index];
-                    if(is_string($images)) {
-                        $images = array_filter(preg_split("/\s+/", $images));
-                        $migratedimgs = migrateImages($accessToken, $images, $savedimages);
-                        foreach($migratedimgs as $index => $url) {
-                            if (filter_var($url, FILTER_VALIDATE_URL)) {
-                                $product['Skus'][0]['Images'][$index] = $url;
-                            } else {
-                                $product['Skus'][0]['Images'][$index] = isset($backupimages[$index]) ? $backupimages[$index] : "";
-                            }
-                        }
-                    } else {
-                        myecho("WRONG IMAGE INPUT" , __FUNCTION__);
-                    }
+                    // migrate images
+                    $images = migrateImages($accessToken, $inputdata["images"][$index], $cache);
+                    $product = setProductImages($product, $images);       
                 } else {
-                    $product['Skus'][0]['Images'] = $backupimages;
+                    $product = setProductImages($product, $backupimages);   
                 }
                  
                 if(!intval($preview)) {

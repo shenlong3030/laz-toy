@@ -53,6 +53,7 @@ if($sku) {
         $shortdesc = $product['attributes']['short_description'];
         $desc = $product['attributes']['description'];
         $brand = $product['attributes']['brand'];
+        $video = $product['attributes']['video'];
     }
 }
 
@@ -160,6 +161,12 @@ $addChildLink = "http://$_SERVER[HTTP_HOST]/lazop/addchild.php?sku=$sku&name=$na
         echo htmlLinkImage($image);
     }
 ?>
+<hr>
+    <form action="update.php" method="POST" name="videoForm" target="responseIframe">
+    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    Video <input type="text" name="video" size="70" value="<?php echo $video;?>" />
+    <input type="submit" value="Update video link"/>
+    </form>
 <hr>
     <form action="update.php" method="POST" name="qtyForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
