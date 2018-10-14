@@ -297,7 +297,7 @@ function printProducts($products) {
             
             $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="price" type="text" size="8" value="'.$price1.'"/>--><input name="sale_price" type="text" size="8" value="'.$price2.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
             
-            $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="80" value="'.$name.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
+            $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="50" value="'.$name.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
             
             echo '<td>'.$reservedTxt.$qtyForm.'</td>';
             echo '<td class="name on padding">'.$nameLink.'</td>';

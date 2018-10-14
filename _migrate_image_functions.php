@@ -45,8 +45,8 @@ function migrateImages($accessToken, $images, &$cache = null) {
     $output = array();
 
     // convert string to array
-    if(is_string($image)) {
-        $images = preg_split("/\s+/", $image);
+    if(is_string($images)) {
+        $images = preg_split("/\s+/", $images);
     }
 
     foreach($images as $url) {
