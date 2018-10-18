@@ -710,6 +710,8 @@ function setPackageContentForProduct($product, $value) {
 }
 
 function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
+    $skus = pre_process_skus($skus);
+    
     $savedimages = array();
     $success = array();
     foreach($skus as $index => $sku) {
@@ -792,6 +794,7 @@ function saveProduct($accessToken, $product) {
 //####################################################################
 
 function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
+    $sku = pre_process_sku($sku);
     $cloneby = $inputdata['cloneby'];
     $skuprefix = $inputdata['skuprefix'];
     $newName = $inputdata['newname'];
@@ -895,6 +898,9 @@ function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
 }
 
 function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
+    $srcSkus = pre_process_skus($srcSkus);
+    $newSkus = pre_process_skus($newSkus);
+
     $createdSkus = array();
     $needDelSkus = array();
     $products = getProducts($accessToken, '', 'all', $srcSkus);
@@ -961,6 +967,7 @@ function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
 }
 
 function massCloneToShop($accessToken, $srcSkus, $dest_token, $sku_prefix) {
+    $srcSkus = pre_process_skus($srcSkus);
     $createdSkus = array();
     $products = getProducts($accessToken, '', 'all', $srcSkus);
 
@@ -1015,6 +1022,9 @@ function massCloneToShop($accessToken, $srcSkus, $dest_token, $sku_prefix) {
 // options[] = 3 : copy desc + short desc
 // options[] = 4 : copy size, weight
 function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
+    $sourcesku = pre_process_sku($sourcesku);
+    $skus = pre_process_skus($skus);
+
     $srcproduct = getProduct($accessToken, $sourcesku);
     if(!$srcproduct) {
         echo "<h2>Wrong source SKU</h2>";
@@ -1105,6 +1115,8 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
 //####################################################################
 
 function delProducts($accessToken, $skus) {
+    $skus = pre_process_skus($skus);
+
     // chia thành các mảng nhỏ 20item
     $chunks = array_chunk($skus, 20);
     
