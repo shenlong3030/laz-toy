@@ -24,6 +24,7 @@
 .pagenumber {
 	padding: 5px;
 }
+.padding.disabled,
 .pagenumber.disabled {
   opacity: 0.5;
   pointer-events: none;

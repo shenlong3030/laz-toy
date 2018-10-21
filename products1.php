@@ -81,17 +81,25 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
       $linkInactive = $bareLink . '?status=inactive';
       $linkPending = $bareLink . '?status=pending';
       $linkImageMissing = $bareLink . '?status=image-missing';
-      echo "<a class='padding' href='$linkAll'>Tất cả</a>";
-      echo "<a class='padding' href='$linkSoldout'>Hết hàng</a>";
-      echo "<a class='padding' href='$linkRejected'>Bị từ chối</a>";
-      echo "<a class='padding' href='$linkInactive'>Đang tắt</a>";
-      echo "<a class='padding' href='$linkPending'>Đang chờ duyệt</a>";
-      echo "<a class='padding' href='$linkImageMissing'>Thiếu ảnh</a>";
+
+      $linkAllClass = ($status=="all")?" disabled":"";
+      $linkSoldoutClass = ($status=="sold-out")?" disabled":"";
+      $linkRejectedClass = ($status=="rejected")?" disabled":"";
+      $linkInactiveClass = ($status=="inactive")?" disabled":"";
+      $linkPendingClass = ($status=="pending")?" disabled":"";
+      $linkImageMissingClass = ($status=="image-missing")?" disabled":"";
+
+      echo "<a class='padding $linkAllClass' href='$linkAll'>Tất cả</a>";
+      echo "<a class='padding $linkSoldoutClass' href='$linkSoldout'>Hết hàng</a>";
+      echo "<a class='padding $linkRejectedClass' href='$linkRejected'>Bị từ chối</a>";
+      echo "<a class='padding $linkInactiveClass' href='$linkInactive'>Đang tắt</a>";
+      echo "<a class='padding $linkPendingClass' href='$linkPending'>Đang chờ duyệt</a>";
+      echo "<a class='padding $linkImageMissingClass' href='$linkImageMissing'>Thiếu ảnh</a>";
     ?> 
     
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
     Search <input class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
-    <input type="hidden" name="status" value="all">
+    <input type="hidden" name="status" value="<?php echo $_GET['status']; ?>">
     <input type="hidden" name="offset" value="0">
     
     <input id="cbshowthumbnail" type="checkbox" name="showthumbnail" value="1" checked="checked"> I Show thumbnail
