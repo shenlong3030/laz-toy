@@ -58,8 +58,9 @@ if($accessToken && $sku) {
         $product = prepareProductForUpdating($product);
 
         if ($images) {
-            //echo "i1";
-            $product = setImagesForProduct($product, $images, $savedimages);
+            // migrate images
+            $images = migrateImages($accessToken, $images, $cache);
+            $product = setProductImages($product, $images, TRUE);   
         } elseif (is_numeric($qty)){
             //echo "i2";
             $response = updateQuantity($accessToken, $sku, $qty);

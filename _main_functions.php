@@ -868,9 +868,9 @@ function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
                 if(isset($inputdata["images"][$index])) {
                     // migrate images
                     $images = migrateImages($accessToken, $inputdata["images"][$index], $cache);
-                    $product = setProductImages($product, $images);       
+                    $product = setProductImages($product, $images, TRUE);       
                 } else {
-                    $product = setProductImages($product, $backupimages);   
+                    $product = setProductImages($product, $backupimages, TRUE);   
                 }
                  
                 if(!intval($preview)) {

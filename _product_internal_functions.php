@@ -51,7 +51,10 @@ function setProductAssociatedSku($product, $sku) {
 
 // migrage images before setting
 // $fromindex : just setImages after this index
-function setProductImages($product, $images, $fromindex = 0) {
+function setProductImages($product, $images, $reset=FALSE, $fromindex = 0) {
+    if($reset) {
+         $product['Skus'][0]['Images'] = array();
+    }
     foreach($images as $index => $url) {
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             $product['Skus'][0]['Images'][$index + $fromindex] = $url;

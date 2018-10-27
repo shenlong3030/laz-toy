@@ -100,6 +100,10 @@ function vn_urlencode ( $str ) {
      return $str;
 }
 
+function pre_process_sku($val) {
+    return trim($val);
+}
+
 function pre_process_skus($list) {
     return array_map("trim", $list);
 }
