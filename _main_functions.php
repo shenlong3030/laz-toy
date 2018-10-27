@@ -105,9 +105,10 @@ function getOrderItemsInfo($dict) {
                     $variation = "•• Lựa chọn: ".$variation_value;
                 } else {
                     // name must have mix format like this ... / ... / ... /
-                    if(preg_match("(\/)", $item['name'], $out)) {
-                        $variation = "•• Lựa chọn: ".$variation_value;
-                    }
+                    // if(preg_match("(\/)", $item['name'], $out)) {
+                    //     $variation = "•• Lựa chọn: ".$variation_value;
+                    // } 
+                    $variation = "•• Lựa chọn: ".$variation_value;
                 }
             }
         }
