@@ -294,7 +294,7 @@ function printProducts($products) {
             echo '<td class="sku off padding">'.$shopsku.'</td>';
             $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
             
-            $qtyForm = '<form action="update.php" method="POST" name="qtyForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="qty" type="text" size="4" value="'.$qty.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
+            $qtyForm = '<form action="update.php" method="POST" name="qtyForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="qty" type="text" size="4" value="'.$qty.'"/><input type="submit" tabindex="-1" value="↵" /></form>';
             
             $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="price" type="text" size="8" value="'.$price1.'"/>--><input name="sale_price" type="text" size="8" value="'.$price2.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
             
@@ -312,7 +312,7 @@ function printProducts($products) {
             echo '<td class="price on">'.$price2.'</td>';
 
             $link = "http://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
-            echo '<td><a target="_blank" href="'.$link.'" class="fa fa-edit" style="color:red"></a></td>';
+            echo '<td><a target="_blank" href="'.$link.'" class="fa fa-edit" style="color:red" tabindex="-1"></a></td>';
 
             // bootstrap (need bootstrap css and bootstraptoggle css + js)
             $status = ($sku['Status'] == "active") ? "checked" : "";
