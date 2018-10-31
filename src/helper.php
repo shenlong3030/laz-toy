@@ -76,10 +76,10 @@ function vn_to_str ($str){
     $str = preg_replace("/($uni)/i", $nonUnicode, $str);
      
     }
-    $str = str_replace(' ','_',$str);
+    $str = str_replace(' ','.',$str);
     
-    // remove non-alphabet letter
-    $str = preg_replace("/[^0-9a-zA-Z_]/", "", $str);
+    // remove non-alphabet letter , keep "_", "."
+    $str = preg_replace("/[^0-9a-zA-Z_\.]/", "", $str);
      
     return $str;
 }
@@ -106,6 +106,42 @@ function pre_process_sku($val) {
 
 function pre_process_skus($list) {
     return array_map("trim", $list);
+}
+
+function make_short_sku($sku) {
+    $dict = array(
+    'COMBO' => 'CB',
+
+    'TRONG.SUOT' => 'TRONG',
+    
+    'OP.DEO' => 'OD',
+    'OP.LUNG' => 'OL',
+    'CHONG.SOC' => 'CS',
+    'CUONG.LUC' => 'CL',
+    'BAO.DA' => 'BD',
+
+    'APPLE' => '',
+    'IPHONE' => 'IP', 
+    
+    'SAMSUNG' =>'SS',
+     
+    'HUAWEI' =>'HW',
+
+    'REDMI' => 'RM',
+
+    'ASUS' => '',
+    'ZENFONE' => 'ZEN',
+
+    'MOTOROLA' => 'MOTO',
+     
+    'NOKIA'=>'NK'
+    );
+
+    foreach($dict as $name=>$shortname){
+        $sku = preg_replace("/($name)/i", $shortname, $sku);
+    }
+
+    return $sku;
 }
 
 ?>

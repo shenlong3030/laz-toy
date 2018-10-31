@@ -428,7 +428,7 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                     $newSku = $newSku . "." . "X" . $combo;
                 }
 
-                $product = setSkuForProduct($product, $newSku);
+                $product = setProductSku($product, $newSku);
                 
                 // set price
                 $price = $prices[$combo];
@@ -593,13 +593,6 @@ function setPrimaryCategory($accessToken, $sku, $category) {
         $response["code"] = 1;
         $response["message"] = "Invalid SKU: ".$sku;
     }
-}
-
-function setSkuForProduct($product, $sku) {
-    // convert SKU to UPPERCASE, set SKU
-    $newSku = strtoupper($sku);
-    $product['Skus'][0]['SellerSku'] = $newSku;
-    return $product;
 }
 
 // $fromindex : just setImages after this index
@@ -836,7 +829,7 @@ function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
                 // set SKU
                 $newSku = ( !empty($skuprefix) ? $skuprefix : $sku);
                 if($cloneby == 'color') {
-                    $newSku = $newSku . '.' . vn_urlencode($value);
+                    // do nothing
                 } else {
                     // crop words
                     $model = $value;
@@ -846,13 +839,18 @@ function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
                         array_splice( $words, 0, $leftcrop);
                         $model = implode( " ", $words );
                     }
-                    $newSku = $newSku . '.' . vn_urlencode($model);
+                    $value = $model;
                 }
+                if(substr($newSku, -1) != "_" && substr($newSku, -1) != ".") {
+                    $newSku = $newSku . '.';
+                } 
+                $newSku = $newSku . vn_urlencode($value);
+
+
                 if($inputdata["appendtime"]) {
                     $newSku .= '.' . $time;
                 }
-                $newSku = strtoupper($newSku);
-                $product['Skus'][0]['SellerSku'] = $newSku;
+
                 $product = setProductSku($product, $newSku);
                 
                 if(isset($inputdata["qtys"][$index])) {
@@ -869,7 +867,7 @@ function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
                 if(isset($inputdata["images"][$index])) {
                     // migrate images
                     $images = migrateImages($accessToken, $inputdata["images"][$index], $cache);
-                    $product = setProductImages($product, $images, TRUE);       
+                    $product = setProductImages($product, $images, FALSE);       
                 } else {
                     $product = setProductImages($product, $backupimages, TRUE);   
                 }
@@ -938,7 +936,7 @@ function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
                     0 => $dict
                     );
             $product['AssociatedSku'] = $associatedSku;
-            $product = setSkuForProduct($product, $newSku);
+            $product = setProductSku($product, $newSku);
 
             $res = createProduct($accessToken, $product);
             if($res["code"] == "0") {
@@ -996,7 +994,7 @@ function massCloneToShop($accessToken, $srcSkus, $dest_token, $sku_prefix) {
                     0 => $dict
                     );
             $product['AssociatedSku'] = $associatedSku;
-            $product = setSkuForProduct($product, $newSku);
+            $product = setProductSku($product, $newSku);
 
             $res = createProduct($dest_token, $product);
             if($res["code"] == "0") {

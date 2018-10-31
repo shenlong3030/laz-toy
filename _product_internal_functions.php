@@ -36,11 +36,14 @@ function setProductCategory($product, $category) {
     return $product;
 }
 
-function setProductSku($product, $sku) {
+// SKU is reference variable,
+// SKU will be updated after run this function
+function setProductSku($product, &$sku) {
     // convert SKU to UPPERCASE, set SKU
-    $newSku = strtoupper($sku);
+    $sku = strtoupper($sku);
+    $sku = make_short_sku($sku);
 
-    $product['Skus'][0]['SellerSku'] = $newSku;
+    $product['Skus'][0]['SellerSku'] = $sku;
     return $product;
 }
 

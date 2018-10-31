@@ -31,7 +31,9 @@ $sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
 $cloneby = isset($_POST['cloneby']) ? $_POST['cloneby'] : "";
 $preview = isset($_POST['preview']) ? $_POST['preview'] : 0;
 
-$skuprefix = isset($_POST['skuprefix']) ? $_POST['skuprefix'] : "";
+preg_match('/(.+__.+__)/', $sku, $match);
+$initskuprefix = count($match) ? $match[1] : "";
+$skuprefix = isset($_POST['skuprefix']) ? $_POST['skuprefix'] : $initskuprefix;
 $appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
 $newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 
@@ -59,16 +61,15 @@ Parent SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><b
 Child SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"> Append time()<input type="checkbox" name="appendtime" checked="1" value="1" <?php if($appendtime) echo "checked=1"?> ><br> 
 New child name: <input type="text" name="name" size="80" value="<?php echo $newName?>"><br>
 Options:<br>
-    <input type="radio" name="cloneby" value="color">Add by color (associated with source SKU)<br>
-    <input type="radio" name="cloneby" value="model">Add by model (associated with source SKU)<br>
+    <input type="radio" name="cloneby" value="color" <?php if($cloneby=="color") echo "checked=1"?>>Add by color (associated with source SKU)<br>
+    <input type="radio" name="cloneby" value="model" <?php if($cloneby=="model") echo "checked=1"?>>Add by model (associated with source SKU)<br>
 <table>
     <tbody>
         <tr>
-            <td>Color<br></td>
-            <td>Model<br>Left crop <input size="3" type="text" name="lcropmodel" value="<?php echo val($lcropmodel);?>">words
-            <br><a target="_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-model-mobile-phone.html">Model list</a></td>
-            <td>Quantity<br></td>
-            <td>Price<br></td>
+            <td>Color</td>
+            <td>Model</td>
+            <td>Quantity</td>
+            <td>Price</td>
             <td>Image links</td>
         </tr>
         <tr>
@@ -100,7 +101,7 @@ $inputdata = array(
 if($cloneby) {
     $dict = addAssociatedProduct($accessToken, $sku, $inputdata, $preview);
 } else {
-    echo "<br><br>Please select options<br><br>";   
+    echo "<br><br><h1>Please select options</h1>";   
 }
 
 ?>
