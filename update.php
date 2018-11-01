@@ -73,22 +73,22 @@ if($accessToken && $sku) {
             $response = setPrimaryCategory($accessToken, $sku, $category);
         } elseif($name) {
             //echo "i5";
-            $product = setNameForProduct($product, $name);
+            $product = setProductName($product, $name);
         } elseif($color_family) {
             //echo "i6";
-            $product = setColorForProduct($product, $color_family);
+            $product = setProductColor($product, $color_family);
         } elseif($compatibility_by_model) {
             //echo "i7";
             $product = setModelForProduct($product, $compatibility_by_model);
         } elseif($shortdesc) {
             //echo "i8";
-            $product = setShortDescriptionForProduct($product, $shortdesc);
+            $product = setProductShortDescription($product, $shortdesc);
         } elseif($desc) {
             //echo "i9";
-            $product = setDescriptionForProduct($product, $desc);
+            $product = setProductDescription($product, $desc);
         } elseif($brand) {
             //echo "i9";
-            $product = setBrandForProduct($product, $brand);
+            $product = setProductBrand($product, $brand);
         } elseif($weight) {
             $product = setPackageWeightForProduct($product, $weight);
             $product = setPackageSizeForProduct($product, $size_h, $size_w, $size_l);
@@ -97,7 +97,8 @@ if($accessToken && $sku) {
             $product = setProductVideo($product, $video);
         }
 
-        //var_dump($price, $sale_price);
+        
+
         if(!$response) {
             $response = saveProduct($accessToken, $product);
         }

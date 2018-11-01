@@ -10,6 +10,18 @@ function prepareProductForUpdating($product) {
     $product['Attributes'] = $product['attributes'];
     $product['Skus'] = $product['skus'];
     $product['PrimaryCategory'] = $product['primary_category'];
+
+    // remove english name, desc, short_desc
+    if(isset($product['Attributes']["name_en"])) {
+        $product['Attributes']["name_en"] = $product['Attributes']["name"];
+    }
+    if(isset($product['Attributes']['short_description_en'])) {
+        $product['Attributes']['short_description_en'] = $product['Attributes']['short_description'];
+    }
+    if(isset($product['Attributes']['description_en'])) {
+        $product['Attributes']['description_en'] = $product['Attributes']['description'];
+    }
+
     
     // remove wrong keyName
     unset($product['attributes']);
@@ -62,7 +74,9 @@ function setProductImages($product, $images, $reset=FALSE, $fromindex = 0) {
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             $product['Skus'][0]['Images'][$index + $fromindex] = $url;
         } else {
-            myecho("INVALID URL : " + $images[$index], __FUNCTION__);
+            if(!empty($url)) {
+                myecho("INVALID URL : " + $images[$index], __FUNCTION__);
+            }
         }
     }
     return $product;
@@ -72,6 +86,10 @@ function setProductName($product, $name) {
     // set new product name
     if(!empty($name)) {
         $product['Attributes']["name"] = $name;
+
+        if(isset($product['Attributes']["name_en"])) {
+            $product['Attributes']["name_en"] = $name;
+        }
     }
     return $product;
 }
@@ -85,7 +103,7 @@ function setProductBrand($product, $val) {
 
 // just input 1 price
 function setProductPrice($product, $price) {
-        return setProductPrices($product, $price);
+    return setProductPrices($product, $price);
 }
 
 // input price and sale price
@@ -123,11 +141,19 @@ function setProductModel($product, $model) {
 
 function setProductShortDescription($product, $value) {
     $product['Attributes']['short_description'] = $value;
+
+    if(isset($product['Attributes']['short_description_en'])) {
+        $product['Attributes']['short_description_en'] = $value;
+    }
     return $product;
 }
 
 function setProductDescription($product, $value) {
     $product['Attributes']['description'] = $value;
+
+    if(isset($product['Attributes']['description_en'])) {
+        $product['Attributes']['description_en'] = $value;
+    }
     return $product;
 }
 

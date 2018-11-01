@@ -618,14 +618,6 @@ function setImagesForProduct($product, $image, &$savedimages, $fromindex = 0) {
         return $product;
 }
 
-function setNameForProduct($product, $name) {
-        // set new product name
-        if(!empty($name)) {
-            $product['Attributes']["name"] = $name;
-        }
-        return $product;
-}
-
 function setBrandForProduct($product, $val) {
         if(!empty($val)) {
             $product['Attributes']["brand"] = $val;

@@ -186,10 +186,10 @@ $addChildLink = "http://$_SERVER[HTTP_HOST]/lazop/addchild.php?sku=$sku&name=$na
     <form action="update.php" method="POST" name="pricesForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
 
-    Weight: <input type="text" name="weight" value="<?php echo $weight;?>" /><br>
+    Weight: <input type="text" name="weight" size="5" value="<?php echo $weight;?>"/> kg<br>
     Packing Size: <input type="text" name="size_h" size="10" value="<?php echo $h;?>" /> 
     x <input type="text" name="size_w" size="10" value="<?php echo $w;?>" /> 
-    x <input type="text" name="size_l" size="10" value="<?php echo $l;?>" /><br>
+    x <input type="text" name="size_l" size="10" value="<?php echo $l;?>" /> cm<br>
     Packing Content: <input type="text" name="content" size="70" value="<?php echo $content;?>" /><br>
     <input type="submit" value="Update weight, size, content"/>
     </form>
