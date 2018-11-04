@@ -11,6 +11,8 @@ $input = isset($_POST['skus']) ? $_POST['skus'] : '';
 $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 $options = isset($_POST['options']) ? $_POST['options'] : '';
 
+$str_imageindexes = val($_POST['imageindexes'], "1,2,3,4,5,6,7,8");
+$imageindexes = array_filter(explode(",", $str_imageindexes));
 ?>
 
 <!DOCTYPE html>
@@ -37,10 +39,10 @@ $options = isset($_POST['options']) ? $_POST['options'] : '';
     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']?>">
         Copy from SKU <input name="sourcesku" size="80" value="<?php echo $sourcesku; ?>"><br><br>
         Copy options:<br>
-        <input type="checkbox" name="options[]" value="1">Images
-        <input type="checkbox" name="options[]" value="2">Prices
-        <input type="checkbox" name="options[]" value="3">Descriptions
-        <input type="checkbox" name="options[]" value="4">Size, weight, package content
+        <input type="checkbox" name="options[]" value="1">Images <input name="imageindexes" size="15" value="<?php echo $str_imageindexes?>"><br>
+        <input type="checkbox" name="options[]" value="2">Prices<br>
+        <input type="checkbox" name="options[]" value="3">Descriptions<br>
+        <input type="checkbox" name="options[]" value="4">Size, weight, package content<br>
         <br><br>
         To SKUs<br><textarea name="skus" rows="10" cols="80"><?php echo implode("\n", $skus);?></textarea><br>
         <input type="submit" value="Submit">
@@ -55,7 +57,16 @@ if($sourcesku && count($skus)) {
     if(empty($options)) {
         echo "<h1>Please select options</h1>";
     } else {
-        copyInfoToSkus($accessToken, $sourcesku, $skus, $options);
+        if(empty($imageindexes)) {
+            echo "<h1>Please input images index</h1>";
+        } else {
+            $inputdata = array(
+                "options" => $options,
+                "imageindexes" => $imageindexes
+            );
+
+            copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata);
+        }
     }
 }
 ?>

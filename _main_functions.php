@@ -1012,7 +1012,10 @@ function massCloneToShop($accessToken, $srcSkus, $dest_token, $sku_prefix) {
 // options[] = 2 : copy price
 // options[] = 3 : copy desc + short desc
 // options[] = 4 : copy size, weight
-function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
+function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
+    $options = $inputdata["options"];
+    $imageindexes = $inputdata["imageindexes"];
+
     $sourcesku = pre_process_sku($sourcesku);
     $skus = pre_process_skus($skus);
 
@@ -1043,8 +1046,10 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $options) {
 
                     // copy images
                     if(in_array("1", $options)) {
-                        echo "<hr>1<hr>";
-                        $dict['Images'] = $srcproduct['skus'][0]['Images'];
+                        foreach ($imageindexes as $index) {
+                            $i = $index - 1;
+                            $dict['Images'][$i] = $srcproduct['skus'][0]['Images'][$i];
+                        }
                     }
 
                     // copy prices
