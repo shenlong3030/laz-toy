@@ -60,7 +60,7 @@ Clone products from SHOP to SHOP
 <?php
 $src_token = $GLOBALS["accessToken"];
 
-if(!empty($srcSkus) && !empty($dest_token) && !empty($sku_prefix)) {
+if(!empty($srcSkus) && !empty($dest_token)) {
     if($src_token == $dest_token) {
         echo "<h3>Can not execute because SOURCE and DESTINATION are same SHOP</h3>";
         echo "SOURCE token: <br>$src_token<br><br>"; 
@@ -69,7 +69,7 @@ if(!empty($srcSkus) && !empty($dest_token) && !empty($sku_prefix)) {
         $dict = massCloneToShop($accessToken, $srcSkus, $dest_token, $sku_prefix);
     }
 } else {
-    echo "<h3>Please input destionation token AND sku prefix AND source skus</h3>";   
+    echo "<h3>Please input destionation token AND source skus</h3>";   
 }
 
 ?>
