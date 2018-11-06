@@ -698,7 +698,7 @@ function setPackageContentForProduct($product, $value) {
 function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
     $skus = pre_process_skus($skus);
     
-    $savedimages = array();
+    $cache = array();
     $success = array();
     foreach($skus as $index => $sku) {
         $product = getProduct($accessToken, $sku);
@@ -707,7 +707,8 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
             $product = prepareProductForUpdating($product);
             
             if(isset($data["names"][$index])) {
-                // setNameForProduct
+                $val = $data["names"][$index];
+                $product = setProductName($product, $val);
             }
             
             if(isset($data["prices"][$index])) {
@@ -734,7 +735,8 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
                 $imageindex = isset($data["imageindex"]) ? $data["imageindex"] - 1 : 0;
                 $imageindex = ($imageindex > 0 && $imageindex < 9) ? $imageindex : 0;
                 
-                $product = setImagesForProduct($product, $data["images"][$index], $savedimages, $imageindex);
+                $images = migrateImages($accessToken, $data["images"][$index], $cache);
+                $product = setProductImages($product, $images, FALSE, $imageindex);
             }
             
             if(!intval($preview)) {
