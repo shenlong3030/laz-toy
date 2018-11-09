@@ -120,7 +120,6 @@ function make_short_sku($sku) {
     'CUONG.LUC' => 'CL',
     'BAO.DA' => 'BD',
 
-    'APPLE' => '',
     'IPHONE' => 'IP', 
     
     'SAMSUNG' =>'SS',
