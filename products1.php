@@ -120,10 +120,10 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 <?php
 echo '<table id="myTable" class="tablesorter" border="1" style="width:110%">';
 echo '<thead><tr>';
-    echo '<th>&#x25BC</th>';
-    echo '<th>&#x25BC</th>';
-    echo '<th>&#x25BC <b>(<span id="count" style="color:red">0</span>)</b></th>';
-    echo '<th>&#x25BC</th>';
+    echo '<th class="sku on">&#x25BC SKU</th>'; // display:visible
+    echo '<th class="sku">&#x25BC SHOPSKU</th>';    // display:none
+    echo '<th>&#x25BC QUANTITY</th>';
+    echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
     echo '<th>&#x25BC</th>';
     echo '<th>&#x25BC</th>';
     echo '<th>&#x25BC</th>';
