@@ -20,7 +20,7 @@ $imageindexes = array_filter(explode(",", $str_imageindexes));
 <head><meta http-equiv="Content-Type" content="text/html; charset=shift_jis">
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
+    <title>COPY INFO</title>
     <link rel="shortcut icon" type="image/x-icon" href="./ico/tool.ico" />
     <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
     <script src="//code.jquery.com/jquery-1.11.1.js"></script>
