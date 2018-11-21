@@ -27,8 +27,12 @@ require_once('_main_functions.php');
 // It's only needed if timezone in php.ini is not set correctly.
 date_default_timezone_set("UTC");
 
-$sku = val($_POST['sku'], "");
-$skuprefix = val($_POST['skuprefix']);
+$sku = val($_REQUEST['sku'], "");
+
+preg_match('/(.+__.+__)/', $sku, $match);
+$initskuprefix = count($match) ? $match[1] : "";
+$skuprefix = isset($_POST['skuprefix']) ? $_POST['skuprefix'] : $initskuprefix;
+
 $preview = val($_POST['preview']);
 
 $combos = val($_POST["combo"]);
@@ -41,17 +45,17 @@ $input = val($_POST['col'][1]);
 $branches = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][2]);
-$colors = array_filter(explode("\n", str_replace("\r", "", $input)));
+$groups = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][3], "");
 $models = array_filter(explode("\n", str_replace("\r", "", $input)));
 $lcropmodel = val($_POST['lcropmodel'], 0);
 
 $input = val($_POST['col'][4], "");
-$qtys = array_filter(explode("\n", str_replace("\r", "", $input)),'is_numeric');
+$colors = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][5]);
-$groups = array_filter(explode("\n", str_replace("\r", "", $input)));
+$qtys = array_filter(explode("\n", str_replace("\r", "", $input)),'is_numeric');
 
 $input = val($_POST['col'][6]);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
@@ -64,7 +68,7 @@ $comboimages = val($_POST['comboimage']);
     <h1>Create products</h1>
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
 Source SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><br>
-New SKU prefix: <input type="text" name="skuprefix" size="80" value="<?php echo $skuprefix?>"><br>
+New SKU prefix: <input placeholder="PRODUCT.KIND__BRANCH.MODEL__" type="text" name="skuprefix" size="80" value="<?php echo $skuprefix?>"><br>
 
 Create options:<br>
     <input type="checkbox" name="combo[]" value="0">Buy 1 get 1 --> 
@@ -94,20 +98,20 @@ Create options:<br>
     <tbody>
         <tr>
             <td>Name</td>
-            <td>Branch</td>
-            <td>Color</td>
-            <td>Model<br>Left crop <input size="3" type="text" name="lcropmodel" value="<?php echo val($lcropmodel);?>">words<br><a target="_blank" href="http://npminhphuc.blogspot.com/2018/08/lazada-model-mobile-phone.html">Model list</a></td>
-            <td>Qty</td>
+            <td style="display: none">Branch</td>
             <td>Group</td>
+            <td>Model</td>
+            <td>Color</td>
+            <td>Qty</td>
             <td>Images</td>
         </tr>
         <tr>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="60"><?php echo implode("\n", $names);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $branches);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $colors);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="20"><?php echo implode("\n", $models);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("\n", $qtys);?></textarea></td>
+            <td style="display: none"><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $branches);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("\n", $groups);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="20"><?php echo implode("\n", $models);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $colors);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("\n", $qtys);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="80" style="white-space: nowrap;"><?php echo implode("\n", $images);?></textarea></td>
         </tr>
     </tbody>
@@ -120,11 +124,6 @@ Create options:<br>
     
 if(empty($sku) || empty($skuprefix)) {
     echo "<h1>Please input source SKU and SKU prefix</h1>";
-    exit(1);
-}
-
-if(empty($branches)) {
-    echo "<h1>Please input branches</h1>";
     exit(1);
 }
 

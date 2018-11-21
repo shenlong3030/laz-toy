@@ -58,7 +58,7 @@ if($sku) {
 }
 
 $addChildLink = "http://$_SERVER[HTTP_HOST]/lazop/addchild.php?sku=$sku&name=$name";
-
+$cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 
 ?>
 
@@ -111,6 +111,7 @@ $addChildLink = "http://$_SERVER[HTTP_HOST]/lazop/addchild.php?sku=$sku&name=$na
     </form>
 
     <a style="color:red" href="<?php echo $addChildLink?>" target="_blank">Add Child</a>
+    <a style="color:red;padding-left: 10px" href="<?php echo $cloneLink?>" target="_blank">Clone to new product</a>
 <hr>
     <form action="update.php" method="POST" name="nameForm" target="responseIframe">
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">

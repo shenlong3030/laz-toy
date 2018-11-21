@@ -291,7 +291,7 @@ function printProducts($products) {
             //visible 
             echo '<td class="sku on padding">'. ($index?"<i class='fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
             // hidden
-            echo '<td class="sku off padding">'.$shopsku.'</td>';
+            echo '<td class="sku padding">'.$shopsku.'</td>';
             $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
             
             $qtyForm = '<form action="update.php" method="POST" name="qtyForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="qty" type="text" size="4" value="'.$qty.'"/><input type="submit" tabindex="-1" value="↵" /></form>';
@@ -379,12 +379,12 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
         $backupimages = $product['Skus'][0]['Images'];
         // reset all image
  
-        $time = time();
+        $time = substr(time(), -4);
         $created = array();
         $associatedskus = array();
         $savedimages = array();
         foreach($data["names"] as $index => $name) {
-            $time++;
+            //$time++;
             foreach($combos as $combo) {
                 if($combo == 0) { // buy 1 get 1
                     $product['Attributes']["name"] = "$name" . " (Mua 1 tặng 1)";
@@ -395,31 +395,24 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                 }
                 
                 // SKU = prefix + branch + time
-                $branch = isset($data["branches"][$index]) ? (vn_urlencode($data["branches"][$index])) : "";
-                $newSku = $skuprefix . '.' . $branch;
-                
-                // set color
-                if(isset($data["colors"][$index])) {
-                    $product['Skus'][0]['color_family'] = $data["colors"][$index];
-                    $newSku = $newSku . '.' . vn_urlencode($data["colors"][$index]);
+                //$branch = isset($data["branches"][$index]) ? (vn_urlencode($data["branches"][$index])) : "";
+                if(substr($skuprefix, -2) != "__") {
+                    $skuprefix .= "__";
                 }
-                
+                $newSku = $skuprefix;
+
                 // set model
                 if(isset($data["models"][$index])) {
                     $model = $data["models"][$index];
                     $product['Skus'][0]['compatibility_by_model'] = $model;
-                    
-                    // crop words
-                    $leftcrop = $data["lcropmodel"];
-                    if($leftcrop && is_numeric($leftcrop)) {
-                        $words = explode( " ", $model);
-                        array_splice( $words, 0, $leftcrop);
-                        $model = implode( " ", $words );
-                    }
-                    $newSku = $newSku . '.' . vn_urlencode($model);
+                    $newSku = $newSku . vn_urlencode($model) . "__";
                 }
                 
-                $newSku = $newSku . '.' . time();
+                // set color
+                if(isset($data["colors"][$index])) {
+                    $product['Skus'][0]['color_family'] = $data["colors"][$index];
+                    $newSku = $newSku . vn_urlencode($data["colors"][$index]);
+                }
                 
                 if($combo == 0) { // buy 1 get 1
                     $newSku = $newSku . "." . "1TANG1";
@@ -428,6 +421,9 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                 } else { // combo 2,3,4,5 
                     $newSku = $newSku . "." . "X" . $combo;
                 }
+
+                $newSku .= "." . $time;
+                $newSku = make_short_sku($newSku);
 
                 $product = setProductSku($product, $newSku);
                 
