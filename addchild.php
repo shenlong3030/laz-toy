@@ -99,7 +99,7 @@ $inputdata = array(
     );
 
 if($cloneby) {
-    $dict = addAssociatedProduct($accessToken, $sku, $inputdata, $preview);
+    $dict = addChildProduct($accessToken, $sku, $inputdata, $preview);
 } else {
     echo "<br><br><h1>Please select options</h1>";   
 }

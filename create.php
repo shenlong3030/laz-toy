@@ -61,6 +61,7 @@ $input = val($_POST['col'][6]);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $comboimages = val($_POST['comboimage']);
+$resetimages = val($_POST['resetimages'], 0);
 
 ?>
 
@@ -103,7 +104,7 @@ Create options:<br>
             <td>Model</td>
             <td>Color</td>
             <td>Qty</td>
-            <td>Images</td>
+            <td>Images <input style="padding-left: 10px" type="checkbox" name="resetimages" value="1" <?php if($resetimages) echo "checked=1";?>>Remove all source's images</td>
         </tr>
         <tr>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="60"><?php echo implode("\n", $names);?></textarea></td>
@@ -143,6 +144,7 @@ $data = array(
     "qtys" => $qtys, 
     "groups" => $groups,
     "images" => $images,
+    "resetimages" => $resetimages
     );
 
 //var_dump($comboimages);

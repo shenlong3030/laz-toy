@@ -382,7 +382,7 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
         $time = substr(time(), -4);
         $created = array();
         $associatedskus = array();
-        $savedimages = array();
+        $cache = array();
         foreach($data["names"] as $index => $name) {
             //$time++;
             foreach($combos as $combo) {
@@ -447,18 +447,33 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                 
                 // set images
                 $cbimage = val($comboimages[$combo]);
-
-                $product['Skus'][0]['Images'] = array();
-                if(isset($data["images"][$index]) && strlen($data["images"][$index]) > 10) {
-                    $imagesStr = $data["images"][$index];
-                    $product = setImagesForProduct($product, $imagesStr, $savedimages);
-                } else {
-                    $product['Skus'][0]['Images'] = $backupimages;
-                }
-                
+                $resetimages = $data["resetimages"];
                 if(!empty($cbimage)) {
-                    $product = setImagesForProduct($product, $cbimage, $savedimages);
-                }
+                    $product = setImagesForProduct($product, $cbimage, $cache);
+                } else {
+                    if(isset($data["images"][$index])) {
+                        // migrate images
+                        $images = migrateImages($accessToken, $data["images"][$index], $cache);
+                        $product = setProductImages($product, $images, $resetimages);       
+                    } else {
+                        $product = setProductImages($product, $backupimages, TRUE);   
+                    }
+                }   
+
+                // // set images
+                // $cbimage = val($comboimages[$combo]);
+
+                // $product['Skus'][0]['Images'] = array();
+                // if(isset($data["images"][$index]) && strlen($data["images"][$index]) > 10) {
+                //     $imagesStr = $data["images"][$index];
+                //     $product = setImagesForProduct($product, $imagesStr, $savedimages);
+                // } else {
+                //     $product['Skus'][0]['Images'] = $backupimages;
+                // }
+                
+                // if(!empty($cbimage)) {
+                //     $product = setImagesForProduct($product, $cbimage, $savedimages);
+                // }
                 
                 //echo "<br>", $combo, " @ ", $cbimage, " @ ", $product['Skus'][0]['Images'][0];
                 //echo "<br>",$product['Attributes']["name"]," : ",$newSku, " : ", $product['Skus'][0]['price'], " : ", $product['Skus'][0]['special_price'], " : ", $product['Skus'][0]['quantity'], " : ", $product['Skus'][0]['Images'][0];
@@ -778,7 +793,7 @@ function saveProduct($accessToken, $product) {
 // Clone region
 //####################################################################
 
-function addAssociatedProduct($accessToken, $sku, $inputdata, $preview = 1) {
+function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
     $sku = pre_process_sku($sku);
     $cloneby = $inputdata['cloneby'];
     $skuprefix = $inputdata['skuprefix'];
