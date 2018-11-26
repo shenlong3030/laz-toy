@@ -34,3 +34,6 @@
 .grouped {
 	background-color: #EDA;
 }
+.grouped.parent {
+	font-weight: bold;
+}

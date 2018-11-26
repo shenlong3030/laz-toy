@@ -29,7 +29,7 @@ require_once('_main_functions.php');
     <!-- bootstrap JS file -->
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css?v=1.1">
 
     <style>
     .nav{
