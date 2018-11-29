@@ -80,6 +80,7 @@ function vn_to_str ($str){
     
     // remove non-alphabet letter , keep "_", "."
     $str = preg_replace("/[^0-9a-zA-Z_\.]/", "", $str);
+    $str = preg_replace("[\.\.]", ".", $str);
      
     return $str;
 }
