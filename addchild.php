@@ -45,10 +45,11 @@ $models = array_filter(explode("\n", str_replace("\r", "", $input)));
 $lcropmodel = val($_POST['lcropmodel'], 0);
 
 $input = val($_POST['col'][2]);
-$qtys = array_filter(explode("\n", str_replace("\r", "", $input)));
+$qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
+var_dump($input);
 
 $input = val($_POST['col'][3]);
-$prices = array_filter(explode("\n", str_replace("\r", "", $input)));
+$prices = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
 
 $input = val($_POST['col'][4]);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
@@ -98,11 +99,17 @@ $inputdata = array(
     "prices" => $prices
     );
 
-if($cloneby) {
-    $dict = addChildProduct($accessToken, $sku, $inputdata, $preview);
-} else {
-    echo "<br><br><h1>Please select options</h1>";   
+if(!$cloneby) {
+    echo "<br><br><h1>Please select options</h1>";
+    exit();
 }
+
+if(count($qtys) == 0) {
+    echo "<br><br><h1>Please input Quantity</h1>";
+    exit();
+}
+
+$dict = addChildProduct($accessToken, $sku, $inputdata, $preview);
 
 ?>
 
