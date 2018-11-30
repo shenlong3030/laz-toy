@@ -1063,8 +1063,8 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                     // copy images
                     if(in_array("1", $options)) {
                         foreach ($imageindexes as $index) {
-                            $i = $index - 1;
-                            $dict['Images'][$i] = $srcproduct['skus'][0]['Images'][$i];
+                            $t = $index - 1;
+                            $dict['Images'][$t] = $srcproduct['skus'][0]['Images'][$t];
                         }
                     }
 
@@ -1111,11 +1111,11 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                 
                 $response = json_decode($c->execute($request, $accessToken), true);
                 if($response["code"] == "0") {
-                    myecho("success");
+                    myecho("success : " . $sku);
                 } else {
                     myvar_dump($response);
                 }
-            }
+        }
 
         // sleep 0.5s
         usleep(500000);
