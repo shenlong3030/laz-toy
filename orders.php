@@ -25,14 +25,8 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ORDERS</title>
     <link rel="shortcut icon" type="image/x-icon" href="./ico/cart.ico" />
-    <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
-    <script src="//code.jquery.com/jquery-1.11.1.js"></script>
-    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-    <!-- bxSlider Javascript file -->
-    <script src="./js/controls.js"></script>
-    <script src="./js/jquery.tablesorter.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <?php include('src/head.php');?>
 </head>
 <body>
 <div class="menu">
@@ -90,7 +84,7 @@ if($status == 'all') {
 
     // resort merged list
     usort($list, function($a, $b) {
-        return $b['created_at'] <=> $a['created_at'];
+        return strcmp($b['created_at'] > $a['created_at'])*(-1);
     });
 } elseif($status == 'pending' || $status == 'ready_to_ship' || $status == 'shipped') {
     $list = getAllOrders($accessToken, $status, $sortBy);
@@ -120,6 +114,17 @@ echo "</div>";
 setTimeout(function(){
     $("#<?php echo $GLOBALS['status'];?>").text("(<?php echo $GLOBALS['count'];?>)");
 }, 1000);
+
+$('table').on('click', '.paymentMethod', function(e){
+   //$(this).closest('tr').remove();
+   $(this).closest('tr').addClass("off");
+})
+
+$('table').on('click', '.age', function(e){
+   //$(this).closest('tr').remove();
+   $(this).closest('tr').siblings().removeClass("off");
+})
+
 //========================================================================
 </script>
 </body>

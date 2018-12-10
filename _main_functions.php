@@ -155,7 +155,7 @@ function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "")
             echo '<td>'.$cusName.'</td>';
             echo '<td><b>'.$cusPhone.'</b></td>';
             echo '<td>'.$item['ItemName'].'</td>';
-            echo '<td>'.$paymentMethod.'</td>';
+            echo '<td class="paymentMethod">'.$paymentMethod.'</td>';
             echo '<td>'.$item["img"].'</td>';
         }
         
@@ -167,7 +167,7 @@ function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "")
         $txtNgay = ($days?($days.' ngày '):'');
         $txtGio = ($hours?($hours.' giờ'):'');
         
-        echo '<td>'.$txtNgay.$txtGio.'</td>';
+        echo '<td class="age">'.$txtNgay.$txtGio.'</td>';
         
         $cdate = preg_replace('/(\+0700)/i', '', $order["created_at"]);
         echo '<td><b>'.$cdate.'</b></td>';

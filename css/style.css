@@ -4,7 +4,8 @@
 .sku,
 .price,
 .name,
-.ex {
+.ex,
+.off {
     display: none;
 }
 .on {
