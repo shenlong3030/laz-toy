@@ -117,12 +117,12 @@ setTimeout(function(){
 
 $('table').on('click', '.paymentMethod', function(e){
    //$(this).closest('tr').remove();
-   $(this).closest('tr').addClass("off");
+   $(this).closest('tr').addClass("hide");
 })
 
 $('table').on('click', '.age', function(e){
    //$(this).closest('tr').remove();
-   $(this).closest('tr').siblings().removeClass("off");
+   $(this).closest('tr').siblings().removeClass("hide");
 })
 
 //========================================================================

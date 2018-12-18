@@ -5,7 +5,7 @@
 .price,
 .name,
 .ex,
-.off {
+.hide{
     display: none;
 }
 .on {
