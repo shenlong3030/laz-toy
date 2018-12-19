@@ -32,9 +32,9 @@
   cursor: default;
   color: red;
 }
-.grouped {
+.grouped.child {
 	background-color: #EDA;
 }
 .grouped.parent {
-	font-weight: bold;
+  background-color: #e6cc7f;
 }
