@@ -105,11 +105,19 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 echo '<table id="myTable" class="tablesorter" border="1" style="width:110%">';
 echo '<thead><tr>';
     echo '<th class="sku on">&#x25BC SKU</th>'; // display:visible
-    echo '<th class="sku">&#x25BC SHOPSKU</th>';    // display:none
+    echo '<th class="sku">&#x25BC SHOPSKU</th>';    // SHOPSKU display:none
+    
     echo '<th>&#x25BC QUANTITY</th>';
+    
     echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
+    echo '<th class="name"></th>'; // name form, display:none
+
+    echo '<th class="color"></th>';
+
+    echo '<th class="price"></th>'; // price form, display:none
     echo '<th>&#x25BC</th>';
     echo '<th>&#x25BC</th>';
+    
     echo '<th>&#x25BC</th>';
     echo '<th>&#x25BC</th>';
 echo '</tr></thead>';
@@ -184,6 +192,13 @@ $(function(){
             } 
           });
     });
+
+  $('table').on('click', '.grouped-icon', function(e){
+     //$(this).closest('tr').remove();
+     $('.grouped.child').toggleClass('hide');
+  })
+
+
 });
 
 function getURLWithNewQueryString(key, newvalue){
