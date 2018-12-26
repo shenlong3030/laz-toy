@@ -1,8 +1,9 @@
 <?php
 include_once "check_token.php";
+//require_once('src/show_errors.php');
 require_once('_main_functions.php');
 
-//require_once('src/show_errors.php');
+
 
 $sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
 
