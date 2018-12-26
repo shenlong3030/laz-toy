@@ -12,6 +12,12 @@ $.extend($.expr[":"], {
           return elementValue.toLowerCase().indexOf(val.toLowerCase()) >= 0;
         });
         return isSubset;
+    },
+    "containsSubstring": function(element, index, match, array) {
+        var input = match[3];
+        var text = $(element).text();
+        
+        return (text.toLowerCase().indexOf(input.toLowerCase()) >= 0);
     }
 });
 
@@ -41,7 +47,8 @@ function filterName(val) {
         $("table tbody tr").hide();
         
         // show TR match value
-        $("table tbody tr td:containsAny('" + val.trim() + "')").parents('tr').show();
+        //$("table tbody tr td:containsAny('" + val.trim() + "')").parents('tr').show();
+        $("table tbody tr td:containsSubstring('" + val.trim() + "')").parents('tr').show();
     } else {
         $("table tbody tr").show();
     }
@@ -60,32 +67,19 @@ window.addEventListener('load', function(){
         filterQuantityLessThan(fQty, 2);
     }
 
-    $("#filterName").keyup(function(){
-        var inputVal = $("#filterName").val();
-        console.log('name changed : ', inputVal);
-
-        // return if empty imput
-        if(!inputVal){
-            return;
+    $("#filterName").keyup(function(e){
+        if (e.which == 13) {
+          var inputVal = $("#filterName").val();
+          filterName(inputVal);
+          return false;    //<---- this line is the same as calling e.preventDefault and e.stopPropagation()
         }
-
-        // return if inputVal not ending with space
-        if(!(/\s+$/.test(inputVal))){
-            return;
-        }
-
-        filterName(inputVal);
     });
 
-    $("#filterQty").keyup(function(){
-        var inputVal = $("#filterQty").val();
-        console.log('quantity changed : ', inputVal);
-
-        // return if empty imput
-        if(!inputVal){
-            return;
+    $("#filterQty").keyup(function(e){
+        if (e.which == 13) {
+          var inputVal = $("#filterQty").val();
+          filterQuantityLessThan(inputVal, 2);
+          return false;    //<---- this line is the same as calling e.preventDefault and e.stopPropagation()
         }
-
-        filterQuantityLessThan(inputVal, 2);
     });
 })
