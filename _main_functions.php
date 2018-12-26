@@ -186,17 +186,13 @@ function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "")
 //####################################################################
 
 //status: all, live, inactive, deleted, image-missing, pending, rejected, sold-out
-function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = null, $create_after="2010-01-01T00:00:00+0800"){
-    if(count($skulist) > 100) {
-        myecho("<h1>ERROR: max number of SKU per request = 100</h1>");
-        exit();
-    }
-
+function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = null){
     $allProducts = array();
     $limit = 50;
     $offset = 0;
+    $totalProducts = 0;
     do {
-        $products = getProductsPaging($accessToken, $q, $status, $offset, $limit);
+        $products = getProductsPaging($accessToken, $q, $status, $offset, $limit, $totalProducts, $skulist);
         $skusCount = getSkusCount($products);
 
         $offset += $skusCount;
@@ -214,16 +210,26 @@ function getSkusCount($products) {
     return $skusCount;
 }
 
-function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_products=null, $create_after="2010-01-01T00:00:00+0800"){
+function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_products=null, $skulist=null){
     $c = getClient();
     $request = new LazopRequest('/products/get','GET');
     $request->addApiParam('filter', $status);
     if(strlen($q)) {
         $request->addApiParam('search',$q);
     }
+
+    if(count($skulist) > 100) {
+        myecho("<h1>ERROR: max number of SKU per request = 100</h1>");
+        exit();
+    }
+    // filter by SKU
+    if($skulist && count($skulist)) {
+        $request->addApiParam('sku_seller_list',json_encode($skulist));
+    }
+
     $request->addApiParam('offset', (string)$offset);
     $request->addApiParam('limit', (string)$limit);
-    $request->addApiParam('create_after', (string)$create_after);
+    //$request->addApiParam('create_after', (string)$create_after);
     //$request->addApiParam('update_after','2010-01-01T00:00:00+0800');
     $request->addApiParam('options','1');
 
