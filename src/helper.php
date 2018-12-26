@@ -14,6 +14,10 @@ function myvar_dump($val) {
     var_dump($val);
 }
 
+function is_blank($val) {
+    return empty($val) && !is_numeric($val);
+}
+
 function htmlLinkImage($url, $width=100, $height=100) {
     return '<a target="_blank" href="'.$url.'"><img width='.$width.' height='.$height.' src="'.$url.'"></img></a>';
 }

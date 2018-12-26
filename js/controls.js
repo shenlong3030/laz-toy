@@ -26,7 +26,7 @@ function filterQuantityLessThan(val, colIndex) {
     
     // find and show TR that have quantity < val
     listTR.filter(function (i, v) {
-        var cellValue = $(this).find('td:eq(' + colIndex + ')').html();
+        var cellValue = $(this).find('td:eq(' + colIndex + ')').text();
         if(parseInt(cellValue) <= parseInt(val)) {
           	return true;
         }
@@ -50,9 +50,18 @@ function filterName(val) {
 window.addEventListener('load', function(){
 	// Everything has loaded!
   	console.log('Everything has loaded!');
+    var fName = $("#filterName").val().trim();
+    var fQty = $("#filterQty").val().trim();
 
-    $("#myNameInput").keyup(function(){
-        var inputVal = $("#myNameInput").val();
+    if(fName.length) {
+        filterName(fName);
+    }
+    if(fQty.length) {
+        filterQuantityLessThan(fQty, 2);
+    }
+
+    $("#filterName").keyup(function(){
+        var inputVal = $("#filterName").val();
         console.log('name changed : ', inputVal);
 
         // return if empty imput
@@ -68,8 +77,8 @@ window.addEventListener('load', function(){
         filterName(inputVal);
     });
 
-    $("#myQuantityInput").keyup(function(){
-        var inputVal = $("#myQuantityInput").val();
+    $("#filterQty").keyup(function(){
+        var inputVal = $("#filterQty").val();
         console.log('quantity changed : ', inputVal);
 
         // return if empty imput
@@ -77,6 +86,6 @@ window.addEventListener('load', function(){
             return;
         }
 
-        filterQuantityLessThan(inputVal, 4);
+        filterQuantityLessThan(inputVal, 2);
     });
 })

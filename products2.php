@@ -1,7 +1,7 @@
 <?php
 include_once "check_token.php";
-require_once('_main_functions.php');
 //include_once "src/show_errors.php";
+require_once('_main_functions.php');
 
 ?>
 
@@ -28,7 +28,7 @@ require_once('_main_functions.php');
       z-index: 10;
     }
     .mainContent{
-      margin-top: 150px;
+      margin-top: 160px;
     }
     </style>
 </head>
@@ -48,6 +48,9 @@ $byskus = $_GET['byskus'] ? $_GET['byskus'] : 0;
 
 $input = val($_GET['skus']);
 $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
+
+$filterName = val($_GET['filterName'], "");
+$filterQty = val($_GET['filterQty'], "");
 
 ?>
 
@@ -81,21 +84,27 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
       echo "<a class='padding $linkImageMissingClass' href='$linkImageMissing'>Thiếu ảnh</a>";
     ?> 
     
-    <form action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
-    Search <input class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
+    <form id="searchForm" action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
+    Search <input id="q" class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
     <input type="hidden" name="status" value="<?php echo $_GET['status']; ?>">
-    <input type="hidden" name="offset" value="0">
+    <input id="offset" type="hidden" name="offset" value="<?php echo $offset; ?>">
+    <input id="limit" type="hidden" name="limit" value="<?php echo $limit; ?>">
     
     <input id="cbshowthumbnail" type="checkbox" name="showthumbnail" value="1" checked="checked"> I Show thumbnail
     <input id="cbshowshopsku" type="checkbox" name="showshopsku" value="1" checked="1>Show shopsku
     <input id="cbshowall" type="checkbox" name="showall" value="1" checked="1">Show all
     <input id="cbfulledit" type="checkbox" name="fulledit" value="1">Edit mode
 
+    <br>Filter 
+    <input type="text" id="filterName" name="filterName" placeholder="Name contain" value="<?php echo $filterName; ?>">
+    <input type="text" id="filterQty" name="filterQty" placeholder="Quantity less than" value="<?php echo $filterQty; ?>"> 
+
     <textarea class="nowrap search skus" name="skus" placeholder="Input SKUs separated by line" rows="20" cols="50"><?php echo implode("\n", $skus);?></textarea><br>
     <input id="cbbyskus" type="checkbox" name="byskus" value="1">Search by SKUs
-    <input class="padding" type="submit">
+    <button id="searchBtn" class="padding" type="button">Search</button>
     </form>
-    <div class="control-bar-1"><input type="text" id="myNameInput" placeholder="Filter name"><input type="text" id="myQuantityInput" placeholder="Filter quantity"> <span style="padding:5px;">Page</span></div>
+    <div class="control-bar-1">
+      <span style="padding:5px;">Page</span></div>
     
     </div>
 
@@ -107,6 +116,7 @@ echo '<thead><tr>';
     echo '<th class="sku on">&#x25BC SKU</th>'; // display:visible
     echo '<th class="sku">&#x25BC SHOPSKU</th>';    // SHOPSKU display:none
     
+    echo '<th>&#x25BC QUANTITY</th>';
     echo '<th>&#x25BC QUANTITY</th>';
     
     echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
@@ -140,6 +150,12 @@ if($byskus) {
 }
 
 if(count($list)) {
+    $filter = array(
+      "filterName" => $filterName,
+      "filterQty" => $filterQty
+    );
+
+    $list = reArrangeProducts($list);
     printProducts($list);
 }
 
@@ -150,8 +166,23 @@ echo '</table><br><hr>';
 <!––document of tablesorter, see http://tablesorter.com/docs/-->
 <script type="text/javascript">
 
+function search() {
+    $("#limit").val("");
+    $("#offset").val(0);
+    $("#searchForm").submit();
+}
+
 $(function(){
-    
+  $('#q').keypress(function (e) {
+    if (e.which == 13) {
+      search();
+      return false;    //<---- this line is the same as calling e.preventDefault and e.stopPropagation()
+    }
+  });
+  $("#searchBtn").click(function(){
+      search();
+  });
+
   // sort column 0
   $('#myTable').tablesorter();
   //$("#myTable").tablesorter( {sortList: [[0,0]]} );
@@ -177,21 +208,21 @@ $(function(){
     $('.search').toggleClass('on');
   });
   
-    $('input[type=checkbox][data-toggle=toggle]').change(function() {
-        var status;
-        if(this.checked) {
-            status = 'active';
-        } else {
-            status = 'inactive';
-        }
-        
-        $.post( "update-api.php", { sku: this.id, skustatus: status })
-          .done(function( data ) {
-            if(data.code) {
-                alert(data);
-            } 
-          });
-    });
+  $('input[type=checkbox][data-toggle=toggle]').change(function() {
+      var status;
+      if(this.checked) {
+          status = 'active';
+      } else {
+          status = 'inactive';
+      }
+      
+      $.post( "update-api.php", { sku: this.id, skustatus: status })
+        .done(function( data ) {
+          if(data.code) {
+              alert(data);
+          } 
+        });
+  });
 
   $('table').on('click', '.grouped-icon', function(e){
      //$(this).closest('tr').remove();
@@ -201,84 +232,44 @@ $(function(){
 
 });
 
-function getURLWithNewQueryString(key, newvalue){
-    var baseUrl = [location.protocol, '//', location.host, location.pathname].join('');
-    /*
-     * queryParameters -> handles the query string parameters
-     * queryString -> the query string without the fist '?' character
-     * re -> the regular expression
-     * m -> holds the string matching the regular expression
-     */
-    var queryParameters = {}, queryString = location.search.substring(1),
-        re = /([^&=]+)=([^&]*)/g, m;
-
-    // Creates a map with the query string parameters
-    while (m = re.exec(queryString)) {
-        queryParameters[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+function loadPage(page) {
+    if(page < 0) {
+        $("#offset").val(0);
+        $("#limit").val("no");
+    } else {
+        var limit = $("#limit").val();
+        $("#offset").val(page*limit);
     }
-
-    // Add new parameters or update existing ones
-    queryParameters[key] = newvalue;
-
-    /*
-     * Replace the query portion of the URL.
-     * jQuery.param() -> create a serialized representation of an array or
-     *     object, suitable for use in a URL query string or Ajax request.
-     */
-    return baseUrl + '?' + $.param(queryParameters);
-}
-
-function getQueryStringValue(key){
-    /*
-     * queryParameters -> handles the query string parameters
-     * queryString -> the query string without the fist '?' character
-     * re -> the regular expression
-     * m -> holds the string matching the regular expression
-     */
-    var queryParameters = {}, queryString = location.search.substring(1),
-        re = /([^&=]+)=([^&]*)/g, m;
-
-    // Creates a map with the query string parameters
-    while (m = re.exec(queryString)) {
-        queryParameters[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-    }
-
-    // Add new parameters or update existing ones
-    return queryParameters[key];
-}
-
-function getQueryStringOffsetValue() {
-    var value = getQueryStringValue('offset');
-    return value ? value : <?php echo $offset;?>;
-}
-
-function getQueryStringLimitValue() {
-    var value = getQueryStringValue('limit');
-    return value ? value : <?php echo $limit;?>;
+    $("#searchForm").submit();
 }
 
 setTimeout(function(){
     var pagecount = <?php echo $pagecount;?>;
-    
     for (var i = 0; i < pagecount; i++) {
       var newLink = $("<a />", {
           class : "pagenumber",
           name : "link",
-          href : getURLWithNewQueryString("offset", i*getQueryStringLimitValue()),
-          text : (i+1)
+          href : "#",
+          text : (i+1),
+          onclick : "loadPage(" + i + ")"
       });
-      if(getQueryStringOffsetValue() == i*getQueryStringLimitValue()) {
+      if($("#offset").val() == i * $("#limit").val()) {
         newLink.addClass('disabled');
       }
       $('.control-bar-1').append(newLink);
     }
 
+    var page = -1;
     var showAllLink = $("<a />", {
           class : "pagenumber",
           name : "link",
-          href : getURLWithNewQueryString("limit", "no"),
-          text : "ALL"
+          href : "#",
+          text : "ALL",
+          onclick : "loadPage(" + page + ")"
       });
+    if($("#limit").val() == "no") {
+      showAllLink.addClass('disabled');
+    }
     $('.control-bar-1').append(showAllLink);
 
     $('#count').text("<?php echo count($list)." of ".$total; ?>");

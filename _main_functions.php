@@ -186,48 +186,35 @@ function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "")
 //####################################################################
 
 //status: all, live, inactive, deleted, image-missing, pending, rejected, sold-out
-function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = null){
+function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = null, $create_after="2010-01-01T00:00:00+0800"){
     if(count($skulist) > 100) {
         myecho("<h1>ERROR: max number of SKU per request = 100</h1>");
         exit();
     }
 
-    $limitPerQuery = '50';
-    $c = getClient();
-    $request = new LazopRequest('/products/get','GET');
-    $request->addApiParam('filter', $status);
-    if(strlen($q)) {
-        $request->addApiParam('search',$q);
-    }
-    $request->addApiParam('offset', '0');
-    $request->addApiParam('limit', $limitPerQuery);
-    $request->addApiParam('create_after','2010-01-01T00:00:00+0800');
-    //$request->addApiParam('update_after','2010-01-01T00:00:00+0800');
-    $request->addApiParam('options','1');
-    
-    // filter by SKU
-    if($skulist && count($skulist)) {
-        $request->addApiParam('sku_seller_list',json_encode($skulist));
-    }
-    
-    $response = json_decode($c->execute($request, $accessToken), true);
+    $allProducts = array();
+    $limit = 50;
+    $offset = 0;
+    do {
+        $products = getProductsPaging($accessToken, $q, $status, $offset, $limit);
+        $skusCount = getSkusCount($products);
 
-    $products = array();
-    if($response["code"] == "0") {
-        $products = $response["data"]["products"];
+        $offset += $skusCount;
+        $allProducts = array_merge($allProducts, $products);
+    } while(count($products) == $limit);
 
-        while(count($products) < (int)$response["data"]["total_products"]) {
-            $nextpage = getProductsPaging($accessToken, $q, $status, count($products), $limitPerQuery);
-            $products = array_merge($products, $nextpage);
-        }
-    } else {
-        myvar_dump($response);
-    }
-    
-    return $products;
+    return $allProducts;
 }
 
-function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_products=null){
+function getSkusCount($products) {
+    $skusCount = 0;
+    foreach($products as $index=>$product) {
+        $skusCount += count($product['skus']);
+    }
+    return $skusCount;
+}
+
+function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_products=null, $create_after="2010-01-01T00:00:00+0800"){
     $c = getClient();
     $request = new LazopRequest('/products/get','GET');
     $request->addApiParam('filter', $status);
@@ -236,7 +223,7 @@ function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_p
     }
     $request->addApiParam('offset', (string)$offset);
     $request->addApiParam('limit', (string)$limit);
-    $request->addApiParam('create_after','2010-01-01T00:00:00+0800');
+    $request->addApiParam('create_after', (string)$create_after);
     //$request->addApiParam('update_after','2010-01-01T00:00:00+0800');
     $request->addApiParam('options','1');
 
@@ -264,6 +251,21 @@ function getProduct($accessToken, $sku){
     }
 }
 
+// use dictionary to rearrange, key is $product['item_id']
+// all skus with same $product['item_id'], must be grouped together
+function reArrangeProducts($products) {
+    $newProducts = array(); 
+    foreach($products as $product) {
+        if(!isset($newProducts[$product['item_id']])) {
+            $newProducts[$product['item_id']] = $product;
+        } else {
+            $newProducts[$product['item_id']]['skus'] = array_merge($newProducts[$product['item_id']]['skus'], 
+                $product['skus']);
+        }
+    }
+    return $newProducts;
+}
+
 function printProducts($products) {
     foreach($products as $product) {
         $GLOBALS['count'] += 1;
@@ -287,11 +289,12 @@ function printProducts($products) {
             //$variation = str_replace('AIS Lava', '', $variation);
             //$variation = str_replace('Not Specified', '', $variation);
 
-            $cssclass = (count($product['skus'])) > 1 ? 'grouped' : '';
-            $cssclass .= ($index == 0) ? ' parent' : '';
+            $isGrouped = (count($product['skus']) > 1);
+            $cssclass = $isGrouped ? 'grouped' : '';
+            $cssclass .= ($index == 0) ? ' parent' : ' child';
             echo '<tr class="'. $cssclass .'">';
             //visible 
-            echo '<td class="sku on padding">'. ($index?"<i class='fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
+            echo '<td class="sku on padding">'. ($isGrouped?"<i class='grouped-icon fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
             // hidden
             echo '<td class="sku padding">'.$shopsku.'</td>';
             $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
@@ -302,6 +305,7 @@ function printProducts($products) {
             
             $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="50" value="'.$name.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
             
+            echo '<td>'.$qty.'</td>';
             echo '<td>'.$reservedTxt.$qtyForm.'</td>';
             echo '<td class="name on padding">'.$nameLink.'</td>';
             echo '<td class="name">'.$nameForm.'</td>';
@@ -338,6 +342,50 @@ function printProducts($products) {
     }
 }
 
+// function printProductsWithFilter($products, $filter) { 
+//     $filterQty = $filter["filterQty"];
+//     $filterNameWords = array_filter(explode(' ', strtolower($filter["filterName"])));
+
+
+//     // foreach($products as $index=>$product) {
+//     //     echo "<br>", count($product['skus']);
+//     // }
+
+//     if(count($filterNameWords) || !is_blank($filterQty)) {
+//         foreach($products as $index=>$product) {
+//             if(count($filterNameWords)) {
+//                 $attrs = $product['attributes'];
+//                 $name = strtolower($attrs['name']);
+//                 $nameWords = array_filter(explode(' ', strtolower($name)));
+
+//                 $matches = array_intersect($nameWords, $filterNameWords);
+//                 if(count($matches) == 0)
+//                 {
+//                     unset($products[$index]); // remove unmatched product
+//                     continue;
+//                 } 
+//             }
+
+//             if(is_numeric($filterQty)) {
+//                 foreach($product['skus'] as $index=>$sku) {
+//                     $qty = $sku['quantity'];
+//                     if($qty > $filterQty) {
+//                         echo "shen", $qty;
+//                         unset($product['skus'][$index]); // remove unmatched product
+//                         continue;
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     // foreach($products as $index=>$product) {
+//     //     echo "<br>", count($product['skus']);
+//     // }
+
+//     printProducts($products);
+// }
+
 function printProduct($product) {
     echo "<br>";
     echo $product['Skus'][0]['SellerSku'], htmlLinkImages($product['Skus'][0]['Images']);
@@ -361,11 +409,11 @@ function createProduct($accessToken, $product) {
     $request->addApiParam('payload', $payload);
 
     $res = json_decode($c->execute($request, $accessToken), true);
+    $sku = $product['Skus'][0]['SellerSku'];
     if($res["code"] == "0") {
-        myecho("success");
+        myecho("success : " . $sku);
     } else {
-        myecho("CREATE FAILED: ");
-        echo $product['Skus'][0]['SellerSku'];
+        myecho("CREATE FAILED: " . $sku);
         var_dump($res);
     }
     
