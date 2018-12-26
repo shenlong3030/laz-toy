@@ -3,6 +3,8 @@ include_once "check_token.php";
 require_once('_main_functions.php');
 //include_once "src/show_errors.php";
 
+exit();
+
 ?>
 
 <!DOCTYPE html>
