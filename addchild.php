@@ -46,7 +46,6 @@ $lcropmodel = val($_POST['lcropmodel'], 0);
 
 $input = val($_POST['col'][2]);
 $qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
-var_dump($input);
 
 $input = val($_POST['col'][3]);
 $prices = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
