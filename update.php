@@ -21,6 +21,13 @@ $category = $_POST['category'] ? $_POST['category'] : 0;
 $input = val($_POST['images']);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 
+$temp = array();
+foreach($images as $image) {
+    $temp = array_merge($temp, preg_split("/\s+/", $image));
+}
+$images = array_filter($temp);
+
+
 $shortdesc = $_POST['shortdesc'] ? $_POST['shortdesc'] : '';
 $desc = $_POST['desc'] ? $_POST['desc'] : '';
 $brand = $_POST['brand'] ? $_POST['brand'] : '';
