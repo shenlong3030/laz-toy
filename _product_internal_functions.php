@@ -39,6 +39,11 @@ function prepareProductForCreating($product) {
     
     // force active product
     $product['Skus'][0]['Status'] = "active";
+
+    // remove name_en
+    unset($product['Attributes']["name_en"]);
+    unset($product['Attributes']['short_description_en']);
+    unset($product['Attributes']['description_en']);
     
     return $product;
 }
