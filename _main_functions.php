@@ -459,9 +459,9 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
 
                 // set model
                 if(isset($data["models"][$index])) {
-                    $model = $data["models"][$index];
+                    $model = trim($data["models"][$index]);
                     $product['Skus'][0]['compatibility_by_model'] = $model;
-                    $newSku = $newSku . vn_urlencode($model) . "__";
+                    $newSku = $newSku . vn_urlencode($model);
                 }
                 
                 // set color
