@@ -24,6 +24,7 @@ function htmlLinkImage($url, $width=100, $height=100) {
 
 function htmlLinkImages($urls, $width=100, $height=100) {
     $output = "";
+    $urls = array_filter($urls);
     foreach($urls as $url) {
         $output .= '<a target="_blank" href="'.$url.'"><img width='.$width.' height='.$height.' src="'.$url.'"></img></a>';
     }
