@@ -461,7 +461,7 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                 if(isset($data["models"][$index])) {
                     $model = trim($data["models"][$index]);
                     $product['Skus'][0]['compatibility_by_model'] = $model;
-                    $newSku = $newSku . vn_urlencode($model);
+                    $newSku = $newSku . vn_urlencode($model) . "__";
                 }
                 
                 // set color
@@ -478,7 +478,11 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                     $newSku = $newSku . "." . "X" . $combo;
                 }
 
-                $newSku .= "." . $time;
+                if(substr($newSku, -2) != "__") {
+                    $newSku .= ".";
+                }
+                $newSku .= $time;
+
                 $newSku = make_short_sku($newSku);
 
                 $product = setProductSku($product, $newSku);
