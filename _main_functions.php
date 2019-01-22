@@ -478,11 +478,10 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                     $newSku = $newSku . "." . "X" . $combo;
                 }
 
-                if(substr($newSku, -2) != "__") {
-                    $newSku .= ".";
+                if(substr($newSku, -2) == "__") {
+                    $newSku = substr($newSku, 0, -2);
                 }
-                $newSku .= $time;
-
+                $newSku .= "." . $time;
                 $newSku = make_short_sku($newSku);
 
                 $product = setProductSku($product, $newSku);
