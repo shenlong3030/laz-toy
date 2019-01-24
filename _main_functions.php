@@ -161,7 +161,7 @@ function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "")
         
         $date1 = new DateTime($order["created_at"]);
         $date2 = new DateTime();
-        $date2->modify('+ 7 hour');
+        //$date2->modify('+ 7 hour');
         $days  = $date2->diff($date1)->format('%a');
         $hours = $date2->diff($date1)->format('%h');
         $txtNgay = ($days?($days.' ngày '):'');
