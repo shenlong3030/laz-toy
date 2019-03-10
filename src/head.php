@@ -5,6 +5,7 @@
 
 <!-- bxSlider Javascript file -->
 <script src="./js/controls.js?v1.3"></script>
+<script src="./js/auth.js"></script>
 <script src="./js/jquery.tablesorter.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
