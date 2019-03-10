@@ -29,6 +29,10 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
     <?php include('src/head.php');?>
 </head>
 <body>
+
+<?php include('src/nav.php');?>
+<hr>
+
 <div class="menu">
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=all&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Tất cả</a>
 <?php if($GLOBALS['status']=='all') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>   

@@ -12,13 +12,11 @@ require_once('_main_functions.php');
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PRODUCTS</title>
     <link rel="shortcut icon" type="image/x-icon" href="./ico/product.ico" />
-    
+
     <?php include('src/head.php');?>
 
     <style>
-    .nav{
-      margin: 0;
-      padding: 0;
+    .control-bar{
       position: fixed;
       top: 0;
       left: 0;
@@ -28,7 +26,7 @@ require_once('_main_functions.php');
       z-index: 10;
     }
     .mainContent{
-      margin-top: 160px;
+      margin-top: 190px;
     }
     </style>
 </head>
@@ -55,35 +53,36 @@ $filterQty = val($_GET['filterQty'], "");
 ?>
 
 <body>
-    <div class="nav">
+  <div class="control-bar">
+    <?php include('src/nav.php');?>
     <div class="control-bar-2">
-        <iframe id="responseIframe" name="responseIframe" width="100%" height="30"></iframe>
+      <iframe id="responseIframe" name="responseIframe" width="100%" height="30"></iframe>
+      <?php 
+        $currentLink = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; 
+        $bareLink = strtok($currentLink, '?');
+        $linkSoldout = $bareLink . '?status=sold-out';
+        $linkRejected = $bareLink . '?status=rejected';
+        $linkAll = $bareLink . '?status=all';
+        $linkInactive = $bareLink . '?status=inactive';
+        $linkPending = $bareLink . '?status=pending';
+        $linkImageMissing = $bareLink . '?status=image-missing';
+
+        $linkAllClass = ($status=="all")?" disabled":"";
+        $linkSoldoutClass = ($status=="sold-out")?" disabled":"";
+        $linkRejectedClass = ($status=="rejected")?" disabled":"";
+        $linkInactiveClass = ($status=="inactive")?" disabled":"";
+        $linkPendingClass = ($status=="pending")?" disabled":"";
+        $linkImageMissingClass = ($status=="image-missing")?" disabled":"";
+
+        echo "<a class='padding $linkAllClass' href='$linkAll'>Tất cả</a>";
+        echo "<a class='padding $linkSoldoutClass' href='$linkSoldout'>Hết hàng</a>";
+        echo "<a class='padding $linkRejectedClass' href='$linkRejected'>Bị từ chối</a>";
+        echo "<a class='padding $linkInactiveClass' href='$linkInactive'>Đang tắt</a>";
+        echo "<a class='padding $linkPendingClass' href='$linkPending'>Đang chờ duyệt</a>";
+        echo "<a class='padding $linkImageMissingClass' href='$linkImageMissing'>Thiếu ảnh</a>";
+      ?> 
     </div>
-    <?php 
-      $currentLink = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; 
-      $bareLink = strtok($currentLink, '?');
-      $linkSoldout = $bareLink . '?status=sold-out';
-      $linkRejected = $bareLink . '?status=rejected';
-      $linkAll = $bareLink . '?status=all';
-      $linkInactive = $bareLink . '?status=inactive';
-      $linkPending = $bareLink . '?status=pending';
-      $linkImageMissing = $bareLink . '?status=image-missing';
 
-      $linkAllClass = ($status=="all")?" disabled":"";
-      $linkSoldoutClass = ($status=="sold-out")?" disabled":"";
-      $linkRejectedClass = ($status=="rejected")?" disabled":"";
-      $linkInactiveClass = ($status=="inactive")?" disabled":"";
-      $linkPendingClass = ($status=="pending")?" disabled":"";
-      $linkImageMissingClass = ($status=="image-missing")?" disabled":"";
-
-      echo "<a class='padding $linkAllClass' href='$linkAll'>Tất cả</a>";
-      echo "<a class='padding $linkSoldoutClass' href='$linkSoldout'>Hết hàng</a>";
-      echo "<a class='padding $linkRejectedClass' href='$linkRejected'>Bị từ chối</a>";
-      echo "<a class='padding $linkInactiveClass' href='$linkInactive'>Đang tắt</a>";
-      echo "<a class='padding $linkPendingClass' href='$linkPending'>Đang chờ duyệt</a>";
-      echo "<a class='padding $linkImageMissingClass' href='$linkImageMissing'>Thiếu ảnh</a>";
-    ?> 
-    
     <form id="searchForm" action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
     Search <input id="q" class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
     <input type="hidden" name="status" value="<?php echo $_GET['status']; ?>">
@@ -104,11 +103,11 @@ $filterQty = val($_GET['filterQty'], "");
     <button id="searchBtn" class="padding" type="button">Search</button>
     </form>
     <div class="control-bar-1">
-      <span style="padding:5px;">Page</span></div>
-    
+    <span style="padding:5px;">Page</span>
     </div>
+  </div>
 
-    <div class="mainContent">
+  <div class="mainContent">
 
 <?php
 echo '<table id="myTable" class="tablesorter" border="1" style="width:110%">';
