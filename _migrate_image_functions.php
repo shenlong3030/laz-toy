@@ -26,7 +26,7 @@ function migrateImage($accessToken, $imageUrl, $retry = 3) {
     
     if($response['code'] == '0') {
         $output = $response['data']['image']['url'];
-        myecho("", __FUNCTION__);
+        //myecho("", __FUNCTION__);
     } else {
         if($retry) {
             sleep(3);
