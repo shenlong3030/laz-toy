@@ -1,7 +1,7 @@
 <?php
 
-$appKey = '104805';
-$appSecret = 'PZPEQzns8OeNy0R9OImqowLWIs0zXHAn';
+$appKey = '108795';
+$appSecret = 'ZqRHtkj5owPmA50b0TqoQGqvxzpamRzH';
 $appLink = 'https://toy1.phukiensh.com/lazop';
 
 // Authentication Link
