@@ -76,7 +76,7 @@ function setProductImages($product, $images, $reset=FALSE, $fromindex = 0) {
          $product['Skus'][0]['Images'] = array();
     }
     foreach($images as $index => $url) {
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
+        if (is_url($url)) {
             $product['Skus'][0]['Images'][$index + $fromindex] = $url;
         } else {
             if(!empty($url)) {

@@ -679,7 +679,7 @@ function setImagesForProduct($product, $image, &$savedimages, $fromindex = 0) {
         $migratedimgs = migrateImages($accessToken, $images, $savedimages);
 
         foreach($migratedimgs as $index => $url) {
-            if (filter_var($url, FILTER_VALIDATE_URL)) {
+            if (is_url($url)) {
                 $product['Skus'][0]['Images'][$index + $fromindex] = $url;
             } else {
                 //myvar_dump($url);

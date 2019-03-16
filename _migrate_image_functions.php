@@ -11,7 +11,7 @@ require_once('src/helper.php');
 function migrateImage($accessToken, $imageUrl, $retry = 3) {
     $output = '';
     
-    if(!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+    if(!is_url($imageUrl)) {
         return "Invalid URL: " + $imageUrl;
     }
     
@@ -53,14 +53,14 @@ function migrateImages($accessToken, $images, &$cache = null) {
         if(isLazadaImage($url)) {
             $output[] = $url;
         } else {
-            if(!isset($cache[$url])) {
-                $cache[$url] = migrateImage($accessToken, $url);  
+            if(!isset($cache[sha1($url)])) {
+                $cache[sha1($url)] = migrateImage($accessToken, $url);  
                 sleep(1);
             }
             
             // only output valid URL
-            if(filter_var($cache[$url], FILTER_VALIDATE_URL)) {
-                $output[] = $cache[$url];
+            if(is_url($cache[sha1($url)])) {
+                $output[] = $cache[sha1($url)];
             }
         }
     }

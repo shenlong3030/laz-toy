@@ -14,6 +14,15 @@ function myvar_dump($val) {
     var_dump($val);
 }
 
+
+function is_url($url) {
+    $path = parse_url($url, PHP_URL_PATH);
+    $encoded_path = array_map('urlencode', explode('/', $path));
+    $url = str_replace($path, implode('/', $encoded_path), $url);
+
+    return filter_var($url, FILTER_VALIDATE_URL) ? true : false;
+}
+
 function is_blank($val) {
     return empty($val) && !is_numeric($val);
 }

@@ -37,10 +37,10 @@ $input = val($_POST['col'][2]);
 $colors = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][3]);
-$prices = array_filter(explode("\n", str_replace("\r", "", $input)));
+$prices = array_filter(explode("\n", str_replace("\r", "", $input)), 'is_numeric');
 
 $input = val($_POST['col'][4]);
-$qty = array_filter(explode("\n", str_replace("\r", "", $input)));
+$qty = array_filter(explode("\n", str_replace("\r", "", $input)), 'is_numeric');
 
 $input = val($_POST['col'][5]);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
