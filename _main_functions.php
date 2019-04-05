@@ -272,7 +272,7 @@ function reArrangeProducts($products) {
     return $newProducts;
 }
 
-function printProducts($products) {
+function printProducts($products, $showChilden=TRUE) {
     foreach($products as $product) {
         $GLOBALS['count'] += 1;
         
@@ -344,6 +344,9 @@ function printProducts($products) {
             }
 
             echo '</tr>';
+            if(!$showChilden) {
+                break;
+            }
         }
     }
 }
