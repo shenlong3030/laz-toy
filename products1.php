@@ -107,7 +107,8 @@ echo '<thead><tr>';
     echo '<th class="sku on">&#x25BC SKU</th>'; // display:visible
     echo '<th class="sku">&#x25BC SHOPSKU</th>';    // SHOPSKU display:none
     
-    echo '<th>&#x25BC QUANTITY</th>';
+    echo '<th>&#x25BC QTY</th>';
+    echo '<th>&#x25BC UpdateQty</th>';
     
     echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
     echo '<th class="name"></th>'; // name form, display:none
