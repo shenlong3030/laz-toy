@@ -1171,9 +1171,9 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                 
                 $response = json_decode($c->execute($request, $accessToken), true);
                 if($response["code"] == "0") {
-                    myecho("success : " . $sku);
+                    myecho("success group : " . $product['Skus'][0]["SellerSku"]);
                 } else {
-                    myvar_dump($response);
+                    myecho("failed group : " . $product['Skus'][0]["SellerSku"] . " : ");
                 }
         }
 
