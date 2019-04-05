@@ -931,7 +931,8 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
                     $product = setProductPrice($product, $price);
                 }
 
-                // set images
+                // set imagesaddChild
+                $product['Skus'][0]['Images'] = $backupimages;
                 if(isset($inputdata["images"][$index])) {
                     // migrate images
                     $images = migrateImages($accessToken, $inputdata["images"][$index], $cache);
