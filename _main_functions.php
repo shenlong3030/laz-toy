@@ -122,7 +122,7 @@ function getOrderItemsInfo($dict) {
     return $info;
 }
 
-function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "") {
+function printOrders($token, $orders, $offset = 0, $needFullOrderInfo = 0, $status = "") {
     foreach($orders as $index=>$order) {
         $orderId = $order['order_id'];
         $orderNumber = $order['order_number'];
@@ -133,7 +133,7 @@ function printOrders($orders, $offset = 0, $needFullOrderInfo = 0, $status = "")
         $itemCount = $order['items_count'];
         $orderStatus = $order['statuses'][0];
         $paymentMethod = $order['payment_method'];
-        $item = $needFullOrderInfo ? getOrderItems($_COOKIE["access_token"], $orderId) : array();
+        $item = $needFullOrderInfo ? getOrderItems($token, $orderId) : array();
         $price = $order['price'];
         
         echo '<tr class="'.$orderStatus.'">';

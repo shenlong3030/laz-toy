@@ -67,8 +67,9 @@ echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif; he
 echo "<p><b>10 đơn hàng bị huỷ gần đây nhất<b></p>";
 echo '<table border="1"><tbody>';
 
-$list = getOrders($accessToken, 'canceled', 0, 10, $sortBy);
-printOrders($list , 0, $needFullOrderInfo, $status);
+$token = $GLOBALS["accessToken"];
+$list = getOrders($token, 'canceled', 0, 10, $sortBy);
+printOrders($token, $list , 0, $needFullOrderInfo, $status);
 
 echo '</tbody></table></div><hr>';
 //========================================================================
@@ -85,17 +86,12 @@ if($status == 'all') {
     $readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy);
     
     $list = array_merge($pendingOrders, $readyOrders);
-
-    // resort merged list
-    usort($list, function($a, $b) {
-        return strcmp($b['created_at'] > $a['created_at'])*(-1);
-    });
 } elseif($status == 'pending' || $status == 'ready_to_ship' || $status == 'shipped') {
     $list = getAllOrders($accessToken, $status, $sortBy);
 } else {
     $list = array();
     for($i=0; $i<$limit; $i+=100) {
-        $nextlist = getOrders($accessToken, $status, $i, 100, $sortBy);
+        $nextlist = getOrders($accessToken, $status, $i + $offset, 100, $sortBy);
         $list = array_merge($list, $nextlist);
 
         if(count($nextlist) < 100) {
@@ -104,8 +100,13 @@ if($status == 'all') {
     }
 }
 
+// resort merged list
+// usort($list, function($a, $b) {
+//     return strcmp($b['created_at'] > $a['created_at'])*(-1);
+// });
+
 $GLOBALS['count'] = count($list);
-printOrders($list, 0, $needFullOrderInfo, $status);
+printOrders($token, $list, 0, $needFullOrderInfo, $status);
 
 echo '</tbody></table><br><hr>';
 echo "</div>";
