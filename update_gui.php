@@ -27,8 +27,13 @@ $brand = "";
 
 if($sku) {
     $product = getProduct($accessToken, $sku);
-    
+
+    $sibling = null;
     if($product) {
+        $sibling = getProduct($accessToken, "", $product['item_id']);
+        if(count($sibling['skus']) < 2) {
+            $sibling = null;
+        }
 
         //var_dump($product);
         $images = array_filter($product['skus'][0]['Images']);
@@ -79,6 +84,8 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
+    <?php include('src/head.php');?>
+
     <style>
     .nav{
       margin: 0;
@@ -113,6 +120,15 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 
     <a style="color:red" href="<?php echo $addChildLink?>" target="_blank">Add Child</a>
     <a style="color:red;padding-left: 10px" href="<?php echo $cloneLink?>" target="_blank">Clone to new product</a>
+<hr>
+<?php if($sibling) { ?>
+    <h2>Danh sách các SP cùng nhóm này</h2>
+    <table border="1">
+        <tbody>
+            <?php echo printProducts(array($sibling));?>
+        </tbody>
+    </table>
+<?php } ?>
 <hr>
     <form action="update.php" method="POST" name="nameForm" target="responseIframe">
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
@@ -215,6 +231,12 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <?php echo $desc;?>
     
     </div>
+
+<hr>
+    <form action="del.php" method="POST" name="delForm" target="responseIframe">
+    <input type="hidden" name="skus" value="<?php echo $sku;?>" />
+    <input type="submit" value="Xoá SP này"/>
+    </form>
 <?php
 
 // Pay no attention to this statement.
