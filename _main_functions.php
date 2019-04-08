@@ -298,38 +298,39 @@ function printProducts($products, $showChilden=TRUE) {
             $isGrouped = (count($product['skus']) > 1);
             $cssclass = $isGrouped ? 'grouped' : '';
             $cssclass .= ($index == 0) ? ' parent' : ' child';
-            echo '<tr class="'. $cssclass .'">';
-            //visible 
-            echo '<td class="sku on padding">'. ($isGrouped?"<i class='grouped-icon fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
-            // hidden
-            echo '<td class="sku padding">'.$shopsku.'</td>';
+
             $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
-            
             $qtyForm = '<form action="update.php" method="POST" name="qtyForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="qty" type="text" size="4" value="'.$qty.'"/><input type="submit" tabindex="-1" value="↵" /></form>';
             
             $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="price" type="text" size="8" value="'.$price1.'"/>--><input name="sale_price" type="text" size="8" value="'.$price2.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
             
             $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="50" value="'.$name.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
             
+            echo '<tr class="'. $cssclass .'">';
+            echo '<td class="sku on padding">'. ($isGrouped?"<i class='grouped-icon fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
             echo '<td>'.$qty.'</td>';
             echo '<td>'.$reservedTxt.$qtyForm.'</td>';
             echo '<td class="name on padding">'.$nameLink.'</td>';
             echo '<td class="name">'.$nameForm.'</td>';
             echo '<td>'.$variation.'</td>';
             
-            // hidden 
-            echo '<td class="price">'.$priceForm.'</td>';
             // visible
             echo '<td class="price on">'.$price1.'</td>';
             echo '<td class="price on">'.$price2.'</td>';
+            // hidden 
+            echo '<td class="price">'.$priceForm.'</td>';
 
             $link = "http://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
             echo '<td><a target="_blank" href="'.$link.'" class="fa fa-edit" style="color:red" tabindex="-1"></a></td>';
 
-            // bootstrap (need bootstrap css and bootstraptoggle css + js)
+            // Active toggle button
+            // bootstrap code (need bootstrap css and bootstraptoggle css + js)
             $status = ($sku['Status'] == "active") ? "checked" : "";
             echo '<td><input id="'. $sellersku .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
 
+            // print image thumbnail
+            $thumbNailElements = array();
+            $urlElements = array();
             if(is_array($imgs)) {
                 for($i=0; $i<8; $i++){
                     $thumbLink = trim($imgs[$i]);
@@ -338,10 +339,23 @@ function printProducts($products, $showChilden=TRUE) {
                     $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img alt="thumb" src="'.$thumbLink.'" height="50"></a>';
                     $thumb = empty($thumbLink) ? "" : $thumb;
 
-                    echo '<td class="image thumb on">'.$thumb.'</td>';
-                    echo '<td class="image link">'.$fullLink.'</td>';
+                    array_push($thumbNailElements, '<td class="image thumb on">'.$thumb.'</td>');
+                    array_push($urlElements, '<td class="ex link">'.$fullLink.'</td>');
                 }
             }
+
+            // print extra column
+            echo '<td class="ex shopsku">'.$shopsku.'</td>';
+            echo '<td class="ex url">'.$url.'</td>';
+            foreach ($urlElements as $e) {
+                echo $e;
+            }
+
+            // print thumbnails
+            foreach ($thumbNailElements as $e) {
+                echo $e;
+            }
+
 
             echo '</tr>';
             if(!$showChilden) {
