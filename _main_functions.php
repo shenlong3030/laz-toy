@@ -246,15 +246,23 @@ function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_p
     return $products;
 }
 
-function getProduct($accessToken, $sku){
-    $skulist = array($sku);
-    $list = getProducts($accessToken, '', 'all', $skulist);
-    
-    if(count($list) == 1) {
-        return $list[0];
+function getProduct($accessToken, $sku, $item_id=null){
+    $c = getClient();
+    $request = new LazopRequest('/product/item/get','GET');
+
+    if($item_id) {
+        $request->addApiParam('item_id', (string)$item_id);
     } else {
-        return null;
+        $request->addApiParam('seller_sku', (string)$sku);
+    }   
+
+    $response = json_decode($c->execute($request, $accessToken), true);
+
+    $product = null;
+    if($response["code"] == "0") {
+        $product = $response["data"];
     }
+    return $product;
 }
 
 // use dictionary to rearrange, key is $product['item_id']
