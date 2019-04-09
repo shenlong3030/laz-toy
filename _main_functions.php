@@ -287,6 +287,7 @@ function printProducts($products, $showChilden=TRUE) {
         //var_dump($product);
         $attrs = $product['attributes'];
         $name = $attrs['name'];
+        $item_id = $product['item_id'];
 
         foreach($product['skus'] as $index=>$sku) {
             $price1 = $sku['price'];
@@ -353,6 +354,7 @@ function printProducts($products, $showChilden=TRUE) {
             }
 
             // print extra column
+            echo '<td class="ex item_id">'.$item_id.'</td>';
             echo '<td class="ex shopsku">'.$shopsku.'</td>';
             echo '<td class="ex url">'.$url.'</td>';
             foreach ($urlElements as $e) {

@@ -89,10 +89,8 @@ $filterQty = val($_GET['filterQty'], "");
     <input id="offset" type="hidden" name="offset" value="<?php echo $offset; ?>">
     <input id="limit" type="hidden" name="limit" value="<?php echo $limit; ?>">
     
-    <input id="cbshowthumbnail" type="checkbox" name="showthumbnail" value="1" checked="checked"> I Show thumbnail
-    <input id="cbshowshopsku" type="checkbox" name="showshopsku" value="1" checked="1>Show shopsku
-    <input id="cbshowall" type="checkbox" name="showall" value="1" checked="1">Show all
-    <input id="cbfulledit" type="checkbox" name="fulledit" value="1">Edit mode
+    <input id="cbshowextracol" type="checkbox" name="cbshowextracol" value="1">Show extra columns
+    <input id="cbfulledit" type="checkbox" name="cbfulledit" value="1">Edit mode
 
     <br>Filter 
     <input type="text" id="filterName" name="filterName" placeholder="Name contain" value="<?php echo $filterName; ?>">
@@ -112,23 +110,24 @@ $filterQty = val($_GET['filterQty'], "");
 <?php
 echo '<table id="myTable" class="tablesorter" border="1" style="width:110%">';
 echo '<thead><tr>';
-    echo '<th class="sku on">&#x25BC SKU</th>'; // display:visible
-    echo '<th class="sku">&#x25BC SHOPSKU</th>';    // SHOPSKU display:none
-    
+    echo '<th class="sku on">&#x25BC SKU</th>';
+
     echo '<th>&#x25BC QUANTITY</th>';
-    echo '<th>&#x25BC QUANTITY</th>';
+    echo '<th></th>';  //quantity form
     
     echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
-    echo '<th class="name"></th>'; // name form, display:none
+    echo '<th class="name"></th>';  // name form
 
-    echo '<th class="color"></th>';
+    echo '<th class="color">&#x25BC VARIANT</th>'; // variant
 
-    echo '<th class="price"></th>'; // price form, display:none
-    echo '<th>&#x25BC</th>';
-    echo '<th>&#x25BC</th>';
+    echo '<th class="price on">&#x25BCPRICE</th>'; // price form, display:none
+    echo '<th class="price on">&#x25BCSALE PRICE</th>'; // price form, display:none
+    echo '<th>&#x25BC</th>';  // price form, display:none
     
     echo '<th>&#x25BC</th>';
-    echo '<th>&#x25BC</th>';
+    echo '<th class="ex item_id">item_id</th>';
+    echo '<th class="ex shop_sku">shop_sku</th>';
+    echo '<th class="ex link">link</th>';
 echo '</tr></thead>';
 echo '<tbody>';
 
@@ -186,23 +185,18 @@ $(function(){
   $('#myTable').tablesorter();
   //$("#myTable").tablesorter( {sortList: [[0,0]]} );
 
-  $('#cbshowshopsku').change(function(){
-    $('.sku').toggleClass('on');
-  });
+  // EDIT MODE
   $('#cbfulledit').change(function(){
     $('.price').toggleClass('on');
     $('.name').toggleClass('on');
   });
-  $('#cbshowthumbnail').change(function(){
-    $('.image').toggleClass('on');
+
+  // SHOW EXTRA COLUMNs
+  $('#cbshowextracol').change(function(){
+    $('.ex').toggleClass('on');
   });
-  $('#cbshowall').change(function(){
-      // if($('#cbshowthumbnail').is(":checked")) {
-      //     $('.image1.thumb').toggleClass('on');
-      // } else {
-      //     $('.image1.link').toggleClass('on');
-      // }
-  });
+
+  // SHOW SEARCH BY LIST
   $('#cbbyskus').change(function(){
     $('.search').toggleClass('on');
   });
