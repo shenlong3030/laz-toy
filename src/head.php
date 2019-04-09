@@ -5,6 +5,7 @@
 
 <!-- bxSlider Javascript file -->
 <script src="./js/controls.js?v1.3"></script>
+<script src="./js/helper.js"></script>
 <script src="./js/auth.js"></script>
 <script src="./js/jquery.tablesorter.min.js"></script>
 

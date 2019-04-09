@@ -106,7 +106,7 @@ $filterQty = val($_GET['filterQty'], "");
   </div>
 
   <div class="mainContent">
-
+    <button id="copy-sku-btn">Copy SKU to Clipboard</button>
 <?php
 echo '<table id="myTable" class="tablesorter" border="1" style="width:110%">';
 echo '<thead><tr>';
@@ -171,6 +171,15 @@ function search() {
 }
 
 $(function(){
+  $('#copy-sku-btn').click(function (e) {
+      var text = "";
+      $("#myTable").find("td.sku").each(function(){
+          text = text + $(this).text() + "\n";
+      });
+      console.log("copy text : " + text );
+      copyToClipBoard(text);
+  });
+
   $('#q').keypress(function (e) {
     if (e.which == 13) {
       search();

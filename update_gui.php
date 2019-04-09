@@ -123,7 +123,8 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 <hr>
 <?php if($sibling) { ?>
     <h2>Danh sách các SP cùng nhóm này</h2>
-    <table border="1">
+    <button id="copy-sku-btn">Copy SKUs to Clipboard</button>
+    <table id="siblingTable" border="1">
         <tbody>
             <?php echo printProducts(array($sibling));?>
         </tbody>
@@ -251,6 +252,16 @@ if($sku && !empty($images)) {
 ?>
 
 <script type="text/javascript">
+    $(function(){
+        $('#copy-sku-btn').click(function (e) {
+          var text = "";
+          $("#siblingTable").find("td.sku").each(function(){
+              text = text + $(this).text() + "\n";
+          });
+          console.log("copy text : " + text );
+          copyToClipBoard(text);
+        });
+    });
 </script>
 </div>
 </body>
