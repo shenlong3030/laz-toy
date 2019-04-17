@@ -47,6 +47,7 @@ include_once "check_token.php";
 <a target="_blank" href="/lazop/massclone.php">Mass clone SP</a><br/>
 <a target="_blank" href="/lazop/massclone_shop2shop.php">Mass clone SHOP to SHOP</a><br/>
 <a target="_blank" href="/lazop/create.php">Tạo SP</a><br/>
+<a target="_blank" href="/lazop/create1.php">Tạo SP từ nhiều source</a><br/>
 <a target="_blank" href="/lazop/addchild.php">Tạo SP con</a><br/>
 <a target="_blank" href="/lazop/update_gui.php">Cập nhật SP</a><br/>
 <a target="_blank" href="/lazop/massupdate.php">Mass update</a><br/>

@@ -262,6 +262,7 @@ function getProduct($accessToken, $sku, $item_id=null){
     if($response["code"] == "0") {
         $product = $response["data"];
     }
+
     return $product;
 }
 
@@ -443,14 +444,15 @@ function createProduct($accessToken, $product) {
 
     $res = json_decode($c->execute($request, $accessToken), true);
     $sku = $product['Skus'][0]['SellerSku'];
+    
     if($res["code"] == "0") {
         myecho("success : " . $sku);
+        return 1;
     } else {
         myecho("CREATE FAILED: " . $sku);
         var_dump($res);
+        return 0;
     }
-    
-    return $res;
 }
 
 function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboimages, $prices, $preview = 1) {
@@ -546,24 +548,6 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                     }
                 }   
 
-                // // set images
-                // $cbimage = val($comboimages[$combo]);
-
-                // $product['Skus'][0]['Images'] = array();
-                // if(isset($data["images"][$index]) && strlen($data["images"][$index]) > 10) {
-                //     $imagesStr = $data["images"][$index];
-                //     $product = setImagesForProduct($product, $imagesStr, $savedimages);
-                // } else {
-                //     $product['Skus'][0]['Images'] = $backupimages;
-                // }
-                
-                // if(!empty($cbimage)) {
-                //     $product = setImagesForProduct($product, $cbimage, $savedimages);
-                // }
-                
-                //echo "<br>", $combo, " @ ", $cbimage, " @ ", $product['Skus'][0]['Images'][0];
-                //echo "<br>",$product['Attributes']["name"]," : ",$newSku, " : ", $product['Skus'][0]['price'], " : ", $product['Skus'][0]['special_price'], " : ", $product['Skus'][0]['quantity'], " : ", $product['Skus'][0]['Images'][0];
-            
                 if(!$preview) {
                     createProduct($accessToken, $product);
                     usleep(300000);
@@ -583,6 +567,110 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
         myecho("Wrong SKU", __FUNCTION__);
     }
 }
+
+function createProductsFromManySource($accessToken, $data, $preview = 1){
+    $sourceskus = $data["sourceskus"];
+
+    $time = substr(time(), -4);
+    $created = array();
+    $associatedskus = array();
+    $cache = array();
+    $sourceCache = array();
+    $product;
+    foreach($data["names"] as $index => $name) {
+        $group = isset($data["groups"][$index]) ? "A".trim($data["groups"][$index]) : 0;
+        $sourceSku = isset($data["sourceskus"][$index]) ? trim($data["sourceskus"][$index]) : 0;
+        $skuprefix = isset($data["skuprefixs"][$index]) ? trim($data["skuprefixs"][$index]) : 0;
+        $model = isset($data["models"][$index]) ? trim($data["models"][$index]) : 0;
+        $variation = isset($data["variations"][$index]) ? trim($data["variations"][$index]) : 0;
+        $price = isset($data["prices"][$index]) ? $data["prices"][$index] : 0;
+        $qty = isset($data["qtys"][$index]) ? $data["qtys"][$index] : 0;
+        $image = isset($data["images"][$index]) ? $data["images"][$index] : 0;
+
+        if($sourceSku) {
+            if(isset($sourceCache[$sourceSku])) {
+                $product = $sourceCache[$sourceSku];
+            } else {
+                $product = getProduct($accessToken, $sourceSku);
+            }
+
+            if($product) {
+                // cache
+                $sourceCache[$sourceSku] = $product;
+
+                $product = prepareProductForCreating($product);
+                $backupimages = $product['Skus'][0]['Images'];
+
+                $product['Attributes']["name"] = $name;
+
+                // generate new SKU
+                if(substr($skuprefix, -2) != "__") {
+                    $skuprefix .= "__";
+                }
+                $newSku = $skuprefix . vn_urlencode($model) . "__";
+                if($variation) {
+                    $newSku .= vn_urlencode($variation) . ".";
+                }
+                $newSku .= $time;
+                $newSku = make_short_sku($newSku);
+                $product = setProductSku($product, $newSku);
+
+                // set variation
+                if($variation) {
+                    $product = setProductColor($product, $variation);
+                    $product = setProductModel($product, $variation);
+                }
+
+                // set price
+                if($price) {
+                    $product = setPriceForProduct($product, $price);
+                }
+                
+                // set quantity
+                if($qty) {
+                    $product = setQtyForProduct($product, $qty);
+                }
+
+                // set associated sku
+                if($group) {
+                    if(!isset($associatedskus[$group])) {
+                        $associatedskus[$group] = $newSku;
+                    }
+                    $product['AssociatedSku'] = $associatedskus[$group];
+                }
+
+                // set images
+                $resetimages = $data["resetimages"];
+                if(strlen($image) > 20) {
+                    // migrate images
+                    $images = migrateImages($accessToken, $image, $cache);
+                    $product = setProductImages($product, $images, $resetimages);       
+                } else {
+                    $product = setProductImages($product, $backupimages, TRUE);   
+                }
+
+                if(!$preview) {
+                    createProduct($accessToken, $product);
+                    usleep(300000);
+                }
+                
+                // store to print
+                $created["sku"][] = $product['Skus'][0]['SellerSku'];
+                $created["name"][] = $product['Attributes']["name"];
+                $created["imgs"][] = $product['Skus'][0]['Images'];
+            } else {
+                myecho("SOURCE SKU NOT FOUND: " . $sourceSku);
+            }
+        } else {
+            myecho("SOURCE SKU NOT SET");
+        }   
+    }
+    echo "<h2>REVIEW CREATED PRODUCTS</h2>";
+    foreach($created["sku"] as $index => $sku) {
+        echo "<br>", $created["name"][$index], " # ", $sku, htmlLinkImages($created["imgs"][$index]);
+    }
+}
+
 
 //###################################################################
 // Update images/prices/quantity
