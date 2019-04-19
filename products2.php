@@ -118,7 +118,7 @@ echo '<thead><tr>';
     echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
     echo '<th class="name"></th>';  // name form
 
-    echo '<th class="color">&#x25BC VARIANT</th>'; // variant
+    echo '<th class="color">&#x25BC VARIATION</th>'; // variant
 
     echo '<th class="price on">&#x25BCPRICE</th>'; // price form, display:none
     echo '<th class="price on">&#x25BCSALE PRICE</th>'; // price form, display:none
