@@ -1077,6 +1077,103 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
     }
 }
 
+function massAddChildProduct($accessToken, $data, $preview = 1) {
+    $time = substr(time(), -4);
+    $created = array();
+    $cache = array();
+    $parentCache = array();
+    $product;
+    foreach($data["names"] as $index => $name) {
+        $parentSku = isset($data["parentskus"][$index]) ? trim($data["parentskus"][$index]) : 0;
+        $skuprefix = isset($data["skuprefixs"][$index]) ? trim($data["skuprefixs"][$index]) : 0;
+        $model = isset($data["models"][$index]) ? trim($data["models"][$index]) : 0;
+        $variation = isset($data["variations"][$index]) ? trim($data["variations"][$index]) : 0;
+        $price = isset($data["prices"][$index]) ? $data["prices"][$index] : 0;
+        $qty = isset($data["qtys"][$index]) ? $data["qtys"][$index] : 0;
+        $image = isset($data["images"][$index]) ? $data["images"][$index] : 0;
+
+        if($parentSku) {
+            if(isset($parentCache[$parentSku])) {
+                $product = $parentCache[$parentSku];
+            } else {
+                $product = getProduct($accessToken, $parentSku);
+            }
+
+            if($product) {
+                // cache
+                $parentCache[$parentSku] = $product;
+
+                $product = prepareProductForCreating($product);
+                $backupimages = $product['Skus'][0]['Images'];
+
+                $product['Attributes']["name"] = $name;
+
+                // generate new SKU
+                if(substr($skuprefix, -2) != "__") {
+                    $skuprefix .= "__";
+                }
+                $newSku = $skuprefix;
+                if($model) {
+                    $newSku .= vn_urlencode($model) . "__";
+                }
+                if($variation) {
+                    $newSku .= vn_urlencode($variation) . ".";
+                }
+                $newSku .= $time;
+                $newSku = make_short_sku($newSku);
+                $product = setProductSku($product, $newSku);
+
+                // set variation
+                if($variation) {
+                    $product = setProductColor($product, $variation);
+                    $product = setProductModel($product, $variation);
+                }
+
+                // set price
+                if($price) {
+                    $product = setPriceForProduct($product, $price);
+                }
+                
+                // set quantity
+                if($qty) {
+                    $product = setQtyForProduct($product, $qty);
+                }
+
+                // set associated sku ( =parent SKU )
+                $product['AssociatedSku'] = $parentSku;
+
+                // set images
+                $resetimages = $data["resetimages"];
+                if(strlen($image) > 20) {
+                    // migrate images
+                    $images = migrateImages($accessToken, $image, $cache);
+                    $product = setProductImages($product, $images, $resetimages);       
+                } else {
+                    $product = setProductImages($product, $backupimages, TRUE);   
+                }
+
+                if(!$preview) {
+                    createProduct($accessToken, $product);
+                    usleep(300000);
+                }
+                
+                // store to print
+                $created["sku"][] = $product['Skus'][0]['SellerSku'];
+                $created["name"][] = $product['Attributes']["name"];
+                $created["imgs"][] = $product['Skus'][0]['Images'];
+            } else {
+                myecho("SOURCE SKU NOT FOUND: " . $parentSku);
+            }
+        } else {
+            myecho("PARENT SKU NOT SET");
+        }   
+    }
+    echo "<h2>REVIEW CREATED PRODUCTS</h2>";
+    foreach($created["sku"] as $index => $sku) {
+        echo "<br>", $created["name"][$index], " # ", $sku, htmlLinkImages($created["imgs"][$index]);
+    }
+}
+
 function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
     $srcSkus = pre_process_skus($srcSkus);
     $newSkus = pre_process_skus($newSkus);
