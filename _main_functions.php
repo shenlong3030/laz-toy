@@ -607,7 +607,10 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
                 if(substr($skuprefix, -2) != "__") {
                     $skuprefix .= "__";
                 }
-                $newSku = $skuprefix . vn_urlencode($model) . "__";
+                $newSku = $skuprefix;
+                if($model) {
+                    $newSku .= vn_urlencode($model) . "__";
+                }
                 if($variation) {
                     $newSku .= vn_urlencode($variation) . ".";
                 }
