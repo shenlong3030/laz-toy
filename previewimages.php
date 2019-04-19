@@ -31,6 +31,12 @@ $input = val($_POST['col'][0]);
 $names = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][1]);
+$descs = array_filter(explode("\n", str_replace("\r", "", $input)));
+
+$input = val($_POST['col'][2]);
+$shortdescs = array_filter(explode("\n", str_replace("\r", "", $input)));
+
+$input = val($_POST['col'][3]);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 ?>
 
@@ -39,11 +45,15 @@ $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 <table>
     <tr>
      <th>Names</th>
+     <th>Decription</th>
+     <th>Short description</th>
      <th>Images</th>
     </tr>
     <tbody>
         <tr>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("\n", $names);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("\n", $descs);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("\n", $shortdescs);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="80"><?php echo implode("\n", $images);?></textarea></td>
         </tr>
     </tbody>
@@ -53,17 +63,35 @@ $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 </form>
 <?php
 
-foreach($names as $i => $name) {
-    if(isset($images[$i])) {
+if(count($names)) {
+    foreach($names as $i => $name) {
+        if(isset($images[$i])) {
+            // split images
+            $list = preg_split("/\s+/", $images[$i]);
+            //var_dump($list);
+
+            echo "<br>";
+            echo "$name", htmlLinkImages($list, 150, 150), "<br>", $shortdescs[$i] , "<br>", $descs[$i];
+            echo "<br>";
+            echo "<hr color='red' size='10'>";
+            echo "<hr color='green' size='10'>";
+            echo "<hr color='blue' size='10'>";
+        }
+    }
+} else {
+    foreach($images as $i => $img) {
         // split images
-        $list = preg_split("/\s+/", $images[$i]);
+        $list = preg_split("/\s+/", $img);
         //var_dump($list);
 
         echo "<br>";
-        echo "$name", htmlLinkImages($list, 150, 150);
+        echo "$name", htmlLinkImages($list, 150, 150), "<br>";
         echo "<br>";
+        echo "<hr color='red' size='10'>";
     }
 }
+
+
 
 ?>
 
