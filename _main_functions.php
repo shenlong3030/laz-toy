@@ -1177,6 +1177,77 @@ function massAddChildProduct($accessToken, $data, $preview = 1) {
     }
 }
 
+function massMoveChild($accessToken, $data, $preview) {
+    $time = substr(time(), -4);
+    $created = array();
+    $cache = array();
+    $parentCache = array();
+    $product;
+    foreach($data["skus"] as $index => $sku) {
+        $product = getProduct($accessToken, $sku);
+        if($product) {
+            $product = prepareProductForCreating($product);
+
+            $parentSku = isset($data["newParentSkus"][$index]) ? trim($data["newParentSkus"][$index]) : 0;
+            if($parentSku) {
+                if(isset($parentCache[$parentSku])) {
+                    $parent = $parentCache[$parentSku];
+                } else {
+                    $parent = getProduct($accessToken, $parentSku);
+                }
+
+                if($parent) {
+                    // cache
+                    $parentCache[$parentSku] = $parent;
+                    // check category of child and parent
+                    // to do ...
+
+                    $product = setProductAssociatedSku($product, $parentSku);
+
+                    // add postfix Mx to newSku
+                    preg_match('/(.+\.M)([1-9][0-9]*)/i', $sku, $matches);
+                    if(count($matches)) {
+                        $newSku = $matches[1].(trim($matches[2])+1);
+                    } else {
+                        $newSku = trim($sku).'.M1';
+                    }
+                    $product = setProductSku($product, $newSku);
+
+                    if(!$preview) {
+                        if(createProduct($accessToken, $product)) {
+                            // store to print
+                            $created["oldsku"][] = $sku;
+                            $created["sku"][] = $product['Skus'][0]['SellerSku'];
+                            $created["name"][] = $product['Attributes']["name"];
+                            $created["imgs"][] = $product['Skus'][0]['Images'];
+                        }
+                        
+                        usleep(300000);
+                    } else {
+                        // store to print
+                        $created["sku"][] = $product['Skus'][0]['SellerSku'];
+                        $created["name"][] = $product['Attributes']["name"];
+                        $created["imgs"][] = $product['Skus'][0]['Images'];
+                    }
+                } else {
+                    myecho("PARENT SKU NOT FOUND: " . $parentSku);
+                }
+            } else {
+                myecho("PARENT SKU NOT SET");
+            }
+        } else {
+            myecho("SKU NOT FOUND: " . $sku);
+        }
+    }
+    echo "<h2>REVIEW CREATED PRODUCTS</h2>";
+    foreach($created["sku"] as $index => $sku) {
+        echo "<br>", $created["name"][$index], " # ", $sku, htmlLinkImages($created["imgs"][$index]);
+    }
+    if(count($created["oldsku"])) {
+        delProducts($accessToken, $created["oldsku"]);
+    }
+}
+
 function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
     $srcSkus = pre_process_skus($srcSkus);
     $newSkus = pre_process_skus($newSkus);

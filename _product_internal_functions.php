@@ -37,6 +37,9 @@ function prepareProductForCreating($product) {
     // clear all images before creating
     //$product['Skus'][0]['Images'] = array();
     
+    // keep skus[0], remove all others
+    $product['Skus'] = array_splice($product['Skus'], 0, 1);
+
     // force active product
     $product['Skus'][0]['Status'] = "active";
 
