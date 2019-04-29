@@ -33,13 +33,13 @@ $input = $_POST['col'][0];
 $parentskus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = $_POST['col'][1];
-$skuprefixs = array_filter(explode("\n", str_replace("\r", "", $input)));
+$sourceskus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = $_POST['col'][2];
-$names = array_filter(explode("\n", str_replace("\r", "", $input)));
+$skuprefixs = array_filter(explode("\n", str_replace("\r", "", $input)));
 
-// $input = val($_POST['col'][3]);
-// $groups = array_filter(explode("\n", str_replace("\r", "", $input)));
+$input = $_POST['col'][3];
+$names = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][4], "");
 $models = array_filter(explode("\n", str_replace("\r", "", $input)));
@@ -69,8 +69,8 @@ $resetimages = val($_POST['resetimages'], 1);
     <tbody>
         <tr>
             <td>Parent SKU</td>
+            <td>Source SKU</td>
             <td>SKU prefix</td>
-
             <td>Name</td>
             <td>Model</td>
             <td>Variation</td>
@@ -80,12 +80,9 @@ $resetimages = val($_POST['resetimages'], 1);
         </tr>
         <tr>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="20"><?php echo implode("\n", $parentskus);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="20"><?php echo implode("\n", $sourceskus);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="20"><?php echo implode("\n", $skuprefixs);?></textarea></td>
-
             <td><textarea class="nowrap" name="col[]" rows="20" cols="60"><?php echo implode("\n", $names);?></textarea></td>
-
-            <td style="display: none"><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("\n", $groups);?></textarea></td>
-
             <td><textarea class="nowrap" name="col[]" rows="20" cols="20"><?php echo implode("\n", $models);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $variations);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("\n", $qtys);?></textarea></td>
@@ -107,6 +104,7 @@ if(empty($parentskus) || empty($skuprefixs)) {
 
 $data = array(
     "parentskus" => $parentskus,
+    "sourceskus" => $sourceskus,
     "skuprefixs" => $skuprefixs,
     "names" => $names,
     "groups" => $groups,
