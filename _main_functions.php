@@ -1222,7 +1222,7 @@ function massMoveChild($accessToken, $data, $preview) {
                     $product = setProductAssociatedSku($product, $parentSku);
 
                     // add postfix Mx to newSku
-                    preg_match('/(.+\.M)([1-9][0-9]*)/i', $sku, $matches);
+                    preg_match('/(.+\.M)(\d+)$/i', $sku, $matches);
                     if(count($matches)) {
                         $newSku = $matches[1].(trim($matches[2])+1);
                     } else {
