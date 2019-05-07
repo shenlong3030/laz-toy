@@ -108,28 +108,6 @@ $filterQty = val($_GET['filterQty'], "");
   <div class="mainContent">
     <button id="copy-sku-btn">Copy SKU to Clipboard</button>
 <?php
-echo '<table id="myTable" class="tablesorter" border="1" style="width:110%">';
-echo '<thead><tr>';
-    echo '<th class="sku on">&#x25BC SKU</th>';
-
-    echo '<th>&#x25BC QUANTITY</th>';
-    echo '<th></th>';  //quantity form
-    
-    echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
-    echo '<th class="name"></th>';  // name form
-
-    echo '<th class="color">&#x25BC VARIATION</th>'; // variant
-
-    echo '<th class="price on">&#x25BCPRICE</th>'; // price form, display:none
-    echo '<th class="price on">&#x25BCSALE PRICE</th>'; // price form, display:none
-    echo '<th>&#x25BC</th>';  // price form, display:none
-    
-    echo '<th>&#x25BC</th>';
-    echo '<th class="ex item_id">item_id</th>';
-    echo '<th class="ex shop_sku">shop_sku</th>';
-    echo '<th class="ex link">link</th>';
-echo '</tr></thead>';
-echo '<tbody>';
 
 $list = null;
 $total = 0;
@@ -157,8 +135,6 @@ if(count($list)) {
     printProducts($list);
 }
 
-echo '</tbody>';
-echo '</table><br><hr>';
 ?>
 
 <!––document of tablesorter, see http://tablesorter.com/docs/-->
@@ -173,7 +149,7 @@ function search() {
 $(function(){
   $('#copy-sku-btn').click(function (e) {
       var text = "";
-      $("#myTable").find("td.sku").each(function(){
+      $("#tableProducts").find("td.sku").each(function(){
           text = text + $(this).text() + "\n";
       });
       console.log("copy text : " + text );
@@ -191,8 +167,8 @@ $(function(){
   });
 
   // sort column 0
-  $('#myTable').tablesorter();
-  //$("#myTable").tablesorter( {sortList: [[0,0]]} );
+  $('#tableProducts').tablesorter();
+  //$("#tableProducts").tablesorter( {sortList: [[0,0]]} );
 
   // EDIT MODE
   $('#cbfulledit').change(function(){

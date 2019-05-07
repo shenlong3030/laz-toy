@@ -299,6 +299,30 @@ function reArrangeProducts($products) {
 }
 
 function printProducts($products, $showChilden=TRUE) {
+    echo '<table id="tableProducts" class="tablesorter" border="1" style="width:110%">';
+    echo '<thead><tr>';
+    echo '<th class="sku on">&#x25BC SKU</th>';
+
+    echo '<th>&#x25BC QUANTITY</th>';
+    echo '<th></th>';  //quantity form
+
+    echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
+    echo '<th class="name"></th>';  // name form
+
+    echo '<th class="color">&#x25BC VARIATION</th>'; // variant
+
+    echo '<th class="price on">&#x25BCPRICE</th>'; // price form, display:none
+    echo '<th class="price on">&#x25BCSALE PRICE</th>'; // price form, display:none
+    echo '<th>&#x25BC</th>';  // price form, display:none
+
+    echo '<th>&#x25BC</th>';
+    echo '<th class="ex item_id">item_id</th>';
+    echo '<th class="ex shop_sku">shop_sku</th>';
+    echo '<th class="ex primary_category">primary_category</th>';
+    echo '<th class="ex link">link</th>';
+    echo '</tr></thead>';
+
+    echo '<tbody>';
     foreach($products as $product) {
         $GLOBALS['count'] += 1;
         
@@ -306,6 +330,7 @@ function printProducts($products, $showChilden=TRUE) {
         $attrs = $product['attributes'];
         $name = $attrs['name'];
         $item_id = $product['item_id'];
+        $primary_category = $product['primary_category'];
 
         foreach($product['skus'] as $index=>$sku) {
             $price1 = $sku['price'];
@@ -374,6 +399,7 @@ function printProducts($products, $showChilden=TRUE) {
             // print extra column
             echo '<td class="ex item_id">'.$item_id.'</td>';
             echo '<td class="ex shopsku">'.$shopsku.'</td>';
+            echo '<td class="ex primary_category">'.$primary_category.'</td>';
             echo '<td class="ex url">'.$url.'</td>';
             foreach ($urlElements as $e) {
                 echo $e;
@@ -391,6 +417,9 @@ function printProducts($products, $showChilden=TRUE) {
             }
         }
     }
+
+    echo '</tbody>';
+    echo '</table><br>';
 }
 
 // function printProductsWithFilter($products, $filter) { 
