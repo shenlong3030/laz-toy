@@ -21,12 +21,29 @@ function getRequest($path, $method = 'POST') {
 }
 
 //####################################################################
+// Get seller info
+//####################################################################
+
+function getSellerInfo($accessToken) {
+    $c = getClient();
+    $request = getRequest('/seller/get','GET');
+    $response = $c->execute($request, $accessToken);
+    $response = json_decode($response, true);
+
+    $info = array();
+    if($response["code"] == "0") {
+        $info = $response['data'];
+    }
+    return $info;
+}
+
+//####################################################################
 // Get orders region
 //####################################################################
 
 function getOrderLinkPostfix(){
     $postfix = '/15605';
-    if($GLOBALS['shopid'] == '01') {
+    if(isset($GLOBALS['info']['name']) && $GLOBALS['info']['name'] == 'SHSHOP 01') {
         $postfix = '/100021640';
     }
     return $postfix;

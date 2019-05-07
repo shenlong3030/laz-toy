@@ -36,9 +36,6 @@ if(!$accessToken) {
         $accessToken = $response['access_token'];
         $expire = $response['expires_in'];
         setcookie("access_token",$accessToken,time()+$expire);
-
-        $account = $response['account'];
-        setcookie("account",$account,time()+$expire);
         
         $refreshToken = $response['refresh_token'];
         $refreshExpire = $response['refresh_expires_in'];
