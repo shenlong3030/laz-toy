@@ -56,15 +56,17 @@ function filterName(val) {
 
 window.addEventListener('load', function(){
 	// Everything has loaded!
-  	console.log('Everything has loaded!');
+  	console.log('Everything has loaded! Start SHEN filter');
     var fName = $("#filterName").val().trim();
     var fQty = $("#filterQty").val().trim();
 
     if(fName.length) {
-        filterName(fName);
+        //auto filter Name after submit
+        //filterName(fName);
     }
     if(fQty.length) {
-        filterQuantityLessThan(fQty, 2);
+        //auto filter Qty after submit
+        //filterQuantityLessThan(fQty, 2);
     }
 
     $("#filterName").keyup(function(e){
