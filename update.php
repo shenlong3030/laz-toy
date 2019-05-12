@@ -70,14 +70,13 @@ if($accessToken && $sku) {
             $product = setProductImages($product, $images, TRUE);   
         } elseif (is_numeric($qty)){
             //echo "i2";
-            $response = updateQuantity($accessToken, $sku, $qty);
+            $response = updateQuantityWithAPI($accessToken, $sku, $qty);
         } elseif ($price || $sale_price) {
             //echo "i3";
-            $response = updatePrices($accessToken, $sku, $price, $sale_price);
+            $response = updatePricesWithAPI($accessToken, $sku, $price, $sale_price);
         } elseif($category) {
             //echo "i4";
-            // old source
-            $response = setPrimaryCategory($accessToken, $sku, $category);
+            $product = setProductCategory($product, $category);
         } elseif($name) {
             //echo "i5";
             $product = setProductName($product, $name);
@@ -86,7 +85,7 @@ if($accessToken && $sku) {
             $product = setProductColor($product, $color_family);
         } elseif($compatibility_by_model) {
             //echo "i7";
-            $product = setModelForProduct($product, $compatibility_by_model);
+            $product = setProductModel($product, $compatibility_by_model);
         } elseif($shortdesc) {
             //echo "i8";
             $product = setProductShortDescription($product, $shortdesc);
@@ -104,13 +103,9 @@ if($accessToken && $sku) {
             $product = setProductVideo($product, $video);
         }
 
-        
-
         if(!$response) {
             $response = saveProduct($accessToken, $product);
         }
-        
-        //var_dump($response);
         
     } else {
         echo "<br>INVALID SKU<br>";

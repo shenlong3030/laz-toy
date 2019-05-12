@@ -34,15 +34,18 @@ $input = val($_POST['col'][1]);
 $names = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][2]);
-$colors = array_filter(explode("\n", str_replace("\r", "", $input)));
+$models = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][3]);
-$prices = array_filter(explode("\n", str_replace("\r", "", $input)), 'is_numeric');
+$colors = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][4]);
-$qty = array_filter(explode("\n", str_replace("\r", "", $input)), 'is_numeric');
+$prices = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][5]);
+$qty = array_filter(explode("\n", str_replace("\r", "", $input)));
+
+$input = val($_POST['col'][6]);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 $imageindex = val($_POST['imageindex'], 1);
 
@@ -55,6 +58,7 @@ $preview = val($_POST['preview']);
     <tr>
      <th>SKUs</th>
      <th>Names</th>
+     <th>Models</th>
      <th>Colors</th>
      <th>Prices</th>
      <th>Quantity</th>
@@ -64,6 +68,7 @@ $preview = val($_POST['preview']);
         <tr>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("\n", $skus);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="50"><?php echo implode("\n", $names);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $models);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $colors);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $prices);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $qty);?></textarea></td>
@@ -80,6 +85,7 @@ $preview = val($_POST['preview']);
 
 $data = array(
     "names" => $names,
+    "models" => $models,
     "colors" => $colors,
     "prices" => $prices,
     "images" => $images,

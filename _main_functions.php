@@ -725,7 +725,7 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
 // Update images/prices/quantity
 //###################################################################
 
-function updateQuantity($accessToken, $sku, $qty) {
+function updateQuantityWithAPI($accessToken, $sku, $qty) {
     $qtyPayload = '<Quantity>'.$qty.'</Quantity>';
     $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Product><Skus><Sku><SellerSku>'.$sku.'</SellerSku>'.$qtyPayload.'</Sku></Skus></Product></Request>';
     
@@ -739,7 +739,7 @@ function updateQuantity($accessToken, $sku, $qty) {
     return $response;
 }
 
-function updatePrices($accessToken, $sku, $price, $sale_price, $fromdate = "2018-01-01", $todate = "2028-01-01") {
+function updatePricesWithAPI($accessToken, $sku, $price, $sale_price, $fromdate = "2018-01-01", $todate = "2028-01-01") {
     $pricePayload = '';
     $salePayload = '';
     
@@ -949,22 +949,28 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
             if(isset($data["prices"][$index])) {
                 // setPriceForProduct
                 $value = $data["prices"][$index];
-                $product = setPriceForProduct($product, $value);
+                $product = setProductPrice($product, $value);
+            }
+
+            if(isset($data["models"][$index])) {
+                // setPriceForProduct
+                $value = $data["models"][$index];
+                $product = setProductModel($product, $value);
             }
             
             if(isset($data["colors"][$index])) {
                 // setPriceForProduct
                 $value = $data["colors"][$index];
-                $product = setColorForProduct($product, $value);
+                $product = setProductColor($product, $value);
             }
 
             if(isset($data["qty"][$index])) {
                 // setPriceForProduct
                 $value = $data["qty"][$index];
-                $product = setQtyForProduct($product, $value);
+                $product = setProductQuantity($product, $value);
             }
 
-            //myvar_dump($product['Attributes']['color_family']);
+            //myvar_dump($product);
             
             if(isset($data["images"][$index])) {
                 $imageindex = isset($data["imageindex"]) ? $data["imageindex"] - 1 : 0;

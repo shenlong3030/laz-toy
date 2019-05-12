@@ -53,6 +53,10 @@ function prepareProductForCreating($product) {
 
 function setProductCategory($product, $category) {
     $product['PrimaryCategory'] = $category;
+
+    $product = setProductColor($product, "...");
+    $product = setProductModel($product, "...");
+
     return $product;
 }
 
