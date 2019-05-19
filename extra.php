@@ -62,6 +62,8 @@ include_once "check_token.php";
 <a target="_blank" href="/lazop/previewimages.php">Preview images</a><br/>
 <a target="_blank" href="/lazop/previewproducts.php">Preview products</a><br/>
 <hr>
+<a target="_blank" href="/lazop/laz_getstar.php">Get star LAZADA</a><br/>
+
 <a onclick="showToken()" href="#">Show token</a><br/>
 <a onclick="logout()" href="#">Logout</a><br/>
 </body>
