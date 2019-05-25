@@ -126,7 +126,7 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <button id="copy-sku-btn">Copy SKUs to Clipboard</button>
     <table id="siblingTable" border="1">
         <tbody>
-            <?php echo printProducts(array($sibling));?>
+            <?php echo printProducts(array($sibling), TRUE, $sku);?>
         </tbody>
     </table>
 <?php } ?>

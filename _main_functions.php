@@ -298,7 +298,7 @@ function reArrangeProducts($products) {
     return $newProducts;
 }
 
-function printProducts($products, $showChilden=TRUE) {
+function printProducts($products, $showChilden=TRUE, $selectedSku=null) {
     echo '<table id="tableProducts" class="tablesorter" border="1" style="width:110%">';
     echo '<thead><tr>';
     echo '<th class="sku on">&#x25BC SKU</th>';
@@ -350,6 +350,7 @@ function printProducts($products, $showChilden=TRUE) {
             $isGrouped = (count($product['skus']) > 1);
             $cssclass = $isGrouped ? 'grouped' : '';
             $cssclass .= ($index == 0) ? ' parent' : ' child';
+            $cssclass .= ($selectedSku == $sellersku) ? ' selected' : '';
 
             $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
             $qtyForm = '<form action="update.php" method="POST" name="qtyForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="qty" type="text" size="4" value="'.$qty.'"/><input type="submit" tabindex="-1" value="↵" /></form>';

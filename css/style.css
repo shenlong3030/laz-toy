@@ -25,6 +25,7 @@
 .pagenumber {
 	padding: 5px;
 }
+.selected,
 .padding.disabled,
 .pagenumber.disabled {
   opacity: 0.5;
