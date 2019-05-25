@@ -360,7 +360,12 @@ function printProducts($products, $showChilden=TRUE, $selectedSku=null) {
             $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="50" value="'.$name.'"/><input type="submit" tabindex="-1" value="Submit" /></form>';
             
             echo '<tr class="'. $cssclass .'">';
-            echo '<td class="sku on padding">'. ($isGrouped?"<i class='grouped-icon fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
+            //echo '<td class="sku on padding">'. ($isGrouped?"<i class='grouped-icon fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
+
+            $link = "http://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";
+            $html_link = '<a target="_blank" href="'.$link.'" class="grouped-icon fa fa-code-fork" style="color:red"></a>';
+            echo '<td class="sku on padding">'. ($isGrouped?$html_link:"") .$sellersku.'</td>';
+
             echo '<td>'.$qty.'</td>';
             echo '<td>'.$reservedTxt.$qtyForm.'</td>';
             echo '<td class="name on padding">'.$nameLink.'</td>';

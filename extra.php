@@ -41,8 +41,8 @@ include_once "check_token.php";
 <a target="_blank" href="/lazop/create_voucher.php?">Tạo tên voucher giảm giá</a><br/>
 
 <a target="_blank" href="/lazop/orders.php?needfull=1">Đơn hàng mới</a><br/>
-<a target="_blank" href="/lazop/products.php?status=sold-out">Danh sách sản phẩm</a><br/>
-<a target="_blank" href="/lazop/products2.php?status=all">Danh sách sản phẩm (Paging)</a><br/>
+<a target="_blank" href="/lazop/products.php?status=all">Danh sách sản phẩm (Không hiện SP con)</a><br/>
+<a target="_blank" href="/lazop/products.php?status=all&show_child=1">Danh sách sản phẩm (Hiện SP con)</a><br/>
 <hr> 
 <a target="_blank" href="/lazop/massclone.php">Mass clone SP</a><br/>
 <a target="_blank" href="/lazop/massclone_shop2shop.php">Mass clone SHOP to SHOP</a><br/>
