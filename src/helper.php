@@ -148,7 +148,8 @@ function make_short_sku($sku) {
 
     'MOTOROLA' => 'MOTO',
      
-    'NOKIA'=>'NK'
+    'NOKIA'=>'NK',
+    '\.\.\.'=>''
     );
 
     foreach($dict as $name=>$shortname){
