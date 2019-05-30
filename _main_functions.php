@@ -569,11 +569,11 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                 
                 // set price
                 $price = $prices[$combo];
-                $product = setPriceForProduct($product, $price);
+                $product = setProductPrice($product, $price);
                 
                 // set quantity
                 if(isset($data["qtys"][$index])) {
-                    $product = setQtyForProduct($product, $data["qtys"][$index]);
+                    $product = setProductQuantity($product, $data["qtys"][$index]);
                 }
                 
                 // set associated sku
@@ -589,7 +589,7 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                 $cbimage = val($comboimages[$combo]);
                 $resetimages = $data["resetimages"];
                 if(!empty($cbimage)) {
-                    $product = setImagesForProduct($product, $cbimage, $cache);
+                    // do nothing, already remove cbimage
                 } else {
                     if(isset($data["images"][$index])) {
                         // migrate images
@@ -678,12 +678,12 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
 
                 // set price
                 if($price) {
-                    $product = setPriceForProduct($product, $price);
+                    $product = setProductPrice($product, $price);
                 }
                 
                 // set quantity
                 if($qty) {
-                    $product = setQtyForProduct($product, $qty);
+                    $product = setProductQuantity($product, $qty);
                 }
 
                 // set associated sku
@@ -836,106 +836,6 @@ function setPrimaryCategory($accessToken, $sku, $category) {
     }
 }
 
-// $fromindex : just setImages after this index
-function setImagesForProduct($product, $image, &$savedimages, $fromindex = 0) {
-        $images = $image;
-        
-        // split images
-        if(is_string($image)) {
-            $images = preg_split("/\s+/", $image);
-        }
-
-        $accessToken = $_COOKIE["access_token"];
-        $migratedimgs = migrateImages($accessToken, $images, $savedimages);
-
-        foreach($migratedimgs as $index => $url) {
-            if (is_url($url)) {
-                $product['Skus'][0]['Images'][$index + $fromindex] = $url;
-            } else {
-                //myvar_dump($url);
-                myecho("CAN NOT MIGRATE: " + $images[$index], __FUNCTION__);
-            }
-        }
-        return $product;
-}
-
-function setBrandForProduct($product, $val) {
-        if(!empty($val)) {
-            $product['Attributes']["brand"] = $val;
-        }
-        return $product;
-}
-
-// just input 1 price
-function setPriceForProduct($product, $price) {
-        return setPricesForProduct($product, $price);
-}
-
-// input price and sale price
-function setPricesForProduct($product, $price, $sale_price = 0) {
-        // set price
-        if(is_numeric($price) && is_numeric($sale_price)) {
-            if($sale_price) {
-                $product['Skus'][0]['price'] = $price;
-                $product['Skus'][0]['special_price'] = $sale_price;
-            } else {
-                $product['Skus'][0]['price'] = round($price * 1.3 / 100) * 100;
-                $product['Skus'][0]['special_price'] = $price;
-            }
-            
-            $product['Skus'][0]['special_from_date'] = "2018-01-01";
-            $product['Skus'][0]['special_to_date'] = "2020-12-12";
-        }
-        return $product;
-}
-
-function setQtyForProduct($product, $qty) {
-    $product['Skus'][0]['quantity'] = $qty;
-    return $product;
-}
-
-function setCategoryForProduct($product, $category) {
-    $product['PrimaryCategory'] = $category;
-    return $product;
-}
-
-function setColorForProduct($product, $color) {
-    $product['Skus'][0]['color_family'] = $color;
-    return $product;
-}
-
-function setModelForProduct($product, $model) {
-    $product['Skus'][0]['compatibility_by_model'] = $model;
-    return $product;
-}
-
-function setShortDescriptionForProduct($product, $value) {
-    $product['Attributes']['short_description'] = $value;
-    return $product;
-}
-
-function setDescriptionForProduct($product, $value) {
-    $product['Attributes']['description'] = $value;
-    return $product;
-}
-
-function setPackageWeightForProduct($product, $value) {
-    $product['Skus'][0]['package_weight'] = $value;
-    return $product;
-}
-
-function setPackageSizeForProduct($product, $h, $w, $l) {
-    $product['Skus'][0]['package_height'] = $h;
-    $product['Skus'][0]['package_width'] = $w;
-    $product['Skus'][0]['package_length'] = $l;
-    return $product;
-}
-
-function setPackageContentForProduct($product, $value) {
-    $product['Skus'][0]['package_content'] = $value;
-    return $product;
-}
-
 function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
     $skus = pre_process_skus($skus);
     
@@ -953,25 +853,21 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
             }
             
             if(isset($data["prices"][$index])) {
-                // setPriceForProduct
                 $value = $data["prices"][$index];
                 $product = setProductPrice($product, $value);
             }
 
             if(isset($data["models"][$index])) {
-                // setPriceForProduct
                 $value = $data["models"][$index];
                 $product = setProductModel($product, $value);
             }
             
             if(isset($data["colors"][$index])) {
-                // setPriceForProduct
                 $value = $data["colors"][$index];
                 $product = setProductColor($product, $value);
             }
 
             if(isset($data["qty"][$index])) {
-                // setPriceForProduct
                 $value = $data["qty"][$index];
                 $product = setProductQuantity($product, $value);
             }
@@ -1214,12 +1110,12 @@ function massAddChildProduct($accessToken, $data, $preview = 1) {
 
             // set price
             if($price) {
-                $product = setPriceForProduct($product, $price);
+                $product = setProductPrice($product, $price);
             }
             
             // set quantity
             if($qty) {
-                $product = setQtyForProduct($product, $qty);
+                $product = setProductQuantity($product, $qty);
             }
 
             // set associated sku ( =parent SKU )

@@ -113,27 +113,22 @@ function setProductBrand($product, $val) {
     return $product;
 }
 
-// just input 1 price
-function setProductPrice($product, $price) {
-    return setProductPrices($product, $price);
-}
-
 // input price and sale price
-function setProductPrices($product, $price, $sale_price = 0) {
-        // set price
-        if(is_numeric($price) && is_numeric($sale_price)) {
-            if($sale_price) {
-                $product['Skus'][0]['price'] = $price;
-                $product['Skus'][0]['special_price'] = $sale_price;
-            } else {
-                $product['Skus'][0]['price'] = round($price * 1.3 / 100) * 100;
-                $product['Skus'][0]['special_price'] = $price;
-            }
-            
-            $product['Skus'][0]['special_from_date'] = "2018-01-01";
-            $product['Skus'][0]['special_to_date'] = "2020-12-12";
+function setProductPrice($product, $price, $sale_price = 0) {
+    // set price
+    if(is_numeric($price) && is_numeric($sale_price)) {
+        if($sale_price) {
+            $product['Skus'][0]['price'] = $price;
+            $product['Skus'][0]['special_price'] = $sale_price;
+        } else {
+            $product['Skus'][0]['price'] = round($price * 1.3 / 100) * 100;
+            $product['Skus'][0]['special_price'] = $price;
         }
-        return $product;
+        
+        $product['Skus'][0]['special_from_date'] = "2018-01-01";
+        $product['Skus'][0]['special_to_date'] = "2020-12-12";
+    }
+    return $product;
 }
 
 function setProductQuantity($product, $val) {

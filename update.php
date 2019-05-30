@@ -96,9 +96,9 @@ if($accessToken && $sku) {
             //echo "i9";
             $product = setProductBrand($product, $brand);
         } elseif($weight) {
-            $product = setPackageWeightForProduct($product, $weight);
-            $product = setPackageSizeForProduct($product, $size_h, $size_w, $size_l);
-            $product = setPackageContentForProduct($product, $content);
+            $product = setProductPackageWeight($product, $weight);
+            $product = setProductPackageSize($product, $size_h, $size_w, $size_l);
+            $product = setProductPackageContent($product, $content);
         } elseif($video) {
             $product = setProductVideo($product, $video);
         }
