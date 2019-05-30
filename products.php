@@ -198,6 +198,15 @@ $(function(){
     $('.search').toggleClass('on');
   });
   
+  $('#btn_copy_url').click(function (e) {
+    var text = "";
+    $("table.main").find("td.url").each(function(){
+        text = text + $(this).text() + "\n";
+    });
+    console.log("copy text : " + text );
+    copyToClipBoard(text);
+  });
+
   $('input[type=checkbox][data-toggle=toggle]').change(function() {
       var status;
       if(this.checked) {

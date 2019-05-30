@@ -299,7 +299,7 @@ function reArrangeProducts($products) {
 }
 
 function printProducts($products, $showChilden=TRUE, $selectedSku=null) {
-    echo '<table id="tableProducts" class="tablesorter" border="1" style="width:110%">';
+    echo '<table id="tableProducts" class="main tablesorter" border="1" style="width:110%">';
     echo '<thead><tr>';
     echo '<th class="sku on">&#x25BC SKU</th>';
 
@@ -319,7 +319,7 @@ function printProducts($products, $showChilden=TRUE, $selectedSku=null) {
     echo '<th class="ex item_id">item_id</th>';
     echo '<th class="ex shop_sku">shop_sku</th>';
     echo '<th class="ex primary_category">primary_category</th>';
-    echo '<th class="ex link">link</th>';
+    echo '<th class="ex link">Url<button id="btn_copy_url">Copy</button></th>';
     echo '</tr></thead>';
 
     echo '<tbody>';
