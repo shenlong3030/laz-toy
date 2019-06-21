@@ -71,7 +71,7 @@ if(count($names)) {
             //var_dump($list);
 
             echo "<br>";
-            echo "$name", htmlLinkImages($list, 150, 150), "<br>", $shortdescs[$i] , "<br>", $descs[$i];
+            echo "$name", htmlLinkImages($list, 189, 189), "<br>", $shortdescs[$i] , "<br>", $descs[$i];
             echo "<br>";
             echo "<hr color='red' size='10'>";
             echo "<hr color='green' size='10'>";
@@ -85,7 +85,7 @@ if(count($names)) {
         //var_dump($list);
 
         echo "<br>";
-        echo "$name", htmlLinkImages($list, 150, 150), "<br>";
+        echo "$name", htmlLinkImages($list, 189, 189), "<br>";
         echo "<br>";
         echo "<hr color='red' size='10'>";
     }
