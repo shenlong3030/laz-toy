@@ -2,6 +2,26 @@
 include_once "config.php";
 include_once "lazsdk/LazopSdk.php";
 
+function getSellerInfo($accessToken) {
+    $c = new LazopClient($GLOBALS['apiUrl'],$GLOBALS['appKey'],$GLOBALS['appSecret']);
+    $request = new LazopRequest('/seller/get', 'GET');
+    $response = $c->execute($request, $accessToken);
+    $response = json_decode($response, true);
+
+    $info = array();
+    if($response["code"] == "0") {
+        $info = $response['data'];
+    }
+    return $info;
+}
+
+function isValidInfo($info) {
+    if($info["short_code"] == "VN107AK" || $info["short_code"] == "VN10UTH") {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
 
 $logout = isset($_GET['logout']) ? $_GET['logout'] : null;
 if($logout) {
@@ -16,7 +36,6 @@ if($logout) {
 // setcookie('access_token', '', time() - 3600);
 
 $accessToken = $_COOKIE["access_token"];
-$account = $_COOKIE["account"];
 
 if(!$accessToken) {
     // get code param
@@ -34,6 +53,13 @@ if(!$accessToken) {
     
     if($response['code'] == "0") {
         $accessToken = $response['access_token'];
+
+        $info = getSellerInfo($accessToken);
+        if(!isValidInfo($info)) {
+            echo "INVALID SELLER ID";
+            exit();
+        }
+
         $expire = $response['expires_in'];
         setcookie("access_token",$accessToken,time()+$expire);
         
@@ -46,6 +72,11 @@ if(!$accessToken) {
         exit();
     }
 } else {
+    $info = getSellerInfo($accessToken);
+    if(!isValidInfo($info)) {
+        echo "INVALID SELLER ID";
+        exit();
+    }
 }
 
 ?>
