@@ -10,7 +10,8 @@
     <!-- bxSlider Javascript file -->
     <script src="./js/controls.js"></script>
     <script src="./js/jquery.tablesorter.min.js"></script>
-    
+    <script src="./js/helper.js"></script>
+
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>    
@@ -35,10 +36,13 @@
 
 <hr>
 
-<table id="output_table" border="1">
+<table id="output_table" class="main" border="1">
     <thead>
         <tr>
-            <th>LAZADA URL</th><th>SAO</th><th>DANH GIA</th>
+            <th>LAZADA Name</th>
+            <th>LAZADA URL</th>
+            <th>SAO<button id="copy_sao">Copy</button></th>
+            <th>DANH GIA<button id="copy_dg">Copy</button></th>
         </tr>
     </thead>
     <tbody>
@@ -62,6 +66,10 @@
         });
     }
 
+    const sleep = (milliseconds) => {
+      return new Promise(resolve => setTimeout(resolve, milliseconds))
+    }
+
     // deferred chain pattern, check sample: http://jsfiddle.net/xkhten36/2/
     function getStar(url) {
         var urls = [url];
@@ -69,7 +77,6 @@
         var uri = "<?php echo dirname($_SERVER['REQUEST_URI'])."/laz_getstar_api.php"; ?>";
         var data = {urls : urls};
         var d = $.Deferred();
-
         $.post(uri, data)
         .done(function(res){
             // display json res
@@ -77,12 +84,17 @@
             console.log(res);
             
             res = $.parseJSON(res);
+            var n = res["name"];
             var a = res["url"];
             var b = res["sao"];
             var c = res["dg"];
-            var tr = "<tr><td><a target='_blank' href='" + a + "'>" + a + "</a></td><td>" + b + "</td><td>" + c + "</td></tr>";
+            var tr = "<tr><td>" + n + "</td><td><a target='_blank' href='" + a + "'>" + a + "</a></td><td class='sao'>" + b + "</td><td class='dg'>" + c + "</td></tr>";
             $("#output_table > tbody").append(tr);
-            d.resolve(res);
+
+            var rd = Math.floor((Math.random() * 10) + 1);
+            sleep(rd*100).then(() => {
+              d.resolve(res);
+            })
         });
 
         return d.promise();
@@ -94,6 +106,22 @@
         var urls = str.split(',');
         getStarAll(urls);
     });
+    $('#copy_sao').click(function (e) {
+          var text = "";
+          $("table.main").find("td.sao").each(function(){
+              text = text + $(this).text() + "\n";
+          });
+          console.log("copy text : " + text );
+          copyToClipBoard(text);
+        });
+    $('#copy_dg').click(function (e) {
+          var text = "";
+          $("table.main").find("td.dg").each(function(){
+              text = text + $(this).text() + "\n";
+          });
+          console.log("copy text : " + text );
+          copyToClipBoard(text);
+        });
 </script>
 
 </body>

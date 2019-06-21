@@ -10,8 +10,15 @@ function getLazStar($urls) {
 	$output = array();
 	foreach ($urls as $key => $url) {
 		$output['url'][] = $url;
+
 		if(is_url($url)) {
 			$content = file_get_contents($url);
+
+			preg_match("'<span class=\"pdp-mod-product-badge-title\">(.+?)</span>'si", $content, $matches);
+			if(count($matches)) {
+				$output['name'][] = $matches[1];
+			}
+			
 			preg_match("'<span class=\"score-average\">(.+?)</span>'si", $content, $matches);
 
 			if(count($matches)) {
@@ -37,11 +44,12 @@ function getLazStar($urls) {
 function printLazStar($data) {
 	echo "<table border=1>";
     echo "<thead>";
-    echo "<th>URL</th><th>SAO</th><th>DANH GIA</th>";
+    echo "<th>NAME</th><th>URL</th><th>SAO</th><th>DANH GIA</th>";
     echo "</thead>";
     echo "<tbody>";
     foreach ($data["url"] as $index => $url) {
         echo "<tr>";
+        echo "<td>" . $data["name"][$index] . "</td>";
         echo "<td>$url</td>";
         echo "<td>" . $data["sao"][$index] . "</td>";
         echo "<td>" . $data["dg"][$index] . "</td>";
