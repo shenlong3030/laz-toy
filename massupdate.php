@@ -43,9 +43,6 @@ $input = val($_POST['col'][4]);
 $prices = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][5]);
-$qty = array_filter(explode("\n", str_replace("\r", "", $input)));
-
-$input = val($_POST['col'][6]);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 $imageindex = val($_POST['imageindex'], 1);
 
@@ -61,7 +58,6 @@ $preview = val($_POST['preview']);
      <th>Models</th>
      <th>Colors</th>
      <th>Prices</th>
-     <th>Quantity</th>
      <th>Images >> Start index (1-8) <input size="3" type="text" name="imageindex" value="<?php echo val($imageindex);?>"></th>
     </tr>
     <tbody>
@@ -71,7 +67,6 @@ $preview = val($_POST['preview']);
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $models);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $colors);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $prices);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $qty);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="50"><?php echo implode("\n", $images);?></textarea></td>
         </tr>
     </tbody>

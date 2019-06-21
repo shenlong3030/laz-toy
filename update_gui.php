@@ -255,7 +255,7 @@ if($sku && !empty($images)) {
     $(function(){
         $('#copy-sku-btn').click(function (e) {
           var text = "";
-          $("#siblingTable").find("td.sku").each(function(){
+          $("table.main").find("td.sku").each(function(){
               text = text + $(this).text() + "\n";
           });
           console.log("copy text : " + text );
