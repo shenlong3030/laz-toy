@@ -124,11 +124,7 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 <?php if($sibling) { ?>
     <h2>Danh sách các SP cùng nhóm này</h2>
     <button id="copy-sku-btn">Copy SKUs to Clipboard</button>
-    <table id="siblingTable" border="1">
-        <tbody>
-            <?php echo printProducts(array($sibling), TRUE, $sku);?>
-        </tbody>
-    </table>
+    <?php echo printProducts(array($sibling), TRUE, $sku);?>
 <?php } ?>
 <hr>
     <form action="update.php" method="POST" name="nameForm" target="responseIframe">
@@ -262,6 +258,11 @@ if($sku && !empty($images)) {
           copyToClipBoard(text);
         });
     });
+
+    // document of tablesorter, see http://tablesorter.com/docs/
+    $("#tableProducts").tablesorter();
+    // sort column 0
+    //$("#tableProducts").tablesorter( {sortList: [[0,0]]} );
 </script>
 </div>
 </body>
