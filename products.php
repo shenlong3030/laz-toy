@@ -77,12 +77,12 @@ $show_child = $_GET['show_child'] ? $_GET['show_child'] : 0;
         $linkPendingClass = ($status=="pending")?" disabled":"";
         $linkImageMissingClass = ($status=="image-missing")?" disabled":"";
 
-        echo "<a class='padding $linkAllClass' href='$linkAll'>Tất cả</a>";
-        echo "<a class='padding $linkSoldoutClass' href='$linkSoldout'>Hết hàng</a>";
-        echo "<a class='padding $linkRejectedClass' href='$linkRejected'>Bị từ chối</a>";
-        echo "<a class='padding $linkInactiveClass' href='$linkInactive'>Đang tắt</a>";
-        echo "<a class='padding $linkPendingClass' href='$linkPending'>Đang chờ duyệt</a>";
-        echo "<a class='padding $linkImageMissingClass' href='$linkImageMissing'>Thiếu ảnh</a>";
+        echo "<a tabindex='-1' class='padding $linkAllClass' href='$linkAll'>Tất cả</a>";
+        echo "<a tabindex='-1' class='padding $linkSoldoutClass' href='$linkSoldout'>Hết hàng</a>";
+        echo "<a tabindex='-1' class='padding $linkRejectedClass' href='$linkRejected'>Bị từ chối</a>";
+        echo "<a tabindex='-1' class='padding $linkInactiveClass' href='$linkInactive'>Đang tắt</a>";
+        echo "<a tabindex='-1' class='padding $linkPendingClass' href='$linkPending'>Đang chờ duyệt</a>";
+        echo "<a tabindex='-1' class='padding $linkImageMissingClass' href='$linkImageMissing'>Thiếu ảnh</a>";
       ?> 
     </div>
 
@@ -149,7 +149,6 @@ if($item_id) {
 
 ?>
 
-<!––document of tablesorter, see http://tablesorter.com/docs/-->
 <script type="text/javascript">
 
 function search() {
@@ -178,6 +177,7 @@ $(function(){
       search();
   });
 
+  // document of tablesorter, see http://tablesorter.com/docs/
   // sort column 0
   $('#tableProducts').tablesorter();
   //$("#tableProducts").tablesorter( {sortList: [[0,0]]} );

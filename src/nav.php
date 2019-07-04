@@ -19,7 +19,7 @@ $info = getSellerInfo($token);
 
 
 <div class="nav" style="width: 100%;padding-bottom: 10px;border-bottom: 1px solid lightgrey">
-    <div class="nav logout-link"><a onclick="logout()" href="#">Logout</a><br/></div>
-    <div class="nav token-link"><a onclick="showToken()" href="#">Show token</a></div>
+    <div class="nav logout-link"><a tabindex="-1" onclick="logout()" href="#">Logout</a><br/></div>
+    <div class="nav token-link"><a tabindex="-1" onclick="showToken()" href="#">Show token</a></div>
     <div class="nav account"><?php echo $info["name"], " - ", $info["short_code"] , " ", $GLOBALS["shopid"]?></div>
 </div>
