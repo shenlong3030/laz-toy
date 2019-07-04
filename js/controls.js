@@ -57,31 +57,34 @@ function filterName(val) {
 window.addEventListener('load', function(){
 	// Everything has loaded!
   	console.log('Everything has loaded! Start SHEN filter');
-    var fName = $("#filterName").val().trim();
-    var fQty = $("#filterQty").val().trim();
+    
+    if($("#filterName").length && $("#filterQty").length) {
+        var fName = $("#filterName").val().trim();
+        var fQty = $("#filterQty").val().trim();
 
-    if(fName.length) {
-        //auto filter Name after submit
-        //filterName(fName);
-    }
-    if(fQty.length) {
-        //auto filter Qty after submit
-        //filterQuantityLessThan(fQty, 2);
-    }
-
-    $("#filterName").keyup(function(e){
-        if (e.which == 13) {
-          var inputVal = $("#filterName").val();
-          filterName(inputVal);
-          return false;    //<---- this line is the same as calling e.preventDefault and e.stopPropagation()
+        if(fName.length) {
+            //auto filter Name after submit
+            filterName(fName);
         }
-    });
-
-    $("#filterQty").keyup(function(e){
-        if (e.which == 13) {
-          var inputVal = $("#filterQty").val();
-          filterQuantityLessThan(inputVal, 2);
-          return false;    //<---- this line is the same as calling e.preventDefault and e.stopPropagation()
+        if(fQty.length) {
+            //auto filter Qty after submit
+            filterQuantityLessThan(fQty, 2);
         }
-    });
+
+        $("#filterName").keyup(function(e){
+            if (e.which == 13) {
+              var inputVal = $("#filterName").val();
+              filterName(inputVal);
+              return false;    //<---- this line is the same as calling e.preventDefault and e.stopPropagation()
+            }
+        });
+
+        $("#filterQty").keyup(function(e){
+            if (e.which == 13) {
+              var inputVal = $("#filterQty").val();
+              filterQuantityLessThan(inputVal, 2);
+              return false;    //<---- this line is the same as calling e.preventDefault and e.stopPropagation()
+            }
+        });   
+    }
 })
