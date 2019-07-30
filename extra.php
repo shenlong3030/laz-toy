@@ -51,7 +51,7 @@ include_once "check_token.php";
 <a target="_blank" href="/lazop/addchild.php">Tạo SP con</a><br/>
 <a target="_blank" href="/lazop/addchild1.php">Tạo SP con hàng loạt</a><br/>
 
-<a target="_blank" href="/lazop/addchild1.php">Move child</a><br/>
+<a target="_blank" href="/lazop/movechild.php">Move child</a><br/>
 
 <a target="_blank" href="/lazop/update_gui.php">Cập nhật SP</a><br/>
 <a target="_blank" href="/lazop/massupdate.php">Mass update</a><br/>

@@ -18,7 +18,7 @@ include_once "check_token.php";
 <a target="_blank" href="https://docs.google.com/spreadsheets/d/18DLl1yCn3_dzQxn5nLzlWrGEWd7LOQauWKYhHxIfoqw/edit#gid=0">Kiểm tra đơn hàng trùng / thiếu</href><br/>
 <a target="_blank" href="/lazop/products.php?status=all&show_child=1">Danh sách sản phẩm</href><br/>
 <hr>
-<a target="_blank" href="/lazop/>orders.php?needfull=1&shopid=01">Đơn hàng mới SHSHOP01</href><br/>
+<a target="_blank" href="/lazop/extra.php">Extra toys</href><br/>
 <hr>
 <a onclick="logout()" href="#">Logout</a><br/>
 </body>
