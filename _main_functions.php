@@ -882,6 +882,11 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
                 $product = setProductImages($product, $images, FALSE, $imageindex);
             }
             
+            if(isset($data["actives"][$index])) {
+                $value = $data["qty"][$index];
+                $product = setProductActive($product, $value);
+            }
+
             if(!intval($preview)) {
                 $r = saveProduct($accessToken, $product);
                 usleep(50000);

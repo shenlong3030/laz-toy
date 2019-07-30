@@ -186,4 +186,14 @@ function setProductVideo($product, $value) {
     return $product;
 }
 
+function setProductActive($product, $value) {
+    if(intval($value)) {
+        $product['Skus'][0]['Status'] = "active";
+    } else {
+        $product['Skus'][0]['Status'] = "inactive";
+    }
+    return $product;
+}
+
+
 ?>
