@@ -275,6 +275,10 @@ function getProduct($accessToken, $sku, $item_id=null){
 
     $response = json_decode($c->execute($request, $accessToken), true);
 
+    if($_COOKIE["DEBUG"]) {
+        var_dump($response);
+    }
+
     $product = null;
     if($response["code"] == "0") {
         $product = $response["data"];
