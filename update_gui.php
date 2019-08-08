@@ -124,7 +124,7 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 <?php if($sibling) { ?>
     <h2>Danh sách các SP cùng nhóm này</h2>
     <button id="copy-sku-btn">Copy SKUs to Clipboard</button>
-    <?php echo printProducts(array($sibling), TRUE, $sku);?>
+    <?php echo printProducts(array($sibling), false, $sku);?>
 <?php } ?>
 <hr>
     <form action="update.php" method="POST" name="nameForm" target="responseIframe">

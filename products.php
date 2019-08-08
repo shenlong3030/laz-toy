@@ -51,7 +51,7 @@ $filterName = val($_GET['filterName'], "");
 $filterQty = val($_GET['filterQty'], "");
 
 $item_id = $_GET['item_id'] ? $_GET['item_id'] : '';
-$show_child = $_GET['show_child'] ? $_GET['show_child'] : 0;
+$nochild = $_GET['nochild'] ? $_GET['nochild'] : 0;
 
 ?>
 
@@ -91,7 +91,7 @@ $show_child = $_GET['show_child'] ? $_GET['show_child'] : 0;
     <input type="hidden" name="status" value="<?php echo $_GET['status']; ?>">
     <input id="offset" type="hidden" name="offset" value="<?php echo $offset; ?>">
     <input id="limit" type="hidden" name="limit" value="<?php echo $limit; ?>">
-    <input id="show_child" type="hidden" name="show_child" value="<?php echo $show_child; ?>">
+    <input id="nochild" type="hidden" name="nochild" value="<?php echo $nochild; ?>">
     
     <input id="cbshowextracol" type="checkbox" name="cbshowextracol" value="1">Show extra columns
     <input id="cbfulledit" type="checkbox" name="cbfulledit" value="1">Edit mode
@@ -142,7 +142,7 @@ if($item_id) {
 
         $list = reArrangeProducts($list);
         
-        printProducts($list, $show_child);
+        printProducts($list, $nochild);
     }
 }
 

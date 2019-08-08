@@ -302,7 +302,7 @@ function reArrangeProducts($products) {
     return $newProducts;
 }
 
-function printProducts($products, $showChilden=TRUE, $selectedSku=null) {
+function printProducts($products, $nochild=false, $selectedSku=null) {
     echo '<table id="tableProducts" class="main tablesorter" border="1" style="width:110%">';
     echo '<thead><tr>';
     echo '<th class="sku on">&#x25BC SKU</th>';
@@ -422,7 +422,7 @@ function printProducts($products, $showChilden=TRUE, $selectedSku=null) {
 
 
             echo '</tr>';
-            if(!$showChilden) {
+            if($nochild) {
                 break;
             }
         }
