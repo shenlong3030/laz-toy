@@ -116,6 +116,7 @@ $nochild = $_GET['nochild'] ? $_GET['nochild'] : 0;
 $list = null;
 $total = 0;
 $token = $GLOBALS["accessToken"];
+$pagecount = 1;
 
 if($item_id) {
     $sp = getProduct($token, "", $item_id);
@@ -123,11 +124,9 @@ if($item_id) {
 } else {
     if($byskus) {
         $list = getProducts($token, "", $status, $skus);
-        $pagecount = 1;
         $total = count($list);
     } elseif ($limit == "no") {
         $list = getProducts($token, $q, $status, null);
-        $pagecount = 1;
         $total = count($list);
     } else {
         $list = getProductsPaging($token, $q, $status, $offset, $limit, $total);

@@ -840,6 +840,45 @@ function setPrimaryCategory($accessToken, $sku, $category) {
     }
 }
 
+function fixProducts($accessToken, $skus, $options)
+{
+    $skus = pre_process_skus($skus);
+
+    $success = array();
+    foreach($skus as $index => $sku) {
+        $product = getProduct($accessToken, $sku);
+        $item_id = getProductItemId($product);
+        $product = getProduct($accessToken, null, $item_id);
+
+        if($product) {
+            $product = prepareProductForUpdating($product);
+
+            // option 1
+            if(in_array("1", $options)) {
+                echo "<br>FIX variation<br>";
+                $product = fixProductVariation($product);
+            } 
+
+            // option 2
+            if(in_array("2", $options)) {
+                // do something
+            }
+            
+            $r = saveProduct($accessToken, $product);
+            
+            if($r["code"] == "0") {
+                $success[] = $product;
+            } else {
+                myvar_dump($r);
+            }
+        }
+    }
+    
+    foreach($success as $product) {
+        printProduct($product);
+    }
+}
+
 function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
     $skus = pre_process_skus($skus);
     

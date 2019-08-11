@@ -195,5 +195,16 @@ function setProductActive($product, $value) {
     return $product;
 }
 
+function getProductItemId($product) {
+    return $product['item_id'];
+}
+
+function fixProductVariation($product) {
+    foreach($product['Skus'] as $skuIndex=>$sku) {
+        $product['Skus'][$skuIndex]['color_family'] = str_replace("/", ",", $product['Skus'][$skuIndex]['color_family']);
+        $product['Skus'][$skuIndex]['compatibility_by_model'] = str_replace("/", ",", $product['Skus'][$skuIndex]['compatibility_by_model']);         
+    }   
+    return $product;
+}
 
 ?>

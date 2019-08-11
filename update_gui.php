@@ -240,11 +240,6 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 // It's only needed if timezone in php.ini is not set correctly.
 date_default_timezone_set("UTC");
 
-if($sku && !empty($images)) {
-    //setImages($accessToken, $sku, $images);
-}
-
-
 ?>
 
 <script type="text/javascript">
