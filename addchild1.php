@@ -57,7 +57,7 @@ $input = val($_POST['col'][8]);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $comboimages = val($_POST['comboimage']);
-$resetimages = val($_POST['resetimages'], 1);
+$resetimages = val($_POST['resetimages']);
 
 ?>
 
