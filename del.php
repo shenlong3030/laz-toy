@@ -4,6 +4,12 @@ require_once('_main_functions.php');
 
 //include_once "src/show_errors.php";
 
+date_default_timezone_set("UTC");
+
+$delchildren = val($_POST['delchildren']);
+$input = isset($_POST['skus']) ? $_POST['skus'] : "";
+$skus = array_filter(explode("\n", str_replace("\r", "", $input)));
+
 ?>
 
 <!DOCTYPE html>
@@ -26,20 +32,17 @@ require_once('_main_functions.php');
     <iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe>
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
 SKUs (separated by line):<br>
-    <textarea name="skus" rows="20" cols="80"></textarea><br><br>
+    <textarea name="skus" rows="20" cols="80"><?php echo implode("\n", $skus);?></textarea><br><br>
+    <input type="checkbox" name="delchildren" value="1">Del children<br>
     <input type="submit"><br><hr>
 
 <?php
 
 // Pay no attention to this statement.
 // It's only needed if timezone in php.ini is not set correctly.
-date_default_timezone_set("UTC");
-
-$input = isset($_POST['skus']) ? $_POST['skus'] : "";
-$skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 if($skus && count($skus)) {
-    delProducts($accessToken, $skus);
+    delProducts($accessToken, $skus, $delchildren);
 } else {
     echo "<br><br>Please input SKUs, separated by line<br><br>";   
 }
