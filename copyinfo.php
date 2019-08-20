@@ -41,8 +41,9 @@ $imageindexes = array_filter(explode(",", $str_imageindexes));
         Copy options:<br>
         <input type="checkbox" name="options[]" value="1">Images <input name="imageindexes" size="15" value="<?php echo $str_imageindexes?>"><br>
         <input type="checkbox" name="options[]" value="2">Prices<br>
-        <input type="checkbox" name="options[]" value="3">Descriptions<br>
-        <input type="checkbox" name="options[]" value="4">Size, weight, package content<br>
+        <input type="checkbox" name="options[]" value="3">Short Descriptions<br>
+        <input type="checkbox" name="options[]" value="4">Descriptions <input type="checkbox" name="options[]" value="4.1">Append (not replace)<br><br>
+        <input type="checkbox" name="options[]" value="5">Size, weight, package content<br>
         <br><br>
         To SKUs<br><textarea name="skus" rows="10" cols="80"><?php echo implode("\n", $skus);?></textarea><br>
         <input type="submit" value="Submit">

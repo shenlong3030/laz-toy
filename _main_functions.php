@@ -1455,7 +1455,21 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                 if(in_array("3", $options)) {
                     //echo "<hr>3<hr>";
                     $product['Attributes']['short_description'] = $srcproduct['attributes']['short_description'];
-                    $product['Attributes']['description'] = $srcproduct['attributes']['description'];
+                }
+
+                // copy desc
+                if(in_array("4", $options)) {
+                    //echo "<hr>3<hr>";
+                    if(in_array("4.1", $options)) {
+                        // replace duplicated
+                        if(strpos($product['Attributes']['description'], $srcproduct['attributes']['description']) !== false){
+                            $product['Attributes']['description'] = str_replace($srcproduct['attributes']['description'], "", $product['Attributes']['description']);
+                        }
+                        $product['Attributes']['description'] .= $srcproduct['attributes']['description'];
+                    } else {
+                        $product['Attributes']['description'] = $srcproduct['attributes']['description'];
+                    }
+
                 }
 
                 //var_dump($product);
