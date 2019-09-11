@@ -68,8 +68,8 @@ echo "<p><b>10 đơn hàng bị huỷ gần đây nhất<b></p>";
 echo '<table border="1"><tbody>';
 
 $token = $GLOBALS["accessToken"];
-$list = getOrders($token, 'canceled', 0, 10, $sortBy);
-printOrders($token, $list , 0, $needFullOrderInfo, $status);
+$list = getOrders($token, 'canceled', 0, 10, $sortBy, 0);
+printOrders($token, $list , 0, $status);
 
 echo '</tbody></table></div><hr>';
 //========================================================================
@@ -82,12 +82,12 @@ echo '<table border="1"><tbody>';
 $list = null;
 if($status == 'all') {
     // get pending orders
-    $pendingOrders = getAllOrders($accessToken, "pending", $sortBy);
-    $readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy);
+    $pendingOrders = getAllOrders($accessToken, "pending", $sortBy, $needFullOrderInfo);
+    $readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy, $needFullOrderInfo);
     
     $list = array_merge($pendingOrders, $readyOrders);
 } elseif($status == 'pending' || $status == 'ready_to_ship' || $status == 'shipped') {
-    $list = getAllOrders($accessToken, $status, $sortBy);
+    $list = getAllOrders($accessToken, $status, $sortBy, $needFullOrderInfo);
 } else {
     $list = array();
     for($i=0; $i<$limit; $i+=100) {
@@ -106,7 +106,26 @@ if($status == 'all') {
 // });
 
 $GLOBALS['count'] = count($list);
-printOrders($token, $list, 0, $needFullOrderInfo, $status);
+
+echo "<h2>";
+switch ($status) {
+    case 'pending':
+        echo "Đơn hàng mới";
+        break;
+    case 'ready_to_ship':
+        echo "Đơn hàng SS giao đi";
+        break;
+    case 'shipped':
+        echo "Đơn hàng đang đi phát";
+        break;
+    case 'all':
+        echo "Tất cả đơn hàng";
+        break;
+}
+echo "(" . count($list) . ")";
+echo "</h2>";
+
+printOrders($token, $list, 0, $status);
 
 echo '</tbody></table><br><hr>';
 echo "</div>";

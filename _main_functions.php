@@ -50,22 +50,31 @@ function getOrderLinkPostfix(){
 }
 
 // valid status : pending, canceled, ready_to_ship, delivered, returned, shipped and failed
-function getAllOrders($accessToken, $status = 'pending', $sortBy = 'created_at'){
-    $limit = 1000;
+function getAllOrders($accessToken, $status = 'pending', $sortBy = 'created_at', $getOrderItems = null){
+    $limit = 50;
 
     $list = array();
-    for($i=0; $i<$limit; $i+=100) {
-        $nextlist = getOrders($accessToken, $status, $i, 100, $sortBy);
+    for($i=0; $i<($limit*100); $i+=$limit) {
+        $nextlist = getOrders($accessToken, $status, $i, $limit, $sortBy);
         $list = array_merge($list, $nextlist);
 
-        if(count($nextlist) < 100) {
+        if(count($nextlist) < $limit) {
             break;
         }
     }
+
+    if($getOrderItems) {
+        foreach ($list as $index => $order) {
+            $orderId = $order['order_id'];
+            $orderItems = getOrderItems($accessToken, $orderId);
+            $list[$index]['orderItems'] = $orderItems;
+        }
+    }
+
     return $list;
 }
 
-function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100, $sortBy = 'created_at'){
+function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100, $sortBy = 'created_at', $getOrderItems = null){
     $c = getClient();
     $request = getRequest('/orders/get','GET');
 
@@ -83,6 +92,14 @@ function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100,
     $list = array();
     if($response["code"] == "0") {
         $list = $response['data']['orders'];
+
+        if($getOrderItems) {
+        foreach ($list as $index => $order) {
+            $orderId = $order['order_id'];
+            $orderItems = getOrderItems($accessToken, $orderId);
+            $list[$index]['orderItems'] = $orderItems;
+        }
+    }
     } else {
         myvar_dump($response);
     }
@@ -139,7 +156,7 @@ function getOrderItemsInfo($dict) {
     return $info;
 }
 
-function printOrders($token, $orders, $offset = 0, $needFullOrderInfo = 0, $status = "") {
+function printOrders($token, $orders, $offset = 0, $status = "") {
     foreach($orders as $index=>$order) {
         $orderId = $order['order_id'];
         $orderNumber = $order['order_number'];
@@ -150,7 +167,7 @@ function printOrders($token, $orders, $offset = 0, $needFullOrderInfo = 0, $stat
         $itemCount = $order['items_count'];
         $orderStatus = $order['statuses'][0];
         $paymentMethod = $order['payment_method'];
-        $item = $needFullOrderInfo ? getOrderItems($token, $orderId) : array();
+
         $price = $order['price'];
         
         echo '<tr class="'.$orderStatus.'">';
@@ -163,7 +180,8 @@ function printOrders($token, $orders, $offset = 0, $needFullOrderInfo = 0, $stat
             echo '<td class="order"><a target="_blank" href="https://sellercenter.lazada.vn/order/detail/'.$orderNumber . getOrderLinkPostfix().'">'.$orderNumber.'</a></td>';
         }
         
-        if($needFullOrderInfo) {
+        if(isset($order['orderItems'])) {
+            $item = $order['orderItems'];
             echo '<td>'.$item['TrackingCode'].'</td>';
             echo '<td></td>'; // tracking code link cell
             
