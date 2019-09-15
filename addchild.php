@@ -38,10 +38,10 @@ $appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
 $newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 
 $input = val($_POST['col'][0]);
-$colors = array_filter(explode("\n", str_replace("\r", "", $input)));
+$colors = explode("\n", str_replace("\r", "", $input));
 
 $input = val($_POST['col'][1]);
-$models = array_filter(explode("\n", str_replace("\r", "", $input)));
+$models = explode("\n", str_replace("\r", "", $input));
 $lcropmodel = val($_POST['lcropmodel'], 0);
 
 $input = val($_POST['col'][2]);
