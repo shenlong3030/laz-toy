@@ -38,7 +38,7 @@ if($sku) {
         //var_dump($product);
         $images = array_filter($product['skus'][0]['Images']);
         
-        $category = $product[primary_category];
+        $category = $product['primary_category'];
         $weight = $product['skus'][0]['package_weight'];
         $h = $product['skus'][0]['package_height'];
         $w = $product['skus'][0]['package_width'];
