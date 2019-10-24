@@ -76,6 +76,7 @@ if($accessToken && $sku) {
             $response = updatePricesWithAPI($accessToken, $sku, $price, $sale_price);
         } elseif($category) {
             //echo "i4";
+            $product = setProductBrand($product, "No Brand");
             $product = setProductCategory($product, $category);
         } elseif($name) {
             //echo "i5";
