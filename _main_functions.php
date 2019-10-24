@@ -364,10 +364,21 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $shopsku = $sku['ShopSku'];
             $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
             $imgs = $sku['Images'];
-            //$variation = $sku['_compatible_variation_'];
+            $color = $sku['color_family'];
+            $model = $sku['compatibility_by_model'];
+
             $variation = $sku['_compatible_variation_'];
-            //$variation = str_replace('AIS Lava', '', $variation);
-            //$variation = str_replace('Not Specified', '', $variation);
+            switch ($primary_category) {
+                case 4523: // op lung dien thoai
+                    $variation = $color . " " . $model;
+                    break;
+                case 4528: // mieng dan
+                    $variation = $model;
+                    break;
+                default:
+                    // do nothing
+                    break;
+            }
 
             $isGrouped = (count($product['skus']) > 1);
             $cssclass = $isGrouped ? 'grouped' : '';
