@@ -1011,6 +1011,7 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
             if($r["code"] == "0") {
                 $success[] = $product;
             } else {
+                echo $sku . " ";
                 myvar_dump($r);
             }
         }
