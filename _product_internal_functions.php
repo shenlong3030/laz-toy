@@ -199,11 +199,25 @@ function getProductItemId($product) {
     return $product['item_id'];
 }
 
-function fixProductVariation($product) {
+function fixProductRemoveSlashFromModel($product) {
     foreach($product['Skus'] as $skuIndex=>$sku) {
-        $product['Skus'][$skuIndex]['color_family'] = str_replace("/", ",", $product['Skus'][$skuIndex]['color_family']);
         $product['Skus'][$skuIndex]['compatibility_by_model'] = str_replace("/", ",", $product['Skus'][$skuIndex]['compatibility_by_model']);         
     }   
+    return $product;
+}
+
+function fixProductSetDefaultBrand($product) {
+    $product['Attributes']["brand"] = "No Brand";
+    return $product;
+}
+
+function fixProductSetDefaultColorAndModel($product) {
+    foreach($product['Skus'] as $skuIndex=>$sku) {
+        $product['Skus'][$skuIndex]['compatibility_by_model'] = "..." . $skuIndex;
+        $product['Skus'][$skuIndex]['color_family'] = "...";    
+
+        $product['Skus'][$skuIndex]['Status'] = "inactive";    
+    }
     return $product;
 }
 

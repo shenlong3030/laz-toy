@@ -32,8 +32,9 @@ $options = isset($_POST['options']) ? $_POST['options'] : '';
 <body>
     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']?>">
         FIX options:<br>
-        <input type="checkbox" name="options[]" value="1">Variation<br>
-        <input type="checkbox" name="options[]" value="2">...<br>
+        <input type="checkbox" name="options[]" value="1">Remove / in model<br>
+        <input type="checkbox" name="options[]" value="2">Brand<br>
+        <input type="checkbox" name="options[]" value="3">Set color=... model=...<br>
         <br><br>
         To SKUs<br><textarea name="skus" rows="10" cols="80"><?php echo implode("\n", $skus);?></textarea><br>
         <input type="submit" value="Submit">

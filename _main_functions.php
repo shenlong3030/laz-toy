@@ -894,12 +894,19 @@ function fixProducts($accessToken, $skus, $options)
             // option 1
             if(in_array("1", $options)) {
                 echo "<br>FIX variation<br>";
-                $product = fixProductVariation($product);
+                $product = fixProductRemoveSlashFromModel($product);
             } 
 
             // option 2
             if(in_array("2", $options)) {
-                // do something
+                echo "<br>FIX brand<br>";
+                $product = fixProductSetDefaultBrand($product);
+            }
+
+            // option 3
+            if(in_array("3", $options)) {
+                echo "<br>FIX color=... model=...<br>";
+                $product = fixProductSetDefaultColorAndModel($product);
             }
             
             $r = saveProduct($accessToken, $product);
