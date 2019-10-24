@@ -221,18 +221,20 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
 //####################################################################
 
 //status: all, live, inactive, deleted, image-missing, pending, rejected, sold-out
-function getProducts($accessToken, $q = '', $status = 'sold-out', $skulist = null){
+function getProducts($accessToken, $q = '', $options){
     $allProducts = array();
-    $limit = 50;
-    $offset = 0;
-    $totalProducts = 0;
+    
+    // add limit and offset to options
+    $options['limit'] = 50;
+    $options['offset'] = 0;
+
     do {
-        $products = getProductsPaging($accessToken, $q, $status, $offset, $limit, $totalProducts, $skulist);
+        $products = getProductsPaging($accessToken, $q, $options);
         $skusCount = getSkusCount($products);
 
-        $offset += $skusCount;
+        $options['offset'] += $skusCount;
         $allProducts = array_merge($allProducts, $products);
-    } while(count($products) == $limit);
+    } while(count($products) == $options['limit']);
 
     return $allProducts;
 }
@@ -245,7 +247,13 @@ function getSkusCount($products) {
     return $skusCount;
 }
 
-function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_products=null, $skulist=null){
+function getProductsPaging($accessToken, $q, $options, &$total_products=null){
+    $status = $options['status'] ? $options['status'] : 'sold-out';
+    $offset = $options['offset'];
+    $limit = $options['limit'];
+    $skulist = $options['skulist'];
+    $after = $options['after'];
+
     $c = getClient();
     $request = new LazopRequest('/products/get','GET');
     $request->addApiParam('filter', $status);
@@ -264,21 +272,22 @@ function getProductsPaging($accessToken, $q, $status, $offset, $limit, &$total_p
 
     $request->addApiParam('offset', (string)$offset);
     $request->addApiParam('limit', (string)$limit);
-    //$request->addApiParam('create_after', (string)$create_after);
-    //$request->addApiParam('update_after','2010-01-01T00:00:00+0800');
+    if($after) {
+        $request->addApiParam('create_after', $after);
+    }
+    //$request->addApiParam('create_after', '2010-01-01T00:00:00+0700';
+    //$request->addApiParam('update_after','2010-01-01T00:00:00+0700');
     $request->addApiParam('options','1');
 
     $response = json_decode($c->execute($request, $accessToken), true);
 
-    $products = array();
     if($response["code"] == "0") {
-        $total_products = $response["data"]["total_products"];
-        $products = $response["data"]["products"];
+        $total_products = $response["data"]['total_products'];
+        return $response["data"]['products'];
     } else {
         myvar_dump($response);
+        return null;
     }
-    
-    return $products;
 }
 
 function getProduct($accessToken, $sku, $item_id=null){
@@ -1302,7 +1311,11 @@ function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
 
     $createdSkus = array();
     $needDelSkus = array();
-    $products = getProducts($accessToken, '', 'all', $srcSkus);
+    $options = array(
+        'status' => 'all',
+        'skulist' => $srcSkus,
+    );
+    $products = getProducts($accessToken, '', $options);
 
     foreach($products as $index => $product) {
         $product = prepareProductForCreating($product);
@@ -1368,7 +1381,12 @@ function massCloneProduct($accessToken, $srcSkus, $newSkus, $delsource = 0) {
 function massCloneToShop($accessToken, $srcSkus, $dest_token, $sku_prefix) {
     $srcSkus = pre_process_skus($srcSkus);
     $createdSkus = array();
-    $products = getProducts($accessToken, '', 'all', $srcSkus);
+
+    $options = array(
+        'status' => 'all',
+        'skulist' => $srcSkus,
+    );
+    $products = getProducts($accessToken, '', $options);
 
     foreach($products as $index => $product) {
         $product = prepareProductForCreating($product);
@@ -1437,7 +1455,12 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
     $chunks = array_chunk($skus, 20);
     
     foreach($chunks as $chunk) {
-        $list = getProducts($accessToken, '', 'all', $chunk);
+
+        $options1 = array(
+            'status' => 'all',
+            'skulist' => $chunk,
+        );
+        $list = getProducts($accessToken, '', $options1);
 
         foreach($list as $product) {
                 $product = prepareProductForUpdating($product);

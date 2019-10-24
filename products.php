@@ -52,6 +52,7 @@ $filterQty = val($_GET['filterQty'], "");
 
 $item_id = $_GET['item_id'] ? $_GET['item_id'] : '';
 $nochild = $_GET['nochild'] ? $_GET['nochild'] : 0;
+$after = $_GET['after'] ? $_GET['after'] : '';
 
 ?>
 
@@ -118,18 +119,30 @@ $total = 0;
 $token = $GLOBALS["accessToken"];
 $pagecount = 1;
 
+$options = array(
+    'status' => $status,
+    'offset' => $offset,
+    'limit' => $limit,
+);
+if($after) {
+    $options['after'] = $after . "T00:00:00+0700";
+}
+
+//$products = getProducts($accessToken, '', $options);
+
 if($item_id) {
     $sp = getProduct($token, "", $item_id);
     printProducts(array($sp));
 } else {
     if($byskus) {
-        $list = getProducts($token, "", $status, $skus);
+        $options['skulist'] = $skus;
+        $list = getProducts($token, "", $options);
         $total = count($list);
     } elseif ($limit == "no") {
-        $list = getProducts($token, $q, $status, null);
+        $list = getProducts($token, $q, $options);
         $total = count($list);
     } else {
-        $list = getProductsPaging($token, $q, $status, $offset, $limit, $total);
+        $list = getProductsPaging($token, $q, $options, $total);
         $pagecount = ceil($total/$limit);
     }
 
