@@ -931,6 +931,18 @@ function fixProducts($accessToken, $skus, $options)
                 echo "<br>FIX color=... model=...<br>";
                 $product = fixProductSetDefaultColorAndModel($product);
             }
+
+            // option 4
+            if(in_array("4", $options)) {
+                echo "<br>Remove video link<br>";
+                $product = fixProductRemoveVideoLink($product);
+            }
+            
+            // option 5
+            if(in_array("5", $options)) {
+                echo "<br>Fix sale date<br>";
+                $product = fixProductSaleDate($product);
+            }
             
             $r = saveProduct($accessToken, $product);
             

@@ -35,6 +35,8 @@ $options = isset($_POST['options']) ? $_POST['options'] : '';
         <input type="checkbox" name="options[]" value="1">Remove / in model<br>
         <input type="checkbox" name="options[]" value="2">Brand<br>
         <input type="checkbox" name="options[]" value="3">Set color=... model=...<br>
+        <input type="checkbox" name="options[]" value="4">Remove video link<br>
+        <input type="checkbox" name="options[]" value="5">Fix sale date<br>
         <br><br>
         To SKUs<br><textarea name="skus" rows="10" cols="80"><?php echo implode("\n", $skus);?></textarea><br>
         <input type="submit" value="Submit">

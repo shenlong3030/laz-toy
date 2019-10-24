@@ -223,4 +223,13 @@ function fixProductSetDefaultColorAndModel($product) {
     return $product;
 }
 
+function fixProductRemoveVideoLink($product){
+    return setProductVideo($product, "");
+}
+
+function fixProductSaleDate($product){
+    $product['Skus'][0]['special_from_date'] = "2019-01-01";   
+    return $product;
+}
+
 ?>
