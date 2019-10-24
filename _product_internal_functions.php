@@ -42,6 +42,8 @@ function prepareProductForCreating($product) {
 
     // force active product
     $product['Skus'][0]['Status'] = "active";
+    
+    $product['Skus'][0]['SellerSku'] = "";
 
     // remove name_en
     unset($product['Attributes']["name_en"]);

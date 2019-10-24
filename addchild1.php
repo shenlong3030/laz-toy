@@ -3,6 +3,7 @@ include_once "check_token.php";
 require_once('_main_functions.php');
 
 //include_once "src/show_errors.php";
+exit(1);
 
 ?>
 
@@ -30,7 +31,7 @@ date_default_timezone_set("UTC");
 $preview = val($_POST['preview']);
 
 $input = $_POST['col'][0];
-$parentskus = array_filter(explode("\n", str_replace("\r", "", $input)));
+$parentskus = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][1];
 $sourceskus = array_filter(explode("\n", str_replace("\r", "", $input)));
@@ -45,7 +46,7 @@ $input = val($_POST['col'][4], "");
 $models = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][5], "");
-$variations = array_filter(explode("\n", str_replace("\r", "", $input)));
+$colors = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $input = val($_POST['col'][6]);
 $qtys = array_filter(explode("\n", str_replace("\r", "", $input)),'is_numeric');
@@ -84,7 +85,7 @@ $resetimages = val($_POST['resetimages']);
             <td><textarea class="nowrap" name="col[]" rows="20" cols="20"><?php echo implode("\n", $skuprefixs);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="60"><?php echo implode("\n", $names);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="20"><?php echo implode("\n", $models);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $variations);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $colors);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("\n", $qtys);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("\n", $prices);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="80" style="white-space: nowrap;"><?php echo implode("\n", $images);?></textarea></td>
@@ -109,7 +110,7 @@ $data = array(
     "names" => $names,
     "groups" => $groups,
     "models" => $models,
-    "variations" => $variations,
+    "variations" => $colors,
     "qtys" => $qtys, 
     "prices" => $prices,
     "images" => $images,

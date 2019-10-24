@@ -37,20 +37,20 @@ $skuprefix = isset($_POST['skuprefix']) ? $_POST['skuprefix'] : $initskuprefix;
 $appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
 $newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 
-$input = val($_POST['col'][0]);
+$input = $_POST['col'][0];
 $colors = explode("\n", str_replace("\r", "", $input));
 
-$input = val($_POST['col'][1]);
+$input = $_POST['col'][1];
 $models = explode("\n", str_replace("\r", "", $input));
 $lcropmodel = val($_POST['lcropmodel'], 0);
 
-$input = val($_POST['col'][2]);
+$input = $_POST['col'][2];
 $qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
 
-$input = val($_POST['col'][3]);
+$input = $_POST['col'][3];
 $prices = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
 
-$input = val($_POST['col'][4]);
+$input = $_POST['col'][4];
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 ?>
 
