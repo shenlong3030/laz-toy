@@ -27,27 +27,27 @@ require_once('_main_functions.php');
 // It's only needed if timezone in php.ini is not set correctly.
 date_default_timezone_set("UTC");
 
-$input = val($_POST['col'][0]);
-$skus = array_filter(explode("\n", str_replace("\r", "", $input)));
+$input = $_POST['col'][0];
+$skus = explode("\n", str_replace("\r", "", $input));
 
-$input = val($_POST['col'][1]);
-$names = array_filter(explode("\n", str_replace("\r", "", $input)));
+$input = $_POST['col'][1];
+$names = explode("\n", str_replace("\r", "", $input));
 
-$input = val($_POST['col'][2]);
-$models = array_filter(explode("\n", str_replace("\r", "", $input)));
+$input = $_POST['col'][2];
+$models = explode("\n", str_replace("\r", "", $input));
 
-$input = val($_POST['col'][3]);
-$colors = array_filter(explode("\n", str_replace("\r", "", $input)));
+$input = $_POST['col'][3];
+$colors = explode("\n", str_replace("\r", "", $input));
 
-$input = val($_POST['col'][4]);
-$prices = array_filter(explode("\n", str_replace("\r", "", $input)));
+$input = $_POST['col'][4];
+$prices = explode("\n", str_replace("\r", "", $input));
 
-$input = val($_POST['col'][5]);
-$images = array_filter(explode("\n", str_replace("\r", "", $input)));
+$input = $_POST['col'][5];
+$images = explode("\n", str_replace("\r", "", $input));
 $imageindex = val($_POST['imageindex'], 1);
 
-$input = val($_POST['col'][6]);
-$actives = array_filter(explode("\n", str_replace("\r", "", $input)), 'strlen');
+$input = $_POST['col'][6];
+$actives = explode("\n", str_replace("\r", "", $input));
 
 $preview = val($_POST['preview']);
 ?>
@@ -72,7 +72,7 @@ $preview = val($_POST['preview']);
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $colors);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $prices);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="50"><?php echo implode("\n", $images);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("\n", $actives);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("&#13;&#10;", $actives);?></textarea></td>
         </tr>
     </tbody>
 </table>
