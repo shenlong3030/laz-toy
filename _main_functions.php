@@ -346,7 +346,8 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
     echo '<th class="price on">&#x25BCSALE PRICE</th>'; // price form, display:none
     echo '<th>&#x25BC</th>';  // price form, display:none
 
-    echo '<th>&#x25BC</th>';
+    echo '<th>&#x25BC</th>'; // active button
+    echo '<th class="ex status">status</th>';
     echo '<th class="ex item_id">item_id</th>';
     echo '<th class="ex shop_sku">shop_sku</th>';
     echo '<th class="ex primary_category">primary_category</th>';
@@ -445,6 +446,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             }
 
             // print extra column
+            echo '<td class="ex status">'.$sku['Status'].'</td>';
             echo '<td class="ex item_id">'.$item_id.'</td>';
             echo '<td class="ex shopsku">'.$shopsku.'</td>';
             echo '<td class="ex primary_category">'.$primary_category.'</td>';
