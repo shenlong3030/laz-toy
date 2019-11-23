@@ -143,6 +143,11 @@ function setProductColor($product, $color) {
     return $product;
 }
 
+function setProductColorThumbnail($product, $url) {
+    $product['Skus'][0]['color_thumbnail'] = $url;
+    return $product;
+}
+
 function setProductModel($product, $model) {
     $product['Skus'][0]['compatibility_by_model'] = $model;
     return $product;

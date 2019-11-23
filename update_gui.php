@@ -48,6 +48,7 @@ if($sku) {
         $variation = $product['skus'][0]['_compatible_variation_'];
         
         $color = $product['skus'][0]['color_family'];
+        $color_thumbnail = $product['skus'][0]['color_thumbnail'];
         $model = $product['skus'][0]['compatibility_by_model'];
         
         $price = $product['skus'][0]['price'];
@@ -139,6 +140,12 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
     color_family <input type="text" name="color_family" value="<?php echo $color;?>" />
     <input type="submit" value="Update color"/>
+    </form>
+<hr>
+    <form action="update.php" method="POST" name="colorThumbnailForm" target="responseIframe">
+    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    color_thumbnail <input type="text" name="color_thumbnail" value="<?php echo $color_thumbnail;?>" />
+    <input type="submit" value="Update color_thumbnail"/>
     </form>
 <hr>
     <form action="update.php" method="POST" name="modelForm" target="responseIframe">

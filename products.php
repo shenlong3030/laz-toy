@@ -196,8 +196,7 @@ $(function(){
 
   // EDIT MODE
   $('#cbfulledit').change(function(){
-    $('.price').toggleClass('on');
-    $('.name').toggleClass('on');
+    $('.editmode').toggleClass('on');
   });
 
   // SHOW EXTRA COLUMNs

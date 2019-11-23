@@ -330,24 +330,30 @@ function reArrangeProducts($products) {
 }
 
 function printProducts($products, $nochild=false, $selectedSku=null) {
+    // NOTE: 
+    // nguyên nhân không sort được : do số lượng TH và số lượng cột không khớp với nhau, 
+    // cột ẩn thì phải có TH ẩn đi kèm
+
     echo '<table id="tableProducts" class="main tablesorter" border="1" style="width:110%">';
     echo '<thead><tr>';
-    echo '<th class="sku on">&#x25BC SKU</th>';
+    /* cột 1 */echo '<th class="sku on">&#x25BC SKU</th>';
 
-    echo '<th>&#x25BC QUANTITY</th>';
-    echo '<th></th>';  //quantity form
+    /* cột 2 */echo '<th>&#x25BC QTY</th>';
+    /* cột 3 */echo '<th></th>';  //quantity form
 
-    echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
-    echo '<th class="name"></th>';  // name form
+    /* cột 4 */echo '<th class="editmode on">&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
+    /* cột 5 */echo '<th class="editmode name form">&#x25BC NAME Form<b>'; // name form
 
-    echo '<th class="color">&#x25BC VARIATION</th>'; // variant
+    /* cột 6 */echo '<th class="color">&#x25BC Color</th>'; 
+    /* cột 7 */echo '<th class="model">&#x25BC Model</th>'; 
 
-    echo '<th class="price on">&#x25BCPRICE</th>'; // price form, display:none
-    echo '<th class="price on">&#x25BCSALE PRICE</th>'; // price form, display:none
-    echo '<th>&#x25BC</th>';  // price form, display:none
+    /* cột 8 */echo '<th class="editmode on">&#x25BCPRICE</th>'; // price form, display:none
+    /* cột 9 */echo '<th class="editmode on">&#x25BCSALE PRICE</th>'; // price form, display:none
+    /* cột 10 */echo '<th class="editmode price form">&#x25BCPRICE Form</th>';  // price form, display:none
 
-    echo '<th>&#x25BC</th>'; // active button
-    echo '<th class="ex status">status</th>';
+    echo '<th></th>'; // edit button
+    echo '<th></th>'; // active button
+    echo '<th class="ex status">&#x25BCstatus</th>';
     echo '<th class="ex item_id">item_id</th>';
     echo '<th class="ex shop_sku">shop_sku</th>';
     echo '<th class="ex primary_category">primary_category</th>';
@@ -375,15 +381,15 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
             $imgs = $sku['Images'];
             $color = $sku['color_family'];
-            $model = $sku['compatibility_by_model'];
+            $model = $sku['compatibility_by_model'] ? $sku['compatibility_by_model'] : "_";
+            $color_thumbnail = $sku['color_thumbnail'];
 
             $variation = $sku['_compatible_variation_'];
             switch ($primary_category) {
                 case 4523: // op lung dien thoai
+                case 10100418: // CL đồng hồ
+                case 4528: // mieng dan DT
                     $variation = $color . " " . $model;
-                    break;
-                case 4528: // mieng dan
-                    $variation = $model;
                     break;
                 default:
                     // do nothing
@@ -407,19 +413,22 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
 
             $link = "http://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";
             $html_link = '<a tabIndex="-1" target="_blank" href="'.$link.'" class="grouped-icon fa fa-code-fork" style="color:red"></a>';
-            echo '<td class="sku on padding">'. ($isGrouped?$html_link:"") .$sellersku.'</td>';
+            /* cột 1 */echo '<td class="sku on padding">'. ($isGrouped?$html_link:"") .$sellersku.'</td>';
 
-            echo '<td>'.$qty.'</td>';
-            echo '<td>'.$reservedTxt.$qtyForm.'</td>';
-            echo '<td class="name on padding">'.$nameLink.'</td>';
-            echo '<td class="name">'.$nameForm.'</td>';
-            echo '<td>'.$variation.'</td>';
+            /* cột 2 */echo '<td>'.$qty.'</td>';
+            /* cột 3 */echo '<td>'.$reservedTxt.$qtyForm.'</td>';
+            /* cột 4 */echo '<td class="editmode name on padding">'.$nameLink.'</td>';
+            /* cột 5 */echo '<td class="editmode name form">'.$nameForm.'</td>';
+            
+            /* cột 6 */echo '<td>'.$color.'</td>';
+            /* cột 7 */echo '<td>'.$model.'</td>';
             
             // visible
-            echo '<td class="price on">'.$price1.'</td>';
-            echo '<td class="price on">'.$price2.'</td>';
+            /* cột 8 */echo '<td class="editmode price on">'.$price1.'</td>';
+            /* cột 9 */echo '<td class="editmode price on">'.$price2.'</td>';
+            
             // hidden 
-            echo '<td class="price">'.$priceForm.'</td>';
+            /* cột 10 */echo '<td class="editmode price form">'.$priceForm.'</td>';
 
             $link = "http://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
             echo '<td><a target="_blank" href="'.$link.'" class="fa fa-edit" style="color:red" tabindex="-1"></a></td>';
@@ -433,6 +442,13 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $thumbNailElements = array();
             $urlElements = array();
             if(is_array($imgs)) {
+
+                // color_thumbnail column
+                $thumb = '<a tabindex="-1" target="_blank" href="'.$color_thumbnail.'"><img alt="thumb" src="'.$color_thumbnail.'" height="50"></a>';
+                $thumb = empty($color_thumbnail) ? "" : $thumb;
+                array_push($thumbNailElements, '<td class="image thumb on">'.$thumb.'</td>');
+                array_push($urlElements, '<td class="ex link">'.$color_thumbnail.'</td>');
+
                 for($i=0; $i<8; $i++){
                     $thumbLink = trim($imgs[$i]);
                     $fullLink = trim(preg_replace('/(-catalog)/i', '', $thumbLink));

@@ -16,6 +16,7 @@ $name = $_POST['name'] ? $_POST['name'] : '';
 
 $compatibility_by_model = $_POST['compatibility_by_model'] ? $_POST['compatibility_by_model'] : '';
 $color_family = $_POST['color_family'] ? $_POST['color_family'] : '';
+$color_thumbnail = $_POST['color_thumbnail'] ? $_POST['color_thumbnail'] : '';
 
 $category = $_POST['category'] ? $_POST['category'] : 0;
 $input = val($_POST['images']);
@@ -102,6 +103,8 @@ if($accessToken && $sku) {
             $product = setProductPackageContent($product, $content);
         } elseif($video) {
             $product = setProductVideo($product, $video);
+        } elseif($color_thumbnail) {
+            $product = setProductColorThumbnail($product, $color_thumbnail);
         }
 
         if(!$response) {
