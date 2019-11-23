@@ -28,7 +28,6 @@ require_once('_main_functions.php');
 date_default_timezone_set("UTC");
 
 $sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
-$cloneby = isset($_POST['cloneby']) ? $_POST['cloneby'] : "";
 $preview = isset($_POST['preview']) ? $_POST['preview'] : 0;
 
 preg_match('/(.+__.+__)/', $sku, $match);
@@ -42,7 +41,6 @@ $colors = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][1];
 $models = explode("\n", str_replace("\r", "", $input));
-$lcropmodel = val($_POST['lcropmodel'], 0);
 
 $input = $_POST['col'][2];
 $qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
@@ -60,9 +58,7 @@ $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 Parent SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><br>
 Child SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"> Append time()<input type="checkbox" name="appendtime" checked="1" value="1" <?php if($appendtime) echo "checked=1"?> ><br> 
 New child name: <input type="text" name="name" size="80" value="<?php echo $newName?>"><br>
-Options:<br>
-    <input type="radio" name="cloneby" value="color" <?php if($cloneby=="color") echo "checked=1"?>>Add by color (associated with source SKU)<br>
-    <input type="radio" name="cloneby" value="model" <?php if($cloneby=="model") echo "checked=1"?>>Add by model (associated with source SKU)<br>
+
 <table>
     <tbody>
         <tr>
@@ -73,8 +69,8 @@ Options:<br>
             <td>Image links</td>
         </tr>
         <tr>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("\n", $colors);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("\n", $models);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("&#13;&#10;", $colors);?></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("&#13;&#10;", $models);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $qtys);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="15"><?php echo implode("\n", $prices);?></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="80"><?php echo implode("\n", $images);?></textarea></td>
@@ -92,16 +88,9 @@ $inputdata = array(
     "appendtime" => $appendtime,
     "skuprefix" => $skuprefix,
     "newname" => $newName,
-    "cloneby" => $cloneby,
-    "lcropmodel" => $lcropmodel,
     "qtys" => $qtys,
     "prices" => $prices
     );
-
-if(!$cloneby) {
-    echo "<br><br><h1>Please select options</h1>";
-    exit();
-}
 
 if(count($qtys) == 0) {
     echo "<br><br><h1>Please input Quantity</h1>";

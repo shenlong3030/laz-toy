@@ -1089,47 +1089,40 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
         } else {
             $product = setProductAssociatedSku($product, $sku);
             
-            $values;
-            if($cloneby == 'color') {
-                $values = $inputdata["colors"];
-            } else {
-                $values = $inputdata["models"];
-            }
-            
+            $colors = $inputdata["colors"];
+            $models = $inputdata["models"];
+
             $cache = array();
             $time = substr(time(), -4);
-            foreach($values as $index => $value) {
-                if($cloneby == 'color') {
-                    $product = setProductColor($product, $value);
-                } else {
-                    $product = setProductModel($product, $value);
+            foreach($inputdata["qtys"] as $index => $value) {
+                $color = $colors[$index] ? $colors[$index] : "";
+                $model = $models[$index] ? $models[$index] : "";
+
+                // set SKU
+                $newSku = !empty($skuprefix) ? $skuprefix : $sku;
+                if(substr($newSku, -2) != "__") {
+                    $newSku .= '__';
+                } 
+
+                if($model) {
+                    $product = setProductModel($product, $model);
+                    $newSku .= vn_urlencode($model);
                 }
+                if($color) {
+                    $product = setProductColor($product, $color);
+
+                    if(substr($newSku, -2) == "__" || substr($newSku, -1) == ".") {
+                        $newSku .= vn_urlencode($color);
+                    } else {
+                        $newSku .= '.' . vn_urlencode($color);
+                    }
+                }
+                
                 
                 // set NAME
                 if(!empty($newName)) {
                     $product = setProductName($product, $newName);
                 }
-                
-                // set SKU
-                $newSku = ( !empty($skuprefix) ? $skuprefix : $sku);
-                if($cloneby == 'color') {
-                    // do nothing
-                } else {
-                    // crop words
-                    $model = $value;
-                    $leftcrop = $inputdata["lcropmodel"];
-                    if($leftcrop && is_numeric($leftcrop)) {
-                        $words = explode( " ", $value);
-                        array_splice( $words, 0, $leftcrop);
-                        $model = implode( " ", $words );
-                    }
-                    $value = $model;
-                }
-                if(substr($newSku, -1) != "_" && substr($newSku, -1) != ".") {
-                    $newSku = $newSku . '.';
-                } 
-                $newSku = $newSku . vn_urlencode($value);
-
 
                 if($inputdata["appendtime"]) {
                     $newSku .= '.' . $time;
