@@ -125,6 +125,7 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 <?php if($sibling) { ?>
     <h2>Danh sách các SP cùng nhóm này</h2>
     <button id="copy-sku-btn">Copy SKUs to Clipboard</button>
+    <button id="btn_copy_url">Copy LAZADA urls</button>
     <?php echo printProducts(array($sibling), false, $sku);?>
 <?php } ?>
 <hr>
@@ -259,6 +260,14 @@ date_default_timezone_set("UTC");
           console.log("copy text : " + text );
           copyToClipBoard(text);
         });
+    });
+    $('#btn_copy_url').click(function (e) {
+        var text = "";
+        $("table.main").find("td.url").each(function(){
+            text = text + $(this).text() + "\n";
+        });
+        console.log("copy text : " + text );
+        copyToClipBoard(text);
     });
 
     // document of tablesorter, see http://tablesorter.com/docs/

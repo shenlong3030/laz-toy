@@ -111,7 +111,8 @@ $after = $_GET['after'] ? $_GET['after'] : '';
   </div>
 
   <div class="mainContent">
-    <button id="copy-sku-btn">Copy SKU to Clipboard</button>
+  <button id="copy-sku-btn">Copy SKUs to Clipboard</button>
+  <button id="btn_copy_url">Copy LAZADA urls</button>
 <?php
 
 $list = null;

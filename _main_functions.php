@@ -357,7 +357,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
     echo '<th class="ex item_id">item_id</th>';
     echo '<th class="ex shop_sku">shop_sku</th>';
     echo '<th class="ex primary_category">primary_category</th>';
-    echo '<th class="ex link">Url<button id="btn_copy_url">Copy</button></th>';
+    echo '<th class="ex link">Url</th>';
     echo '</tr></thead>';
 
     echo '<tbody>';
