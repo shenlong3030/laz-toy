@@ -202,6 +202,10 @@ function setProductActive($product, $value) {
     return $product;
 }
 
+function isProductActive($product){
+    return $product['Skus'][0]['Status'] == "active";
+}
+
 function getProductItemId($product) {
     return $product['item_id'];
 }

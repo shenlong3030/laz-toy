@@ -1198,8 +1198,6 @@ function massMoveChild($accessToken, $data, $preview) {
                 }
 
                 if($parent) {
-                    // cache
-                    $parentCache[$parentSku] = $parent;
                     // check category of child and parent
                     // to do ...
 
@@ -1216,6 +1214,12 @@ function massMoveChild($accessToken, $data, $preview) {
 
                     if(!$preview) {
                         if(createProduct($accessToken, $product)) {
+                            // disable parent after moving
+                            if(isProductActive($parent)) {
+                                $parent = setProductActive($parent, 0);
+                                $r = saveProduct($accessToken, $parent);
+                            }
+
                             // store to print
                             $created["oldsku"][] = $sku;
                             $created["sku"][] = $product['Skus'][0]['SellerSku'];
@@ -1230,6 +1234,9 @@ function massMoveChild($accessToken, $data, $preview) {
                         $created["name"][] = $product['Attributes']["name"];
                         $created["imgs"][] = $product['Skus'][0]['Images'];
                     }
+
+                    // cache
+                    $parentCache[$parentSku] = $parent;
                 } else {
                     myecho("PARENT SKU NOT FOUND: " . $parentSku);
                 }
