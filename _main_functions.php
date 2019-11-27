@@ -413,18 +413,18 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
 
             $link = "http://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";
             $html_link = '<a tabIndex="-1" target="_blank" href="'.$link.'" class="grouped-icon fa fa-code-fork" style="color:red"></a>';
-            /* cột 1 */echo '<td class="sku on padding">'. ($isGrouped?$html_link:"") .$sellersku.'</td>';
+            /* cột 1 */echo '<td class="sku on padding info">'. ($isGrouped?$html_link:"") .$sellersku.'</td>';
 
-            /* cột 2 */echo '<td>'.$qty.'</td>';
+            /* cột 2 */echo '<td class="info">'.$qty.'</td>';
             /* cột 3 */echo '<td>'.$reservedTxt.$qtyForm.'</td>';
-            /* cột 4 */echo '<td class="editmode name on padding">'.$nameLink.'</td>';
+            /* cột 4 */echo '<td class="editmode name on padding info">'.$nameLink.'</td>';
             /* cột 5 */echo '<td class="editmode name form">'.$nameForm.'</td>';
             
-            /* cột 6 */echo '<td>'.$color.'</td>';
-            /* cột 7 */echo '<td>'.$model.'</td>';
+            /* cột 6 */echo '<td class="info">'.$color.'</td>';
+            /* cột 7 */echo '<td class="info">'.$model.'</td>';
             
             // visible
-            /* cột 8 */echo '<td class="editmode price on">'.$price1.'</td>';
+            /* cột 8 */echo '<td class="editmode price on info">'.$price1.'</td>';
             /* cột 9 */echo '<td class="editmode price on">'.$price2.'</td>';
             
             // hidden 
@@ -447,7 +447,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
                 $thumb = '<a tabindex="-1" target="_blank" href="'.$color_thumbnail.'"><img alt="thumb" src="'.$color_thumbnail.'" height="50"></a>';
                 $thumb = empty($color_thumbnail) ? "" : $thumb;
                 array_push($thumbNailElements, '<td class="image thumb on">'.$thumb.'</td>');
-                array_push($urlElements, '<td class="ex link">'.$color_thumbnail.'</td>');
+                array_push($urlElements, '<td class="ex link info">'.$color_thumbnail.'</td>');
 
                 for($i=0; $i<8; $i++){
                     $thumbLink = trim($imgs[$i]);
@@ -457,16 +457,16 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
                     $thumb = empty($thumbLink) ? "" : $thumb;
 
                     array_push($thumbNailElements, '<td class="image thumb on">'.$thumb.'</td>');
-                    array_push($urlElements, '<td class="ex link">'.$fullLink.'</td>');
+                    array_push($urlElements, '<td class="ex link info">'.$fullLink.'</td>');
                 }
             }
 
             // print extra column
-            echo '<td class="ex status">'.$sku['Status'].'</td>';
+            echo '<td class="ex status info">'.$sku['Status'].'</td>';
             echo '<td class="ex item_id">'.$item_id.'</td>';
             echo '<td class="ex shopsku">'.$shopsku.'</td>';
             echo '<td class="ex primary_category">'.$primary_category.'</td>';
-            echo '<td class="ex url">'.$url.'</td>';
+            echo '<td class="ex url info">'.$url.'</td>';
             foreach ($urlElements as $e) {
                 echo $e;
             }

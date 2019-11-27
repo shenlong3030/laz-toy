@@ -111,7 +111,8 @@ $after = $_GET['after'] ? $_GET['after'] : '';
   </div>
 
   <div class="mainContent">
-  <button id="copy-sku-btn">Copy SKUs to Clipboard</button>
+  <button id="btn_copy_all">Copy All Clipboard</button>
+  <button id="btn_copy_sku">Copy SKUs</button>
   <button id="btn_copy_url">Copy LAZADA urls</button>
 <?php
 
@@ -171,13 +172,38 @@ function search() {
 }
 
 $(function(){
-  $('#copy-sku-btn').click(function (e) {
+  $('#btn_copy_sku').click(function (e) {
       var text = "";
       $("#tableProducts").find("td.sku").each(function(){
           text = text + $(this).text() + "\n";
       });
       console.log("copy text : " + text );
       copyToClipBoard(text);
+  });
+
+  $('#btn_copy_url').click(function (e) {
+    var text = "";
+    $("table.main").find("td.url").each(function(){
+        text = text + $(this).text() + "\n";
+    });
+    console.log("copy text : " + text );
+    copyToClipBoard(text);
+  });
+
+  $('#btn_copy_all').click(function (e) {
+    var numberOfInfoColumns = 17;
+    var text = "";
+    $("table.main").find("td.info").each(function(index, value){
+        text = text + $(this).text();
+        mod = (index+1)%numberOfInfoColumns;
+        if(mod == 0) {
+            text += "\n";
+        } else {
+            text += "\t";
+        }
+    });
+    console.log("copy text : " + text );
+    copyToClipBoard(text);
   });
 
   $('#q').keypress(function (e) {
@@ -208,15 +234,6 @@ $(function(){
   // SHOW SEARCH BY LIST
   $('#cbbyskus').change(function(){
     $('.search').toggleClass('on');
-  });
-  
-  $('#btn_copy_url').click(function (e) {
-    var text = "";
-    $("table.main").find("td.url").each(function(){
-        text = text + $(this).text() + "\n";
-    });
-    console.log("copy text : " + text );
-    copyToClipBoard(text);
   });
 
   $('input[type=checkbox][data-toggle=toggle]').change(function() {
