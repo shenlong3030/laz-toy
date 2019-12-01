@@ -1506,11 +1506,17 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
 // Delete region
 //####################################################################
 
-function delProducts($accessToken, $skus, $delChildren=false) {
+function delProducts($accessToken, $skus, $deloption=false) {
+    $deloption = (int)$deloption;
     $skus = pre_process_skus($skus);
+    
+    // skus + children
+    $allskus = array();
 
-    if($delChildren) {
-        $temp = array();
+    // children skus
+    $childrenskus = array();
+
+    if($deloption > 1) {
         foreach($skus as $sku) {
             $product = getProduct($accessToken, $sku);
             $id = getProductItemId($product);
@@ -1518,10 +1524,22 @@ function delProducts($accessToken, $skus, $delChildren=false) {
 
             foreach ($product['skus'] as $key => $value) {
                 $sellerSku = $value['SellerSku'];
-                $temp[] = $sellerSku;
+                $allskus[] = $sellerSku;
             }
         }
-        $skus = $temp;
+
+        switch ($deloption) {
+            case 2: // del skus + children
+                $skus = $allskus;
+                break;
+            case 3: // del children
+                $childrenskus = array_diff($allskus, $skus);
+                $skus = $childrenskus;
+                break;
+            default:
+                # code...
+                break;
+        }
     }
 
     // chia thành các mảng nhỏ 20item

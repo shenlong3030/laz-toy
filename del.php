@@ -6,7 +6,7 @@ require_once('_main_functions.php');
 
 date_default_timezone_set("UTC");
 
-$delchildren = val($_POST['delchildren']);
+$deloption = val($_POST['deloption']);
 $input = isset($_POST['skus']) ? $_POST['skus'] : "";
 $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
@@ -33,7 +33,9 @@ $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
 SKUs (separated by line):<br>
     <textarea name="skus" rows="20" cols="80"><?php echo implode("\n", $skus);?></textarea><br><br>
-    <input type="checkbox" name="delchildren" value="1">Del children<br>
+    <input type="radio" name="deloption" value="1" checked="1">Del input SKUs<br>
+    <input type="radio" name="deloption" value="2">Del input SKUs and children<br>
+    <input type="radio" name="deloption" value="3">Del children only<br>
     <input type="submit"><br><hr>
 
 <?php
@@ -42,7 +44,7 @@ SKUs (separated by line):<br>
 // It's only needed if timezone in php.ini is not set correctly.
 
 if($skus && count($skus)) {
-    delProducts($accessToken, $skus, $delchildren);
+    delProducts($accessToken, $skus, $deloption);
 } else {
     echo "<br><br>Please input SKUs, separated by line<br><br>";   
 }
