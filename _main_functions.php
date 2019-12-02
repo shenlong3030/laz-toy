@@ -743,7 +743,9 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
             $newSku .= vn_urlencode($group) . "__";
 
             if($model) {
-                $newSku .= vn_urlencode($model) . ".";
+                if($model != "...") {
+                    $newSku .= vn_urlencode($model) . ".";
+                }
                 $product = setProductModel($product, $model);
             } else {
                 unset($product['Skus'][0]['compatibility_by_model']); 
