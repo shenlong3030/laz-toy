@@ -681,7 +681,7 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
 }
 
 function createProductsFromManySource($accessToken, $data, $preview = 1){
-    $time = substr(time(), -4);
+    $makegroup = (int)$data["makegroup"];
     $created = array();
     $cache = array();
     $parentCache = array();
@@ -758,6 +758,7 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
                 unset($product['Skus'][0]['color_family']);
             }
 
+            $time = substr(time(), -4);
             $newSku .= $time;
             $newSku = make_short_sku($newSku);
             $product = setProductSku($product, $newSku);
@@ -776,12 +777,14 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
             if(!empty($parentSku)) {
                 $product['AssociatedSku'] = $parentSku;
             } else {
-                // set associated sku
-                $key = md5($group, 1);
-                if(!isset($associatedskus[$key])) {
-                    $associatedskus[$key] = $newSku;
+                if($makegroup) {
+                    // set associated sku
+                    $key = md5($group, 1);
+                    if(!isset($associatedskus[$key])) {
+                        $associatedskus[$key] = $newSku;
+                    }
+                    $product['AssociatedSku'] = $associatedskus[$key];
                 }
-                $product['AssociatedSku'] = $associatedskus[$key];
             }
             
             // set images

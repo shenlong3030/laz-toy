@@ -28,6 +28,7 @@ require_once('_main_functions.php');
 date_default_timezone_set("UTC");
 
 $preview = val($_POST['preview']);
+$makegroup = val($_POST['makegroup']);
 
 $input = $_POST['col'][0];
 $parentskus = explode("\n", str_replace("\r", "", $input));
@@ -97,6 +98,7 @@ $resetimages = val($_POST['resetimages']);
     </tbody>
 </table>
 <input type="checkbox" name="preview" checked="1" value="1">Preview<br>
+<input type="checkbox" name="makegroup" value="1">Make group<br>
 <input type="submit"><hr>
 
 
@@ -118,7 +120,8 @@ $data = array(
     "qtys" => $qtys, 
     "prices" => $prices,
     "images" => $images,
-    "resetimages" => $resetimages
+    "resetimages" => $resetimages,
+    "makegroup" => $makegroup
     );
 
 createProductsFromManySource($accessToken, $data, $preview);
