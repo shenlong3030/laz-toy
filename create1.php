@@ -98,7 +98,7 @@ $resetimages = val($_POST['resetimages']);
     </tbody>
 </table>
 <input type="checkbox" name="preview" checked="1" value="1">Preview<br>
-<input type="checkbox" name="makegroup" value="1">Make group<br>
+<input type="checkbox" name="makegroup" <?php if($makegroup) {echo 'checked="1"';}?> value="1">Make group<br>
 <input type="submit"><hr>
 
 
