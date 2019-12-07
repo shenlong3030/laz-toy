@@ -424,8 +424,8 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             /* cột 7 */echo '<td class="info">'.$model.'</td>';
             
             // visible
-            /* cột 8 */echo '<td class="editmode price on info">'.$price1.'</td>';
-            /* cột 9 */echo '<td class="editmode price on">'.$price2.'</td>';
+            /* cột 8 */echo '<td class="editmode price on">'.$price1.'</td>';
+            /* cột 9 */echo '<td class="editmode price on info">'.$price2.'</td>';
             
             // hidden 
             /* cột 10 */echo '<td class="editmode price form">'.$priceForm.'</td>';
