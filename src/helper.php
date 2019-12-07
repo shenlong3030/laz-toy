@@ -134,6 +134,7 @@ function make_short_sku($sku) {
     'CHONG.SOC' => 'CS',
     'CUONG.LUC' => 'CL',
     'BAO.DA' => 'BD',
+    'DUONG.KINH.' => '',
 
     'IPHONE' => 'IP', 
     
@@ -149,6 +150,7 @@ function make_short_sku($sku) {
     'MOTOROLA' => 'MOTO',
      
     'NOKIA'=>'NK',
+
     '\.\.\.'=>''
     );
 
