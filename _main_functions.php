@@ -966,6 +966,12 @@ function fixProducts($accessToken, $skus, $options)
                 echo "<br>Fix sale date<br>";
                 $product = fixProductSaleDate($product);
             }
+
+            // option 6
+            if(in_array("6", $options)) {
+                echo "<br>FIX model=random<br>";
+                $product = fixProductSetRandomModel($product);
+            }
             
             $r = saveProduct($accessToken, $product);
             

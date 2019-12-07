@@ -226,7 +226,14 @@ function fixProductSetDefaultColorAndModel($product) {
     foreach($product['Skus'] as $skuIndex=>$sku) {
         $product['Skus'][$skuIndex]['compatibility_by_model'] = "..." . $skuIndex;
         $product['Skus'][$skuIndex]['color_family'] = "...";    
+        $product['Skus'][$skuIndex]['Status'] = "inactive";    
+    }
+    return $product;
+}
 
+function fixProductSetRandomModel($product) {
+    foreach($product['Skus'] as $skuIndex=>$sku) {
+        $product['Skus'][$skuIndex]['compatibility_by_model'] = time() . "." . $skuIndex;
         $product['Skus'][$skuIndex]['Status'] = "inactive";    
     }
     return $product;
