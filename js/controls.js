@@ -21,6 +21,11 @@ $.extend($.expr[":"], {
     }
 });
 
+// cần sửa lại 
+// dời input filter lên đầu các cột 
+// đổi hàm các hàm filter() thành show()
+// tạo hàm filter mới { ẩn hết các td, chạy cac hàm show() hiện các td thoả điều kiện }
+
 function filterQuantityLessThan(val, colIndex) {
     console.log("run filter quantity with : ", val);
     
@@ -48,7 +53,16 @@ function filterName(val) {
         
         // show TR match value
         //$("table tbody tr td:containsAny('" + val.trim() + "')").parents('tr').show();
-        $("table tbody tr td:containsSubstring('" + val.trim() + "')").parents('tr').show();
+        //$("table tbody tr td:containsSubstring('" + val.trim() + "')").parents('tr').show();
+        
+        // 1 is index of SKU column
+        $("table tbody tr td:nth-child(1):containsSubstring('" + val.trim() + "')").parents('tr').show();
+
+        // 4 is index of name column
+        $("table tbody tr td:nth-child(4):containsSubstring('" + val.trim() + "')").parents('tr').show();
+        
+        // 6 is index of variation column
+        $("table tbody tr td:nth-child(6):containsSubstring('" + val.trim() + "')").parents('tr').show();
     } else {
         $("table tbody tr").show();
     }
