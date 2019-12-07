@@ -39,7 +39,7 @@ date_default_timezone_set("UTC");
     
 $offset = $_GET['offset'] ? $_GET['offset'] : 0;
 $limit = $_GET['limit'] ? $_GET['limit'] : 100;
-$status = $_GET['status'] ? $_GET['status'] : 'sold-out';
+$status = $_GET['status'] ? $_GET['status'] : 'all';
 
 $q = $_GET['q'] ? $_GET['q'] : '';
 $byskus = $_GET['byskus'] ? $_GET['byskus'] : 0;
