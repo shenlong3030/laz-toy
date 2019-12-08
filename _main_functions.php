@@ -1035,7 +1035,7 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
             }
             
             if(isset($data["actives"][$index])) {
-                $value = $data["qty"][$index];
+                $value = $data["actives"][$index];
                 $product = setProductActive($product, $value);
             }
 
