@@ -269,6 +269,21 @@ date_default_timezone_set("UTC");
         console.log("copy text : " + text );
         copyToClipBoard(text);
     });
+    $('input[type=checkbox][data-toggle=toggle]').change(function() {
+      var status;
+      if(this.checked) {
+          status = 'active';
+      } else {
+          status = 'inactive';
+      }
+      
+      $.post( "update-api.php", { sku: this.id, skustatus: status })
+        .done(function( data ) {
+          if(data.code) {
+              alert(data);
+          } 
+        });
+    });
 
     // document of tablesorter, see http://tablesorter.com/docs/
     $("#tableProducts").tablesorter();
