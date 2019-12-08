@@ -244,7 +244,9 @@ function fixProductRemoveVideoLink($product){
 }
 
 function fixProductSaleDate($product){
-    $product['Skus'][0]['special_from_date'] = "2019-01-01";   
+    foreach($product['Skus'] as $skuIndex=>$sku) {
+        $product['Skus'][$skuIndex]['special_from_date'] = "2019-01-01";        
+    }   
     return $product;
 }
 
