@@ -36,7 +36,7 @@ $options = isset($_POST['options']) ? $_POST['options'] : '';
         <input type="checkbox" name="options[]" value="2">Brand all children<br>
         <input type="checkbox" name="options[]" value="3">Set color=... model=... all children<br>
         <input type="checkbox" name="options[]" value="4">Remove video link all children<br>
-        <input type="checkbox" name="options[]" value="5">Fix sale date all children<br>
+        <input type="checkbox" name="options[]" value="5">Fix sale date all children and English languages<br>
         <input type="checkbox" name="options[]" value="6">Set model=random all children<br>
         <br><br>
         To SKUs<br><textarea name="skus" rows="10" cols="80"><?php echo implode("\n", $skus);?></textarea><br>
