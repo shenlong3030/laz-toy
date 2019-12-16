@@ -8,6 +8,7 @@ require_once('_main_functions.php');
 
 $sku = $_POST['sku'] ? $_POST['sku'] : 0;
 $qty = isset($_POST['qty']) ? $_POST['qty'] : '';
+$qtyaction = $_POST['qtyaction'];
 $price = $_POST['price'] ? $_POST['price'] : 0;
 $sale_price = $_POST['sale_price'] ? $_POST['sale_price'] : 0;
 $fromdate = $_POST['fromdate'] ? $_POST['fromdate'] : 0;
@@ -69,7 +70,10 @@ if($accessToken && $sku) {
             // migrate images
             $images = migrateImages($accessToken, $images, $cache);
             $product = setProductImages($product, $images, TRUE);   
-        } elseif (is_numeric($qty)){
+        } elseif (!empty($qtyaction)){
+            if($qtyaction == "+500") {
+                $qty = 500;
+            }
             //echo "i2";
             $response = updateQuantityWithAPI($accessToken, $sku, $qty);
         } elseif ($price || $sale_price) {

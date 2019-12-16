@@ -172,6 +172,10 @@ function search() {
 }
 
 $(function(){
+  $("input[name='qtyaction'][value='+500']").click(function() {
+      $(this).parent().find('input[name=qty]').val('500'); 
+  });
+
   $('#btn_copy_sku').click(function (e) {
       var text = "";
       $("#tableProducts").find("td.sku").each(function(){
