@@ -124,29 +124,7 @@ function getOrderItemsInfo($dict) {
  
     foreach($dict['data'] as $index=>$item) {
         // extract color or model from 'Variation'
-        $variation = '';
-        if(preg_match("(AIS Lava|…)", $item['variation'], $matches)) {
-           // do nothing 
-           // if model = AIS Lava 
-           // or color = …
-        } else {
-            preg_match('/(.+):(.+)/', $item['variation'], $matches);
-            if(count($matches) >= 3) {
-                $variation_type = $matches[1];
-                $variation_value = $matches[2];
-                
-                if(preg_match("#(màu)#i", $variation_type, $out)) {
-                    $variation = "•• Lựa chọn: ".$variation_value;
-                } else {
-                    // name must have mix format like this ... / ... / ... /
-                    // if(preg_match("(\/)", $item['name'], $out)) {
-                    //     $variation = "•• Lựa chọn: ".$variation_value;
-                    // } 
-                    $variation = "•• Lựa chọn: ".$variation_value;
-                }
-            }
-        }
-
+        $variation = make_short_order_variation($item['variation']);
         $info["ItemName"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.'</p>';
         $info["TrackingCode"] = $item['tracking_code'] ? $item['tracking_code'] : $info["TrackingCode"];
         

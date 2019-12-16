@@ -161,4 +161,23 @@ function make_short_sku($sku) {
     return $sku;
 }
 
+function make_short_order_variation($order_variation) {
+    $dict = array(
+    'Nhóm màu:' => '',
+    'Compatibility by Model:' => '',
+    'AIS Lava' => '',
+    '\.\.\.' => '',
+    );
+
+    foreach($dict as $name=>$shortname){
+        $order_variation = preg_replace("/($name)/i", $shortname, $order_variation);
+    }
+
+    if(strlen($order_variation)) {
+        $order_variation = "Lựa chọn: " . $order_variation;
+    }
+
+    return $order_variation;
+}
+
 ?>
