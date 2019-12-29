@@ -815,7 +815,7 @@ function updatePricesWithAPI($accessToken, $sku, $price, $sale_price, $fromdate 
     $pricePayload = '';
     $salePayload = '';
     
-    if(empty($price) || intval($sale_price) > intval($price)) {
+    if(empty($price) || intval($sale_price) > intval($price) || intval($sale_price) < intval($price)/2) {
         $price = intval($sale_price) * 1.2;
     }
 
