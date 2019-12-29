@@ -28,16 +28,16 @@ require_once('_main_functions.php');
 date_default_timezone_set("UTC");
 
 $input = val($_POST['col'][0]);
-$names = array_filter(explode("\n", str_replace("\r", "", $input)));
+$names = explode("\n", str_replace("\r", "", $input));
 
 $input = val($_POST['col'][1]);
-$descs = array_filter(explode("\n", str_replace("\r", "", $input)));
+$descs = explode("\n", str_replace("\r", "", $input));
 
 $input = val($_POST['col'][2]);
-$shortdescs = array_filter(explode("\n", str_replace("\r", "", $input)));
+$shortdescs = explode("\n", str_replace("\r", "", $input));
 
 $input = val($_POST['col'][3]);
-$images = array_filter(explode("\n", str_replace("\r", "", $input)));
+$images = explode("\n", str_replace("\r", "", $input));
 ?>
 
 <body>
