@@ -16,9 +16,6 @@ $todate = $_POST['todate'] ? $_POST['todate'] : 0;
 $name = $_POST['name'] ? $_POST['name'] : '';
 
 $compatibility_by_model = $_POST['compatibility_by_model'] ? $_POST['compatibility_by_model'] : '';
-$color_family = $_POST['color_family'] ? $_POST['color_family'] : '';
-$color_thumbnail = $_POST['color_thumbnail'] ? $_POST['color_thumbnail'] : '';
-
 $category = $_POST['category'] ? $_POST['category'] : 0;
 $input = val($_POST['images']);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
@@ -42,7 +39,15 @@ $content = $_POST['content'] ? $_POST['content'] : '';
 
 $video = $_REQUEST['video'] ? $_REQUEST['video'] : '';
 
-if($accessToken && $sku) {
+$id = $_REQUEST['item_id'] ? $_REQUEST['item_id'] : '';
+
+$input = $_REQUEST['colors'] ? $_REQUEST['colors'] : '';
+$colors = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
+
+$input = $_REQUEST['color_thumbnails'] ? $_REQUEST['color_thumbnails'] : '';
+$color_thumbnails = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
+
+if($accessToken && ($sku || $id)) {
     $response = 0;
     /*    
     if($category) {
@@ -61,7 +66,13 @@ if($accessToken && $sku) {
     }
     */
 
-    $product = getProduct($accessToken, $sku);
+    $product = null;
+    if($id) {
+        $product = getProduct($accessToken, null, $id);
+    } else {
+        $product = getProduct($accessToken, $sku);
+    }
+
     $response = null;
     if($product) {
         $product = prepareProductForUpdating($product);
@@ -107,8 +118,8 @@ if($accessToken && $sku) {
             $product = setProductPackageContent($product, $content);
         } elseif($video) {
             $product = setProductVideo($product, $video);
-        } elseif($color_thumbnail) {
-            $product = setProductColorThumbnail($product, $color_thumbnail);
+        } elseif($color_thumbnails) {
+            $product = setProductColorThumbnail($product, $colors, $color_thumbnails);
         }
 
         if(!$response) {

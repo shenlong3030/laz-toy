@@ -143,8 +143,15 @@ function setProductColor($product, $color) {
     return $product;
 }
 
-function setProductColorThumbnail($product, $url) {
-    $product['Skus'][0]['color_thumbnail'] = $url;
+function setProductColorThumbnail($product, $colors, $thumbnails) {
+    foreach ($colors as $key => $color) {
+        $thumbnail = $thumbnails[$key];
+        foreach($product['Skus'] as $skuIndex=>$sku) {
+            if($product['Skus'][$skuIndex]['color_family'] == $color) {
+                $product['Skus'][$skuIndex]['color_thumbnail'] = $thumbnail;
+            }    
+        }
+    }
     return $product;
 }
 

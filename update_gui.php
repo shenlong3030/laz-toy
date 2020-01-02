@@ -24,13 +24,14 @@ $todate = "";
 $name = "";
 $variation = "";
 $brand = "";
+$id = "";
 
 if($sku) {
     $product = getProduct($accessToken, $sku);
-
+    $id = $product['item_id'];
     $sibling = null;
     if($product) {
-        $sibling = getProduct($accessToken, "", $product['item_id']);
+        $sibling = getProduct($accessToken, "", $id);
         if(count($sibling['skus']) < 2) {
             $sibling = null;
         }
@@ -145,8 +146,8 @@ $cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <input type="submit" value="Update color"/>
     </form>
 <hr>
-    <form action="update.php" method="POST" name="colorThumbnailForm" target="responseIframe">
-    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    <form action="update_color_thumbnail_gui.php" method="POST" name="colorThumbnailForm" target="_blank">
+    <input type="hidden" id="item_id" name="item_id" value="<?php echo $id;?>">
     color_thumbnail <input type="text" name="color_thumbnail" value="<?php echo $color_thumbnail;?>" />
     <input type="submit" value="Update color_thumbnail"/>
     </form>
