@@ -27,17 +27,17 @@ require_once('_main_functions.php');
 // It's only needed if timezone in php.ini is not set correctly.
 date_default_timezone_set("UTC");
 
-$input = val($_POST['col'][0]);
-$names = explode("\n", str_replace("\r", "", $input));
+$input = $_POST['col'][0];
+$names = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
-$input = val($_POST['col'][1]);
-$descs = explode("\n", str_replace("\r", "", $input));
+$input = $_POST['col'][1];
+$descs = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
-$input = val($_POST['col'][2]);
-$shortdescs = explode("\n", str_replace("\r", "", $input));
+$input = $_POST['col'][2];
+$shortdescs = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
-$input = val($_POST['col'][3]);
-$images = explode("\n", str_replace("\r", "", $input));
+$input = $_POST['col'][3];
+$images = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 ?>
 
 <body>
