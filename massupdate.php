@@ -28,26 +28,26 @@ require_once('_main_functions.php');
 date_default_timezone_set("UTC");
 
 $input = $_POST['col'][0];
-$skus = explode("\n", str_replace("\r", "", $input));
+$skus = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][1];
-$names = explode("\n", str_replace("\r", "", $input));
+$names = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][2];
-$models = explode("\n", str_replace("\r", "", $input));
+$models = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][3];
-$colors = explode("\n", str_replace("\r", "", $input));
+$colors = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][4];
-$prices = explode("\n", str_replace("\r", "", $input));
+$prices = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][5];
-$images = explode("\n", str_replace("\r", "", $input));
+$images = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 $imageindex = val($_POST['imageindex'], 1);
 
 $input = $_POST['col'][6];
-$actives = explode("\n", str_replace("\r", "", $input));
+$actives = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
 $preview = val($_POST['preview']);
 ?>
