@@ -21,6 +21,7 @@ require_once('_main_functions.php');
     
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
+<body>
 
 <?php
 // Pay no attention to this statement.
@@ -62,47 +63,6 @@ $images = explode("\n", str_replace("\r", "", $input));
 
 $comboimages = val($_POST['comboimage']);
 $resetimages = val($_POST['resetimages']);
-
-?>
-
-<body>
-    <h1>Create products</h1>
-    <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-
-<table>
-    <tbody>
-        <tr>
-            <td>Parent SKU</td>
-            <td>Source SKU</td>
-            <td>SKU prefix</td>
-            <td>Name</td>
-            <td>Group</td>
-            <td>Model</td>
-            <td>Color</td>
-            <td>Qty</td>
-            <td>Price</td>
-            <td>Images <input style="padding-left: 10px" type="checkbox" name="resetimages" value="1" <?php if($resetimages) echo "checked=1";?>>Remove all source's images</td>
-        </tr>
-        <tr>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="20"><?php echo implode("&#13;&#10;", $parentskus);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="20"><?php echo implode("\n", $sourceskus);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="20"><?php echo implode("\n", $skuprefixs);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="60"><?php echo implode("\n", $names);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="20"><?php echo implode("\n", $groups);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="10"><?php echo implode("&#13;&#10;", $models);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="10"><?php echo implode("&#13;&#10;", $colors);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="5"><?php echo implode("\n", $qtys);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="5"><?php echo implode("\n", $prices);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="30" cols="80" style="white-space: nowrap;"><?php echo implode("\n", $images);?></textarea></td>
-        </tr>
-    </tbody>
-</table>
-<input type="checkbox" name="preview" checked="1" value="1">Preview<br>
-<input type="checkbox" name="makegroup" <?php if($makegroup) {echo 'checked="1"';}?> value="1">Make group<br>
-<input type="submit"><hr>
-
-
-<?php
     
 if(empty($sourceskus) || empty($skuprefixs)) {
     echo "<h1>Please input source SKU and SKU prefix</h1>";
@@ -128,8 +88,5 @@ createProductsFromManySource($accessToken, $data, $preview);
 
 ?>
 
-<script type="text/javascript">
-</script>
-</div>
 </body>
 </html>

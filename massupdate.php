@@ -50,38 +50,6 @@ $input = $_POST['col'][6];
 $actives = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
 $preview = val($_POST['preview']);
-?>
-
-<body>
-    <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-<table>
-    <tr>
-     <th>SKUs</th>
-     <th>Names</th>
-     <th>Models</th>
-     <th>Colors</th>
-     <th>Prices</th>
-     <th>Images >> Start index (1-8) <input size="3" type="text" name="imageindex" value="<?php echo val($imageindex);?>"></th>
-     <th>Actives</th>
-    </tr>
-    <tbody>
-        <tr>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("\n", $skus);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="50"><?php echo implode("\n", $names);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $models);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $colors);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $prices);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="50"><?php echo implode("\n", $images);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="5"><?php echo implode("&#13;&#10;", $actives);?></textarea></td>
-        </tr>
-    </tbody>
-</table>
-<br><br>
-
-<input type="checkbox" name="preview" checked="1" value="1">Preview<br>
-
-<input type="submit"><hr>
-<?php
 
 $data = array(
     "names" => $names,
@@ -95,15 +63,14 @@ $data = array(
 );
 
 if(!empty($skus)) {
-    massUpdateProducts($accessToken, $skus, $data, $preview);
+    massUpdateProducts($accessToken, $skus, $data, $preview);  
 } else {
     echo "<h3>Please input SKUs and images</h3>";   
 }
 
 ?>
 
-<script type="text/javascript">
-</script>
-</div>
 </body>
 </html>
+
+
