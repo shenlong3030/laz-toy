@@ -22,6 +22,7 @@ function prepareProductForUpdating($product) {
         $product['Attributes']['description_en'] = $product['Attributes']['description'];
     }
 
+    $product = unsetQuantity($product);
     
     // remove wrong keyName
     unset($product['attributes']);
@@ -46,6 +47,10 @@ function prepareProductForCreating($product) {
     $product['Skus'][0]['SellerSku'] = "";
 
     // remove name_en
+    unset($product['attributes']["name_en"]);
+    unset($product['attributes']['short_description_en']);
+    unset($product['attributes']['description_en']);
+
     unset($product['Attributes']["name_en"]);
     unset($product['Attributes']['short_description_en']);
     unset($product['Attributes']['description_en']);
@@ -144,6 +149,8 @@ function setProductColor($product, $color) {
 }
 
 function setProductColorThumbnail($product, $colors, $thumbnails) {
+    unset($product['Attributes']);
+
     foreach ($colors as $key => $color) {
         $thumbnail = $thumbnails[$key];
         foreach($product['Skus'] as $skuIndex=>$sku) {
@@ -263,5 +270,14 @@ function fixProductSaleDate($product){
     }   
     return $product;
 }
+
+function unsetQuantity($product){
+    foreach($product['Skus'] as $skuIndex=>$sku) {
+        unset($product['Skus'][$skuIndex]['quantity']);
+    }   
+    return $product;
+}
+
+
 
 ?>
