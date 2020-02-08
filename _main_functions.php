@@ -950,6 +950,13 @@ function fixProducts($accessToken, $skus, $options)
                 echo "<br>FIX model=random<br>";
                 $product = fixProductSetRandomModel($product);
             }
+
+            // option 7
+            if(in_array("7", $options)) {
+                echo "<br>FIX model=...<br>";
+                $product = fixProductModel($product);
+            }
+            
             
             $r = saveProduct($accessToken, $product);
             

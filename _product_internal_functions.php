@@ -246,6 +246,13 @@ function fixProductSetRandomModel($product) {
     return $product;
 }
 
+function fixProductModel($product) {
+    foreach($product['Skus'] as $skuIndex=>$sku) {
+        $product['Skus'][$skuIndex]['compatibility_by_model'] = '...';   
+    }
+    return $product;
+}
+
 function fixProductRemoveVideoLink($product){
     return setProductVideo($product, "");
 }
