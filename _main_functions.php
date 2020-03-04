@@ -408,7 +408,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             // hidden 
             /* cột 10 */echo '<td class="editmode price form">'.$priceForm.'</td>';
 
-            $link = "http://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
+            $link = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
             echo '<td><a target="_blank" href="'.$link.'" class="fa fa-edit" style="color:red" tabindex="-1"></a></td>';
 
             // Active toggle button
