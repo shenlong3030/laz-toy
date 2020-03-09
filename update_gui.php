@@ -65,8 +65,8 @@ if($sku) {
     }
 }
 
-$addChildLink = "http://$_SERVER[HTTP_HOST]/lazop/addchild.php?sku=$sku&name=$name";
-$cloneLink = "http://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
+$addChildLink = "https://$_SERVER[HTTP_HOST]/lazop/addchild.php?sku=$sku&name=$name";
+$cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 
 ?>
 
