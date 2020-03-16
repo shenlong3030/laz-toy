@@ -389,7 +389,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             echo '<tr class="'. $cssclass .'">';
             //echo '<td class="sku on padding">'. ($isGrouped?"<i class='grouped-icon fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
 
-            $link = "http://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";
+            $link = "https://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";
             $html_link = '<a tabIndex="-1" target="_blank" href="'.$link.'" class="grouped-icon fas fa fa-th-list" style="color:red"></a>';
             /* cột 1 */echo '<td class="sku on padding info">'. ($isGrouped?$html_link:"") .$sellersku.'</td>';
 

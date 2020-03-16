@@ -62,7 +62,7 @@ $after = $_GET['after'] ? $_GET['after'] : '';
     <div class="control-bar-2">
       <iframe id="responseIframe" name="responseIframe" width="100%" height="30"></iframe>
       <?php 
-        $currentLink = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; 
+        $currentLink = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; 
         $bareLink = strtok($currentLink, '?');
         $linkSoldout = $bareLink . '?status=sold-out';
         $linkRejected = $bareLink . '?status=rejected';
