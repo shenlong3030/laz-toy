@@ -81,21 +81,18 @@ function vn_to_str ($str){
      
     'U'=>'Ú|Ù|Ủ|Ũ|Ụ|Ư|Ứ|Ừ|Ử|Ữ|Ự',
      
-    'Y'=>'Ý|Ỳ|Ỷ|Ỹ|Ỵ'
+    'Y'=>'Ý|Ỳ|Ỷ|Ỹ|Ỵ',
+
+    '.'=>'\s'
      
     );
      
-    foreach($unicode as $nonUnicode=>$uni){
-     
-    $str = preg_replace("/($uni)/i", $nonUnicode, $str);
-     
+    foreach($unicode as $nonUnicode=>$uni){ 
+        $str = preg_replace("/($uni)/i", $nonUnicode, $str);
     }
-    $str = str_replace(' ','.',$str);
-    
+
     // remove non-alphabet letter , keep "_", "."
     $str = preg_replace("/[^0-9a-zA-Z_\.]/", "", $str);
-    $str = preg_replace("[\.\.]", ".", $str);
-     
     return $str;
 }
 
@@ -137,19 +134,18 @@ function make_short_sku($sku) {
     'DUONG.KINH.' => '',
 
     'IPHONE' => 'IP', 
-    
-    'SAMSUNG' =>'SS',
-     
+    'SAMSUNG' =>'SAM',
     'HUAWEI' =>'HW',
-
     'REDMI' => 'RM',
-
     'ASUS' => '',
     'ZENFONE' => 'ZEN',
-
     'MOTOROLA' => 'MOTO',
-     
     'NOKIA'=>'NK',
+    'XIAOMI'=>'XM',
+    'OPPO'=>'OP',
+    'REALME'=>'REAL',
+    'HONOR'=>'HN',
+    'VSMART'=>'VS',
 
     '\.\.\.'=>''
     );
