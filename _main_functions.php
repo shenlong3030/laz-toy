@@ -55,22 +55,13 @@ function getAllOrders($accessToken, $status = 'pending', $sortBy = 'created_at',
 
     $list = array();
     for($i=0; $i<($limit*100); $i+=$limit) {
-        $nextlist = getOrders($accessToken, $status, $i, $limit, $sortBy);
+        $nextlist = getOrders($accessToken, $status, $i, $limit, $sortBy, $getOrderItems);
         $list = array_merge($list, $nextlist);
 
         if(count($nextlist) < $limit) {
             break;
         }
     }
-
-    if($getOrderItems) {
-        foreach ($list as $index => $order) {
-            $orderId = $order['order_id'];
-            $orderItems = getOrderItems($accessToken, $orderId);
-            $list[$index]['orderItems'] = $orderItems;
-        }
-    }
-
     return $list;
 }
 
@@ -94,12 +85,14 @@ function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100,
         $list = $response['data']['orders'];
 
         if($getOrderItems) {
-        foreach ($list as $index => $order) {
-            $orderId = $order['order_id'];
-            $orderItems = getOrderItems($accessToken, $orderId);
-            $list[$index]['orderItems'] = $orderItems;
+            $orderIds = array_column($list, "order_id");
+            $ordersItems = getOrdersItems($accessToken, $orderIds);
+
+            foreach ($list as $index => $order) {
+                $orderId = $order['order_id'];
+                $list[$index]['orderItems'] = $ordersItems[$orderId];
+            }
         }
-    }
     } else {
         myvar_dump($response);
     }
@@ -113,16 +106,16 @@ function getOrderItems($accessToken, $orderId){
     $request->addApiParam('order_id', $orderId);
     $response = json_decode($c->execute($request, $accessToken), true);
     //var_dump($response);
-    return getOrderItemsInfo($response);
+    return getOrderItemsInfo($response['data']);
 }
 
-function getOrderItemsInfo($dict) {
+function getOrderItemsInfo($data) {
     $info = array();
     $info["ItemName"] = "";
     $info["TrackingCode"] = "";
     $info["img"] = "";
  
-    foreach($dict['data'] as $index=>$item) {
+    foreach($data as $index=>$item) {
         // extract color or model from 'Variation'
         $variation = make_short_order_variation($item['variation']);
         $info["ItemName"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.'</p>';
@@ -132,6 +125,21 @@ function getOrderItemsInfo($dict) {
         $info["img"] .= '<a target="_blank" href="'.$item['product_main_image'].'"><img border="0" src="'.$item['product_main_image'].'" height="50"></a><br>';
     }
     return $info;
+}
+
+function getOrdersItems($accessToken, $orderIds){
+    $strIds = "[" . implode(",", $orderIds) . "]";
+    $c = new LazopClient($GLOBALS['apiUrl'],$GLOBALS['appKey'],$GLOBALS['appSecret']);
+    $request = new LazopRequest('/orders/items/get','GET');
+    $request->addApiParam('order_ids', $strIds);
+    $response = json_decode($c->execute($request, $accessToken), true);
+    //var_dump($response);
+
+    $data = $response['data'];
+    $ordersItems = array_column($data, "order_items", "order_id");
+    $ordersItems =array_map('getOrderItemsInfo', $ordersItems);
+
+    return $ordersItems;
 }
 
 function printOrders($token, $orders, $offset = 0, $status = "") {
@@ -149,6 +157,7 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         $price = $order['price'];
         
         echo '<tr class="'.$orderStatus.'">';
+        echo '<td style="display:none;">'.$orderId.'</td>';
         echo '<td class="index">'.($offset+$index+1).'</td>';
         
         

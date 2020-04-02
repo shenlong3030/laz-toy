@@ -91,7 +91,7 @@ if($status == 'all') {
 } else {
     $list = array();
     for($i=0; $i<$limit; $i+=100) {
-        $nextlist = getOrders($accessToken, $status, $i + $offset, 100, $sortBy);
+        $nextlist = getOrders($accessToken, $status, $i + $offset, 100, $sortBy, $needFullOrderInfo);
         $list = array_merge($list, $nextlist);
 
         if(count($nextlist) < 100) {
