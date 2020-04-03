@@ -62,6 +62,8 @@ if($sku) {
         $desc = $product['attributes']['description'];
         $brand = $product['attributes']['brand'];
         $video = $product['attributes']['video'];
+
+        $status = isProductActive($product) ? "checked" : "";
     }
 }
 
@@ -131,6 +133,10 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <button id="btn_copy_url">Copy LAZADA urls</button>
     <?php echo printProducts(array($sibling), false, $sku);?>
 <?php } ?>
+
+
+<input id="<?php echo $sku;?>" type="checkbox" data-toggle="toggle" <?php echo $status;?>>
+
 <hr>
     <form action="update.php" method="POST" name="nameForm" target="responseIframe">
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">

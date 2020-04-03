@@ -217,7 +217,7 @@ function setProductActive($product, $value) {
 }
 
 function isProductActive($product){
-    return $product['Skus'][0]['Status'] == "active";
+    return $product['Skus'][0]['Status'] == "active" || $product['skus'][0]['Status'] == "active";
 }
 
 function getProductItemId($product) {
