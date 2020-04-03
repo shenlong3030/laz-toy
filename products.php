@@ -26,7 +26,7 @@ require_once('_main_functions.php');
       z-index: 10;
     }
     .mainContent{
-      margin-top: 190px;
+      margin-top: 240px;
     }
     </style>
 </head>
@@ -108,12 +108,13 @@ $after = $_GET['after'] ? $_GET['after'] : '';
     <div class="control-bar-1">
     <span style="padding:5px;">Page</span>
     </div>
+    <br>
+    <button id="btn_copy_all">Copy All Clipboard</button>
+    <button id="btn_copy_sku">Copy SKUs</button>
+    <button id="btn_copy_url">Copy LAZADA urls</button>
   </div>
-
   <div class="mainContent">
-  <button id="btn_copy_all">Copy All Clipboard</button>
-  <button id="btn_copy_sku">Copy SKUs</button>
-  <button id="btn_copy_url">Copy LAZADA urls</button>
+
 <?php
 
 $list = null;
