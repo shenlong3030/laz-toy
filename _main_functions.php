@@ -916,7 +916,12 @@ function fixProducts($accessToken, $skus, $options)
     $skus = pre_process_skus($skus);
 
     $success = array();
+    $doneList = array();
     foreach($skus as $index => $sku) {
+        if(in_array($sku, $doneList)) {
+            continue;
+        }
+
         $product = getProduct($accessToken, $sku);
         $item_id = getProductItemId($product);
         $product = getProduct($accessToken, null, $item_id);
@@ -971,6 +976,7 @@ function fixProducts($accessToken, $skus, $options)
             
             if($r["code"] == "0") {
                 $success[] = $product;
+                $doneList = array_merge($doneList, array_column($product['Skus'], "SellerSku"));
             } else {
                 myvar_dump($r);
             }
