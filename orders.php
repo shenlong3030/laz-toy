@@ -7,7 +7,7 @@ require_once('_main_functions.php');
 $count = 0;
 
 $offset = $_GET['offset'] ? $_GET['offset'] : 0;
-$limit = $_GET['limit'] ? $_GET['limit'] : 200;
+$limit = $_GET['limit'] ? $_GET['limit'] : 100;
 
 // pending, canceled, ready_to_ship, delivered, returned, shipped, failed
 $status = $_GET['status'] ? $_GET['status'] : 'pending';
@@ -68,7 +68,7 @@ echo "<p><b>10 đơn hàng bị huỷ gần đây nhất<b></p>";
 echo '<table border="1"><tbody>';
 
 $token = $GLOBALS["accessToken"];
-$list = getOrders($token, 'canceled', 0, 10, $sortBy, 0);
+$list = getOrders($token, 'canceled', 0, 10, $sortBy, 1);
 printOrders($token, $list , 0, $status);
 
 echo '</tbody></table></div><hr>';
