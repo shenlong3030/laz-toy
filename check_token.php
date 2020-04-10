@@ -36,20 +36,27 @@ if($logout) {
 // setcookie('access_token', '', time() - 3600);
 
 $accessToken = $_COOKIE["access_token"];
+$refreshToken = $_COOKIE["refresh_token"];
 
 if(!$accessToken) {
-    // get code param
-    $code = isset($_GET['code']) ? $_GET['code'] : null;
-    
-    if(!$code) {
-        header("Location: ".$GLOBALS['authLink']); 
-        exit();
+    if($refreshToken) { // refresh token
+        $c = new LazopClient($authUrl, $appKey, $appSecret);
+        $request = new LazopRequest('/auth/token/refresh');
+        $request->addApiParam('refresh_token',$refreshToken);
+        $response = json_decode($c->execute($request), true);
+    } else {
+        // get code param
+        $code = isset($_GET['code']) ? $_GET['code'] : null;
+        if(!$code) {
+            header("Location: ".$GLOBALS['authLink']); 
+            exit();
+        }
+        
+        $c = new LazopClient($authUrl, $appKey, $appSecret);
+        $request = new LazopRequest("/auth/token/create");
+        $request->addApiParam('code', $code);
+        $response = json_decode($c->execute($request), true);
     }
-    
-    $c = new LazopClient($authUrl, $appKey, $appSecret);
-    $request = new LazopRequest("/auth/token/create");
-    $request->addApiParam('code', $code);
-    $response = json_decode($c->execute($request), true);
     
     if($response['code'] == "0") {
         $accessToken = $response['access_token'];
@@ -68,13 +75,20 @@ if(!$accessToken) {
         setcookie("refresh_token",$refreshToken,time()+$refreshExpire);
     } else {
         echo "GET TOKEN ERROR";
-        //header("Location: ".$GLOBALS['authLink']); 
+        //header("Location: ".$GLOBALS['authLink']);
+        
+        // clear cookie access_token , refresh_token
+        setcookie("access_token", "", time()-3600);
+        setcookie("refresh_token", "", time()-3600); 
         exit();
     }
 } else {
     $info = getSellerInfo($accessToken);
     if(!isValidInfo($info)) {
         echo "INVALID SELLER ID";
+        // clear cookie access_token , refresh_token
+        setcookie("access_token", "", time()-3600);
+        setcookie("refresh_token", "", time()-3600);
         exit();
     }
 }
