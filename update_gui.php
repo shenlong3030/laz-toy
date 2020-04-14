@@ -115,6 +115,17 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     
     <div class="mainContent">
 
+<?php if($sibling) { ?>
+    <div style="height:500px;overflow:auto">
+    <h2>Danh sách các SP cùng nhóm này</h2>
+    <button id="btn_copy_all">Copy All Clipboard</button>
+    <button id="btn_copy_sku">Copy SKUs</button>
+    <button id="btn_copy_url">Copy LAZADA urls</button>
+    <?php echo printProducts(array($sibling), false, $sku);?>
+    </div>
+<?php } ?>
+
+<hr>
     <h1>Update product</h1>
     
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
@@ -125,15 +136,6 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <a style="color:red" href="<?php echo $addChildLink?>" target="_blank">Add Child</a>
     <a style="color:red;padding-left: 10px" href="<?php echo $cloneLink?>" target="_blank">Clone to new product</a>
 <hr>
-<?php if($sibling) { ?>
-    <h2>Danh sách các SP cùng nhóm này</h2>
-
-    <button id="btn_copy_all">Copy All Clipboard</button>
-    <button id="btn_copy_sku">Copy SKUs</button>
-    <button id="btn_copy_url">Copy LAZADA urls</button>
-    <?php echo printProducts(array($sibling), false, $sku);?>
-<?php } ?>
-
 
 <input id="<?php echo $sku;?>" type="checkbox" data-toggle="toggle" <?php echo $status;?>>
 
@@ -266,7 +268,7 @@ date_default_timezone_set("UTC");
     $("button[name='qtyaction'][value='=0']").click(function() {
       $(this).parent().find('input[name=qty]').val('0'); 
     });
-    
+
     $('#btn_copy_sku').click(function (e) {
       var text = "";
       $("#tableProducts").find("td.sku").each(function(){
