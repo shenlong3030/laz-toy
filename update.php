@@ -84,6 +84,8 @@ if($accessToken && ($sku || $id)) {
         } elseif (!empty($qtyaction)){
             if($qtyaction == "+500") {
                 $qty = 500;
+            } elseif ($qtyaction == "=0") {
+                $qty = 0;
             }
             //echo "i2";
             $response = updateQuantityWithAPI($accessToken, $sku, $qty);

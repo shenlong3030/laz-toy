@@ -260,6 +260,13 @@ date_default_timezone_set("UTC");
 ?>
 
 <script type="text/javascript">
+    $("button[name='qtyaction'][value='+500']").click(function() {
+      $(this).parent().find('input[name=qty]').val('500'); 
+    });
+    $("button[name='qtyaction'][value='=0']").click(function() {
+      $(this).parent().find('input[name=qty]').val('0'); 
+    });
+    
     $('#btn_copy_sku').click(function (e) {
       var text = "";
       $("#tableProducts").find("td.sku").each(function(){
