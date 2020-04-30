@@ -41,27 +41,29 @@ $input = $_POST['col'][2];
 $skuprefixs = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][3];
-$names = explode("\n", str_replace("\r", "", $input));
+$kiotids = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][4];
-$groups = explode("\n", str_replace("\r", "", $input));
+$names = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][5];
-$models = explode("\n", str_replace("\r", "", $input));
+$groups = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][6];
-$colors = explode("\n", str_replace("\r", "", $input));
+$models = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][7];
-$qtys = explode("\n", str_replace("\r", "", $input));
+$colors = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][8];
-$prices = explode("\n", str_replace("\r", "", $input));
+$qtys = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][9];
+$prices = explode("\n", str_replace("\r", "", $input));
+
+$input = $_POST['col'][10];
 $images = explode("\n", str_replace("\r", "", $input));
 
-$comboimages = val($_POST['comboimage']);
 $resetimages = val($_POST['resetimages']);
     
 if(empty($sourceskus) || empty($skuprefixs)) {
@@ -81,7 +83,8 @@ $data = array(
     "prices" => $prices,
     "images" => $images,
     "resetimages" => $resetimages,
-    "makegroup" => $makegroup
+    "makegroup" => $makegroup,
+    "kiotids" => $kiotids
     );
 
 createProductsFromManySource($accessToken, $data, $preview);

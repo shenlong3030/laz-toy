@@ -32,6 +32,7 @@ require_once('_main_functions.php');
             <td>Parent SKU</td>
             <td>Source SKU</td>
             <td>SKU prefix</td>
+            <td>Kiot id</td>
             <td>Name</td>
             <td>Group</td>
             <td>Model</td>
@@ -44,6 +45,7 @@ require_once('_main_functions.php');
             <td><textarea class="nowrap" name="col[]" rows="30" cols="20"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="30" cols="20"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="30" cols="20"></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="30" cols="10"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="30" cols="60"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="30" cols="20"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="30" cols="10"></textarea></td>

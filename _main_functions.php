@@ -687,6 +687,7 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
         $price = isset($data["prices"][$index]) ? $data["prices"][$index] : 0;
         $qty = isset($data["qtys"][$index]) ? $data["qtys"][$index] : 0;
         $image = isset($data["images"][$index]) ? $data["images"][$index] : 0;
+        $kiotid = isset($data["kiotids"][$index]) ? trim($data["kiotids"][$index]) : 0;
 
         if($sourceSku) {
             if(isset($sourceCache[$sourceSku])) {
@@ -742,15 +743,23 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
             }
 
             if($color) {
-                $newSku .= vn_urlencode($color) . ".";
+                if($color != "...") {
+                    $newSku .= vn_urlencode($color) . ".";
+                }
                 $product = setProductColor($product, $color);
             } else {
                 unset($product['Skus'][0]['color_family']);
             }
 
-            $time = substr(time(), -4);
-            $newSku .= $time;
             $newSku = make_short_sku($newSku);
+
+            if(!empty($kiotid)) {
+                $newSku .= ("KV" . $kiotid);
+            } else {
+                $time = substr(time(), -4);
+                $newSku .= $time;
+            }
+            
             $product = setProductSku($product, $newSku);
 
             // set price
