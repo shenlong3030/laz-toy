@@ -118,8 +118,15 @@ function getOrderItemsInfo($data) {
     foreach($data as $index=>$item) {
         // extract color or model from 'Variation'
         $variation = make_short_order_variation($item['variation']);
-        $info["ItemName"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.'</p>';
+        preg_match('/KV(\d+)/', $item['sku'], $m);
+        $kiotid = count($m)==2 ? $m[1] : "";
+        if(!empty($kiotid)) {
+            $kiotid = "Kiotviet: " . $kiotid;
+        }
+
+        $info["ItemName"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$kiotid.'</p>';
         $info["TrackingCode"] = $item['tracking_code'] ? $item['tracking_code'] : $info["TrackingCode"];
+
         
         // show image of all items, include canceled items
         $info["img"] .= '<a target="_blank" href="'.$item['product_main_image'].'"><img border="0" src="'.$item['product_main_image'].'" height="50"></a><br>';
