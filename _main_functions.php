@@ -121,10 +121,11 @@ function getOrderItemsInfo($data) {
         preg_match('/KV(\d+)/', $item['sku'], $m);
         $kiotid = count($m)==2 ? $m[1] : "";
         if(!empty($kiotid)) {
-            $kiotid = "Kiotviet: " . $kiotid;
+            $kiotid = " Kiotviet:" . $kiotid;
         }
+        $price = " Giá:" . $item['paid_price'];
 
-        $info["ItemName"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$kiotid.'</p>';
+        $info["ItemName"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$price.$kiotid.'</p>';
         $info["TrackingCode"] = $item['tracking_code'] ? $item['tracking_code'] : $info["TrackingCode"];
 
         
