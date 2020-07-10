@@ -146,8 +146,10 @@ function make_short_sku($sku) {
     'REALME'=>'REAL',
     'HONOR'=>'HN',
     'VSMART'=>'VS',
+    '.PLUS'=>'P',
 
-    '\.\.\.'=>''
+    '\.\.\.'=>'',
+    '\.\.'=>'.'
     );
 
     foreach($dict as $name=>$shortname){
