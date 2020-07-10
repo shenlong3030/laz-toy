@@ -761,12 +761,12 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
 
             $newSku = make_short_sku($newSku);
 
-            if(!empty($kiotid)) {
-                $newSku .= ("KV" . $kiotid);
-            } else {
-                $time = substr(time(), -4);
-                $newSku .= $time;
-            }
+            if($kiotid) {
+                $newSku .= $kiotid . ".";
+            } 
+
+            $time = substr(time(), -4);
+            $newSku .= $time;
             
             $product = setProductSku($product, $newSku);
 
