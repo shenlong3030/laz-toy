@@ -158,6 +158,7 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <input type="hidden" id="item_id" name="item_id" value="<?php echo $id;?>">
     color_thumbnail <input type="text" name="color_thumbnail" value="<?php echo $color_thumbnail;?>" />
     <input type="submit" value="Update color_thumbnail"/>
+    <img src="<?php echo $color_thumbnail;?>" width="30" height="30">
     </form>
 <hr>
     <form action="update.php" method="POST" name="modelForm" target="responseIframe">

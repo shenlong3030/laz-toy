@@ -13,6 +13,17 @@ $id = isset($_REQUEST["item_id"]) ? $_REQUEST["item_id"] : "";
 $colors = array();
 $colorThumbnails = array();
 $name = "";
+$defaultColors = array(
+    "Đỏ" => "https://vn-live.slatic.net/p/55ad4226db6a2999dab1895459833d14.jpg",
+    "Đen" => "https://vn-live.slatic.net/p/89b7e4093c507af559543508ee922cc1.jpg",
+    "Vàng" => "https://vn-live.slatic.net/p/0f0c8470b27f4ca6efc08770598ea2e2.jpg",
+    "Xanh matcha" => "https://vn-live.slatic.net/p/dc686e7f51bb8f990a0f5c6f8f2400c3.jpg",
+    "Tím" => "https://vn-live.slatic.net/p/28a765425981cb1817bec161eb101c8a.jpg",
+    "Xanh navy" => "https://vn-live.slatic.net/p/9c14256da7d15e7574c151c1a705eca3.jpg",
+    "Xanh bóng đêm" => "https://vn-live.slatic.net/p/9c14256da7d15e7574c151c1a705eca3.jpg",
+    "Trắng" => "https://vn-live.slatic.net/p/ad489d3e4167065cd26bb80c8d56b242.jpg"
+    );
+
 
 if($id) {
     $product = getProduct($accessToken, null, $id);
@@ -92,12 +103,12 @@ if($id) {
     </tr>
     <tbody>
         <tr>
-            <td><textarea class="nowrap" name="colors" rows="20" cols="20"><?php echo implode("\n", $colors);?></textarea></td>
-            <td><textarea class="nowrap" name="color_thumbnails" rows="20" cols="100"><?php echo implode("\n", $colorThumbnails);?></textarea></td>
+            <td><textarea id="colorsTxt" class="nowrap" name="colors" rows="10" cols="20"><?php echo implode("\n", $colors);?></textarea></td>
+            <td><textarea id="urlsTxt" class="nowrap" name="color_thumbnails" rows="10" cols="100"><?php echo implode("\n", $colorThumbnails);?></textarea></td>
         </tr>
     </tbody>
 </table>
-
+    <button id="dcbuton" type="button">Set default colors</button>
     <input type="submit" value="Update colors thumbnails"/>
     </form>
 <hr>
@@ -109,6 +120,37 @@ if($id) {
         echo "<br>";
     }
 ?>
+
+<script>
+        var defaultColors = {
+            "Đỏ" : "https://vn-live.slatic.net/p/55ad4226db6a2999dab1895459833d14.jpg",
+            "Đen" : "https://vn-live.slatic.net/p/89b7e4093c507af559543508ee922cc1.jpg",
+            "Vàng" : "https://vn-live.slatic.net/p/0f0c8470b27f4ca6efc08770598ea2e2.jpg",
+            "Xanh matcha" : "https://vn-live.slatic.net/p/dc686e7f51bb8f990a0f5c6f8f2400c3.jpg",
+            "Xanh Matcha" : "https://vn-live.slatic.net/p/dc686e7f51bb8f990a0f5c6f8f2400c3.jpg",
+            "Tím" : "https://vn-live.slatic.net/p/28a765425981cb1817bec161eb101c8a.jpg",
+            "Xanh navy" : "https://vn-live.slatic.net/p/9c14256da7d15e7574c151c1a705eca3.jpg",
+            "Xanh Navy" : "https://vn-live.slatic.net/p/9c14256da7d15e7574c151c1a705eca3.jpg",
+            "Xanh bóng đêm" : "https://vn-live.slatic.net/p/e4cde3547c935558227ecc930419df17.jpg",
+            "Xanh Bóng Đêm" : "https://vn-live.slatic.net/p/e4cde3547c935558227ecc930419df17.jpg",
+            "Trắng" : "https://vn-live.slatic.net/p/ad489d3e4167065cd26bb80c8d56b242.jpg"
+        };
+
+        $( "#dcbuton" ).click(function() {
+            console.log("ok1");
+            var colors = $('#colorsTxt').val().split('\n');
+            var urls = [];
+            colors.forEach(function(color, index){
+                if(color in defaultColors) {
+                    urls.push(defaultColors[color]);
+                } else {
+                    urls.push("");
+                } 
+            });
+
+            $('#urlsTxt').val(urls.join("\n"));
+        });
+    </script>
 
 </div>
 </body>
