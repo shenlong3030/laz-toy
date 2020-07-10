@@ -111,8 +111,9 @@ function getOrderItems($accessToken, $orderId){
 
 function getOrderItemsInfo($data) {
     $info = array();
-    $info["ItemName"] = "";
-    $info["TrackingCode"] = "";
+    $info["name"] = "";
+    $info["tracking_code"] = "";
+    $info["shipment_provider"] = "";
     $info["img"] = "";
  
     foreach($data as $index=>$item) {
@@ -125,10 +126,10 @@ function getOrderItemsInfo($data) {
         }
         $price = " Giá:" . $item['paid_price'];
 
-        $info["ItemName"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$price.$kiotid.'</p>';
-        $info["TrackingCode"] = $item['tracking_code'] ? $item['tracking_code'] : $info["TrackingCode"];
+        $info["name"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$price.$kiotid.'</p>';
+        $info["tracking_code"] = $item['tracking_code'] ? $item['tracking_code'] : $info["tracking_code"];
+        $info["shipment_provider"] = $item['shipment_provider'];
 
-        
         // show image of all items, include canceled items
         $info["img"] .= '<a target="_blank" href="'.$item['product_main_image'].'"><img border="0" src="'.$item['product_main_image'].'" height="50"></a><br>';
     }
@@ -167,24 +168,28 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         echo '<tr class="'.$orderStatus.'">';
         echo '<td style="display:none;">'.$orderId.'</td>';
         echo '<td class="index">'.($offset+$index+1).'</td>';
-        
-        
+            
         if($status == 'delivered') {
             echo '<td class="order">'.$orderNumber.'</td>';
         } else {
             echo '<td class="order"><a target="_blank" href="https://sellercenter.lazada.vn/order/detail/'.$orderNumber . getOrderLinkPostfix().'">'.$orderNumber.'</a></td>';
         }
-        
+
         if(isset($order['orderItems'])) {
             $item = $order['orderItems'];
-            echo '<td>'.$item['TrackingCode'].'</td>';
+
+            // kiem tra hoa toc
+            preg_match('/aha/i', $item['shipment_provider'], $m);
+            $shipType = count($m) ? "Hỏa tốc " : "";
+
+            echo '<td>'.$shipType.$item['tracking_code'].'</td>';
             echo '<td></td>'; // tracking code link cell
             
             echo '<td></td>'; // $address cell
             
             echo '<td>'.$cusName.'</td>';
             echo '<td><b>'.$cusPhone.'</b></td>';
-            echo '<td>'.$item['ItemName'].'</td>';
+            echo '<td>'.$item['name'].'</td>';
             echo '<td class="paymentMethod">'.$paymentMethod.'</td>';
             echo '<td>'.$item["img"].'</td>';
         }
