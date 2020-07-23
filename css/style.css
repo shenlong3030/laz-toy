@@ -40,3 +40,6 @@
 .grouped.parent {
   background-color: #e6cc7f;
 }
+.nav {
+  display: contents;
+}

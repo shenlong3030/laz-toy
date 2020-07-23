@@ -6,6 +6,7 @@ require_once('_main_functions.php');
 
 
 $sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
+$itemId = isset($_REQUEST["item_id"]) ? $_REQUEST["item_id"] : "";
 
 $category = "";
 $images = array();
@@ -24,38 +25,38 @@ $todate = "";
 $name = "";
 $variation = "";
 $brand = "";
-$id = "";
 
 if($sku) {
-    $product = getProduct($accessToken, $sku);
-    $id = $product['item_id'];
-    $sibling = null;
+    $product = getProduct($accessToken, "", $itemId);
+
     if($product) {
-        $sibling = getProduct($accessToken, "", $id);
-        if(count($sibling['skus']) < 2) {
-            $sibling = null;
+        $sibling = null;
+        if(count($product['skus']) > 1) {
+            $sibling = $product; // for displaying all SKUs
         }
 
+        $i = getProductSkuIndex($product, $sku);
+
         //var_dump($product);
-        $images = array_filter($product['skus'][0]['Images']);
+        $images = array_filter($product['skus'][$i]['Images']);
         
         $category = $product['primary_category'];
-        $weight = $product['skus'][0]['package_weight'];
-        $h = $product['skus'][0]['package_height'];
-        $w = $product['skus'][0]['package_width'];
-        $l = $product['skus'][0]['package_length'];
-        $content = $product['skus'][0]['package_content'];
-        $qty = $product['skus'][0]['quantity'];
-        $variation = $product['skus'][0]['_compatible_variation_'];
+        $weight = $product['skus'][$i]['package_weight'];
+        $h = $product['skus'][$i]['package_height'];
+        $w = $product['skus'][$i]['package_width'];
+        $l = $product['skus'][$i]['package_length'];
+        $content = $product['skus'][$i]['package_content'];
+        $qty = $product['skus'][$i]['quantity'];
+        $variation = $product['skus'][$i]['_compatible_variation_'];
         
-        $color = $product['skus'][0]['color_family'];
-        $color_thumbnail = $product['skus'][0]['color_thumbnail'];
-        $model = $product['skus'][0]['compatibility_by_model'];
+        $color = $product['skus'][$i]['color_family'];
+        $color_thumbnail = $product['skus'][$i]['color_thumbnail'];
+        $model = $product['skus'][$i]['compatibility_by_model'];
         
-        $price = $product['skus'][0]['price'];
-        $sprice = $product['skus'][0]['special_price'];
-        $fromdate = $product['skus'][0]['special_from_date'];
-        $todate = $product['skus'][0]['special_to_date'];
+        $price = $product['skus'][$i]['price'];
+        $sprice = $product['skus'][$i]['special_price'];
+        $fromdate = $product['skus'][$i]['special_from_date'];
+        $todate = $product['skus'][$i]['special_to_date'];
         
         $name = $product['attributes']['name'];
         $shortdesc = $product['attributes']['short_description'];

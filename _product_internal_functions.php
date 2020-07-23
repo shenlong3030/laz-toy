@@ -216,6 +216,16 @@ function setProductActive($product, $value) {
     return $product;
 }
 
+function getProductSkuIndex($product, $inputSku) {
+    $pos = -1;
+    foreach($product['skus'] as $skuIndex=>$sku) {
+        if ($inputSku == $sku['SellerSku']) {
+            $pos = $skuIndex;
+        }
+    }   
+    return $pos;
+}
+
 function isProductActive($product){
     return $product['Skus'][0]['Status'] == "active" || $product['skus'][0]['Status'] == "active";
 }
