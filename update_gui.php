@@ -65,6 +65,8 @@ if($sku) {
         $video = $product['attributes']['video'];
 
         $status = isProductActive($product) ? "checked" : "";
+    } else {
+        echo "INVALID ID";
     }
 }
 
@@ -92,17 +94,6 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <?php include('src/head.php');?>
 
     <style>
-    .nav{
-      margin: 0;
-      padding: 0;
-      position: fixed;
-      top: 0;
-      left: 0;
-      overflow: hidden;
-      background-color: #FFF;
-      width: 100%;
-      z-index: 10;
-    }
     .mainContent{
       margin-top: 50px;
     }

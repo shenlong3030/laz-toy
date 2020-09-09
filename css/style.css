@@ -30,7 +30,6 @@
 .padding.disabled,
 .pagenumber.disabled {
   opacity: 0.5;
-  pointer-events: none;
   cursor: default;
   color: red;
 }
@@ -40,6 +39,10 @@
 .grouped.parent {
   background-color: #e6cc7f;
 }
-.nav {
-  display: contents;
+
+.nav{
+  display: flex;
+  justify-content: space-between;
+  padding-right: 10px;
+  color: red;
 }

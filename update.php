@@ -129,7 +129,7 @@ if($accessToken && ($sku || $id)) {
         }
         
     } else {
-        echo "<br>INVALID SKU<br>";
+        echo "INVALID SKU<br>";
     }
     
     if($response) {
