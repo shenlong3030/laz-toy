@@ -198,6 +198,10 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <form action="update.php" method="POST" name="qtyForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     Quantity <input type="text" name="qty" value="<?php echo $qty;?>" />
+
+    // API need qtyaction
+    <input type="hidden" name="qtyaction" value="update"/>
+
     <input type="submit" value="Update quantity"/>
     </form>
 <hr>
