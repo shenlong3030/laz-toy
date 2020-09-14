@@ -101,7 +101,7 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 
 </head>
 <body>
-    <div class="nav">
+    <div class="floating-bar">
     <iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe>
     </div>
     
