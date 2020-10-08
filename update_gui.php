@@ -109,7 +109,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <div class="mainContent">
 
 <?php if($sibling) { ?>
-    <div style="height:500px;overflow:auto">
+    <div style="max-height:500px;overflow:auto">
     <h2>Danh sách các SP cùng nhóm này</h2>
     <button id="btn_copy_all">Copy All Clipboard</button>
     <button id="btn_copy_sku">Copy SKUs</button>
