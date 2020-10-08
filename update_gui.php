@@ -70,8 +70,9 @@ if($sku) {
     }
 }
 
-$addChildLink = "https://$_SERVER[HTTP_HOST]/lazop/addchild.php?sku=$sku&name=$name";
+$addChildLink = "https://$_SERVER[HTTP_HOST]/lazop/addchild_gui.php?sku=$sku&name=$name";
 $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
+$copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 
 ?>
 
@@ -126,7 +127,8 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     </form>
 
     <a style="color:red" href="<?php echo $addChildLink?>" target="_blank">Add Child</a>
-    <a style="color:red;padding-left: 10px" href="<?php echo $cloneLink?>" target="_blank">Clone to new product</a>
+    <a style="color:red;padding-left: 20px" href="<?php echo $copyLink?>" target="_blank">Copy</a>
+    <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Clone to new product</a>
 <hr>
 
 <input id="<?php echo $sku;?>" type="checkbox" data-toggle="toggle" <?php echo $status;?>>
