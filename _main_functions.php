@@ -292,29 +292,50 @@ function getProductsPaging($accessToken, $q, $options, &$total_products=null){
     }
 }
 
-function getProduct($accessToken, $sku, $item_id=null){
-    $c = getClient();
-    $request = new LazopRequest('/product/item/get','GET');
 
+// GET PRODUCT WITH API GetProducts
+// $sku : filter by sku , will be ignored if have $item_id
+// $item_id : (prioriry) search by $item_id , show all childrent
+// $name : search by name, will be ignored if have $item_id
+
+function getProduct($accessToken, $sku, $item_id=null, $name=null){
+    $c = getClient();
+
+    $request = null;
     if($item_id) {
+        $request = new LazopRequest('/product/item/get','GET');
         $request->addApiParam('item_id', (string)$item_id);
     } else {
-        $request->addApiParam('seller_sku', (string)$sku);
+        $request = new LazopRequest('/products/get','GET');
+        $request->addApiParam('filter', 'all');
+
+        if(strlen($name)) {
+            $request->addApiParam('search',$name);
+        }
+
+        // filter by SKU
+        $skulist = [];
+        $skulist[] = $sku;
+        $request->addApiParam('sku_seller_list',json_encode($skulist));
     }   
-
+    
     $response = json_decode($c->execute($request, $accessToken), true);
-
-    if($_COOKIE["DEBUG"]) {
-        var_dump($response);
-    }
 
     $product = null;
     if($response["code"] == "0") {
-        $product = $response["data"];
+        if($item_id) {
+            $product = $response["data"];
+        } else {
+            $product = $response["data"]['products'][0];
+        }
+        
+    } else {
+        //myvar_dump($response);
     }
 
     return $product;
 }
+
 
 // use dictionary to rearrange, key is $product['item_id']
 // all skus with same $product['item_id'], must be grouped together
