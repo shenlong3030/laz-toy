@@ -225,16 +225,18 @@ function getProducts($accessToken, $q = '', $options){
     $allProducts = array();
     
     // add limit and offset to options
-    $options['limit'] = 50;
+    $options['limit'] = 10;
     $options['offset'] = 0;
 
     do {
         $products = getProductsPaging($accessToken, $q, $options);
+        $count = count($products);
         $skusCount = getSkusCount($products);
 
-        $options['offset'] += $skusCount;
+        $options['offset'] += $count;
         $allProducts = array_merge($allProducts, $products);
-    } while(count($products) == $options['limit']);
+        usleep(200000);
+    } while($count == $options['limit']);
 
     return $allProducts;
 }
@@ -248,32 +250,32 @@ function getSkusCount($products) {
 }
 
 function getProductsPaging($accessToken, $q, $options, &$total_products=null){
-    $status = $options['status'] ? $options['status'] : 'sold-out';
-    $offset = $options['offset'];
-    $limit = $options['limit'];
-    $skulist = $options['skulist'];
-    $after = $options['after'];
-
     $c = getClient();
     $request = new LazopRequest('/products/get','GET');
-    $request->addApiParam('filter', $status);
+    
     if(strlen($q)) {
         $request->addApiParam('search',$q);
     }
 
-    if(count($skulist) > 100) {
-        myecho("<h1>ERROR: max number of SKU per request = 100</h1>");
-        exit();
-    }
-    // filter by SKU
-    if($skulist && count($skulist)) {
-        $request->addApiParam('sku_seller_list',json_encode($skulist));
+    if(isset($options['skulist']) && count($options['skulist'])) {
+        if(count($options['skulist']) > 100) {
+            myecho("<h1>ERROR: max number of SKU per request = 100</h1>");
+            exit();
+        }
+        $request->addApiParam('sku_seller_list',json_encode($options['skulist']));
     }
 
-    $request->addApiParam('offset', (string)$offset);
-    $request->addApiParam('limit', (string)$limit);
-    if($after) {
-        $request->addApiParam('create_after', $after);
+    $status = $options['status'] ? $options['status'] : 'all';
+    $request->addApiParam('filter', $status);
+
+    if(isset($options['offset'])) {
+        $request->addApiParam('offset', (string)$options['offset']);
+    }
+    if(isset($options['limit'])) {
+        $request->addApiParam('limit', (string)$options['limit']);
+    }
+    if(isset($options['after'])) {
+        //$request->addApiParam('create_after', (string)$options['after']);
     }
     //$request->addApiParam('create_after', '2010-01-01T00:00:00+0700';
     //$request->addApiParam('update_after','2010-01-01T00:00:00+0700');
