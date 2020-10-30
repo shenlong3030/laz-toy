@@ -1451,12 +1451,15 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
     $chunks = array_chunk($skus, 20);
     
     foreach($chunks as $chunk) {
-
         $options1 = array(
             'status' => 'all',
             'skulist' => $chunk,
         );
+
         $list = getProducts($accessToken, '', $options1);
+
+        //  1 product , 1 sku , for updating
+        $list = productsWithSingleSku($list);
 
         foreach($list as $product) {
                 $product = prepareProductForUpdating($product);
@@ -1530,7 +1533,7 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                 // log payload
                 //echo htmlentities($payload, ENT_COMPAT, 'UTF-8');
                 
-                $c = new LazopClient($GLOBALS['apiUrl'],$GLOBALS['appKey'],$GLOBALS['appSecret']);
+                $c = getClient();
                 $request = new LazopRequest('/product/update');
                 $request->addApiParam('payload', $payload);
                 
@@ -1540,6 +1543,7 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                 } else {
                     myecho("failed group : " . $product['Skus'][0]["SellerSku"] . " : ");
                 }
+                usleep(500000);
         }
 
         // sleep 0.5s
