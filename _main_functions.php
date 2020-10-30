@@ -442,9 +442,11 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             echo '<tr class="'. $cssclass .'">';
             //echo '<td class="sku on padding">'. ($isGrouped?"<i class='grouped-icon fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
 
-            $link = "https://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";
-            $html_link = '<a tabIndex="-1" target="_blank" href="'.$link.'" class="grouped-icon fas fa fa-th-list" style="color:red"></a>';
-            /* cột 1 */echo '<td class="sku on padding info">'. ($isGrouped?$html_link:"") .$sellersku.'</td>';
+            $groupLink = "https://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id&qname=$name";
+            $groupHtml = '<a tabIndex="-1" target="_blank" href="'.$groupLink.'" class="grouped-icon fas fa fa-th-list" style="color:red"></a>';
+            $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?item_id=$item_id&sku=$sellersku";
+            
+            /* cột 1 */echo '<td class="sku on padding info">'. ($isGrouped?$groupHtml:"") .$sellersku.'</td>';
 
             /* cột 2 */echo '<td class="info">'.$qty.'</td>';
             /* cột 3 */echo '<td>'.$reservedTxt.$qtyForm.'</td>';
@@ -461,8 +463,8 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             // hidden 
             /* cột 10 */echo '<td class="editmode price form">'.$priceForm.'</td>';
 
-            $link = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?item_id=$item_id&sku=$sellersku";
-            echo '<td><a target="_blank" href="'.$link.'" class="fa fa-edit" style="color:red" tabindex="-1"></a></td>';
+            // Edit button
+            /* cột 11 */echo '<td><a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a></td>';
 
             // Active toggle button
             // bootstrap code (need bootstrap css and bootstraptoggle css + js)

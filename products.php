@@ -139,7 +139,6 @@ if($after) {
 //$products = getProducts($accessToken, '', $options);
 
 if($item_id) {
-    echo "<br><br><br>OK";
     if($qname) { // show group by name, temporary fix API GetProductItem
         $list = getProducts($token, $qname);
         printProducts($list, $nochild);
