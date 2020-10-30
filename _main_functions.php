@@ -1133,46 +1133,31 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
             //... do nothing
         } else {
             $product = setProductAssociatedSku($product, $sku);
-            
+
+            $kiotids = $inputdata["kiotids"];
             $colors = $inputdata["colors"];
             $models = $inputdata["models"];
 
             $cache = array();
             $time = substr(time(), -4);
             foreach($inputdata["qtys"] as $index => $value) {
+                $kiotid = $kiotids[$index] ? $kiotids[$index] : "";
                 $color = $colors[$index] ? $colors[$index] : "";
                 $model = $models[$index] ? $models[$index] : "";
 
-                // set SKU
-                $newSku = !empty($skuprefix) ? $skuprefix : $sku;
-                if(substr($newSku, -2) != "__") {
-                    $newSku .= '__';
-                } 
-
                 if($model) {
                     $product = setProductModel($product, $model);
-                    $newSku .= vn_urlencode($model);
                 }
                 if($color) {
                     $product = setProductColor($product, $color);
-
-                    if(substr($newSku, -2) == "__" || substr($newSku, -1) == ".") {
-                        $newSku .= vn_urlencode($color);
-                    } else {
-                        $newSku .= '.' . vn_urlencode($color);
-                    }
                 }
-                
                 
                 // set NAME
                 if(!empty($newName)) {
                     $product = setProductName($product, $newName);
                 }
 
-                if($inputdata["appendtime"]) {
-                    $newSku .= '.' . $time;
-                }
-
+                $newSku = generateSku($skuprefix, 0, $model, $color, $kiotid);
                 $product = setProductSku($product, $newSku);
                 
                 if(isset($inputdata["qtys"][$index])) {

@@ -37,51 +37,25 @@ $appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
 $newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 
 $input = $_POST['col'][0];
-$colors = explode("\n", str_replace("\r", "", $input));
+$kiotids = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][1];
-$models = explode("\n", str_replace("\r", "", $input));
+$colors = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][2];
-$qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
+$models = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][3];
-$prices = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
+$qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
 
 $input = $_POST['col'][4];
+$prices = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
+
+$input = $_POST['col'][5];
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
-?>
-
-<body>
-    <iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe>
-    <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-Parent SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><br>
-Child SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"> Append time()<input type="checkbox" name="appendtime" checked="1" value="1" <?php if($appendtime) echo "checked=1"?> ><br> 
-New child name: <input type="text" name="name" size="80" value="<?php echo $newName?>"><br>
-
-<table>
-    <tbody>
-        <tr>
-            <td>Color</td>
-            <td>Model</td>
-            <td>Quantity</td>
-            <td>Price</td>
-            <td>Image links</td>
-        </tr>
-        <tr>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("&#13;&#10;", $colors);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"><?php echo implode("&#13;&#10;", $models);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"><?php echo implode("\n", $qtys);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="15"><?php echo implode("\n", $prices);?></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="80"><?php echo implode("\n", $images);?></textarea></td>
-        </tr>
-    </tbody>
-</table>
-<input type="checkbox" name="preview" checked="1" value="1">Preview<br>
-<input type="submit"><hr>
-<?php
 
 $inputdata = array(
+    "kiotids" => $kiotids,
     "colors" => $colors,
     "models" => $models,
     "images" => $images,
