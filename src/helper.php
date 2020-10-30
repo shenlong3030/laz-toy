@@ -178,4 +178,43 @@ function make_short_order_variation($order_variation) {
     return $order_variation;
 }
 
+/*
+ $skuprefix : required
+ $group, $color, $model, $kiotId : optional
+*/
+function generateSku($skuprefix, $group, $model, $color, $kiotid) {
+    $kiotid = trim($kiotid);
+    $newSku = $skuprefix;
+    if(substr($newSku, -2) != "__") { // split prefix
+        $newSku .= '__';
+    }
+
+    if($group) {
+        $newSku .= vn_urlencode($group) . "__";
+    }
+
+    if($model) {
+        if($model != "...") {
+            $newSku .= vn_urlencode($model) . ".";
+        }
+    } 
+
+    if($color) {
+        if($color != "...") {
+            $newSku .= vn_urlencode($color) . ".";
+        }
+    }
+
+    $newSku = make_short_sku($newSku);
+
+    if($kiotid) {
+        $newSku .= $kiotid . ".";
+    } 
+
+    $time = substr(time(), -4);
+    $newSku .= "V" . $time;
+    return $newSku;
+}
+
+
 ?>

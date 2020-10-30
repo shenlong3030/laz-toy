@@ -19,4 +19,4 @@
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
 <!-- External CSS -->
-<link rel="stylesheet" type="text/css" href="css/style.css?v=1.14">
+<link rel="stylesheet" type="text/css" href="css/style.css?v=1.16">
