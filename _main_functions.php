@@ -769,40 +769,19 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
 
             $product['Attributes']["name"] = $name;
 
-            // generate new SKU
-            if(substr($skuprefix, -2) != "__") {
-                $skuprefix .= "__";
-            }
-            $newSku = $skuprefix;
-            $newSku .= vn_urlencode($group) . "__";
-
             if($model) {
-                if($model != "...") {
-                    $newSku .= vn_urlencode($model) . ".";
-                }
                 $product = setProductModel($product, $model);
             } else {
                 unset($product['Skus'][0]['compatibility_by_model']); 
             }
 
             if($color) {
-                if($color != "...") {
-                    $newSku .= vn_urlencode($color) . ".";
-                }
                 $product = setProductColor($product, $color);
             } else {
                 unset($product['Skus'][0]['color_family']);
             }
-
-            $newSku = make_short_sku($newSku);
-
-            if($kiotid) {
-                $newSku .= $kiotid . ".";
-            } 
-
-            $time = substr(time(), -4);
-            $newSku .= $time;
             
+            $newSku = generateSku($skuprefix, $group, $model, $color, $kiotid);
             $product = setProductSku($product, $newSku);
 
             // set price
