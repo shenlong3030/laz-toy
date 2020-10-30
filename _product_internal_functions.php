@@ -216,23 +216,40 @@ function setProductActive($product, $value) {
     return $product;
 }
 
+//######################################
+//GET region
+//######################################
+
 function getProductSkuIndex($product, $inputSku) {
     $pos = -1;
     foreach($product['skus'] as $skuIndex=>$sku) {
         if ($inputSku == $sku['SellerSku']) {
             $pos = $skuIndex;
         }
-    }   
+    }
     return $pos;
-}
-
-function isProductActive($product){
-    return $product['Skus'][0]['Status'] == "active" || $product['skus'][0]['Status'] == "active";
 }
 
 function getProductItemId($product) {
     return $product['item_id'];
 }
+
+//######################################
+//CHECK region
+//######################################
+
+function isProductActive($product, $inputSku=""){
+    $i = 0;
+    if(!empty($inputSku)) {
+        $i = getProductSkuIndex($product, $inputSku);
+    }
+
+    return $product['Skus'][$i]['Status'] == "active" || $product['skus'][$i]['Status'] == "active";
+}
+
+//######################################
+//FIX region
+//######################################
 
 function fixProductRemoveSlashFromModel($product) {
     foreach($product['Skus'] as $skuIndex=>$sku) {
@@ -281,11 +298,34 @@ function fixProductSaleDate($product){
     return $product;
 }
 
+//######################################
+//OTHERS region
+//######################################
+
 function unsetQuantity($product){
     foreach($product['Skus'] as $skuIndex=>$sku) {
         unset($product['Skus'][$skuIndex]['quantity']);
     }   
     return $product;
+}
+
+/*
+    1 product , 1 sku
+*/
+function productsWithSingleSku($products) {
+    $r = array();
+    foreach ($products as $product) {
+        $newProduct = $product;
+
+        // raw data, is [skus] not [Skus]
+        $count = count($product['skus']);
+
+        for ($i = 0; $i < $count; $i++) {
+            $newProduct['skus'] = array_slice($product['skus'], $i, 1);
+            $r[] = $newProduct; // add newProduct to array
+        }
+    }
+    return $r;
 }
 
 

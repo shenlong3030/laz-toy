@@ -38,7 +38,7 @@ $count = 0;
 date_default_timezone_set("UTC");
     
 $offset = $_GET['offset'] ? $_GET['offset'] : 0;
-$limit = $_GET['limit'] ? $_GET['limit'] : 100;
+$limit = $_GET['limit'] ? $_GET['limit'] : 30;
 $status = $_GET['status'] ? $_GET['status'] : 'all';
 
 $q = $_GET['q'] ? $_GET['q'] : '';
@@ -54,64 +54,69 @@ $item_id = $_GET['item_id'] ? $_GET['item_id'] : '';
 $nochild = $_GET['nochild'] ? $_GET['nochild'] : 0;
 $after = $_GET['after'] ? $_GET['after'] : '';
 
+$qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
+
 ?>
 
 <body>
   <div class="control-bar">
+    <iframe id="responseIframe" name="responseIframe" width="100%" height="30"></iframe>
     <?php include('src/nav.php');?>
-    <div class="control-bar-2">
-      <iframe id="responseIframe" name="responseIframe" width="100%" height="30"></iframe>
-      <?php 
-        $currentLink = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; 
-        $bareLink = strtok($currentLink, '?');
-        $linkSoldout = $bareLink . '?status=sold-out';
-        $linkRejected = $bareLink . '?status=rejected';
-        $linkAll = $bareLink . '?status=all';
-        $linkInactive = $bareLink . '?status=inactive';
-        $linkPending = $bareLink . '?status=pending';
-        $linkImageMissing = $bareLink . '?status=image-missing';
+    <div class=control-container>
+        <div class="control-bar-2">
+          <?php 
+            $currentLink = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; 
+            $bareLink = strtok($currentLink, '?');
+            $linkSoldout = $bareLink . '?status=sold-out';
+            $linkRejected = $bareLink . '?status=rejected';
+            $linkAll = $bareLink . '?status=all';
+            $linkInactive = $bareLink . '?status=inactive';
+            $linkPending = $bareLink . '?status=pending';
+            $linkImageMissing = $bareLink . '?status=image-missing';
 
-        $linkAllClass = ($status=="all")?" disabled":"";
-        $linkSoldoutClass = ($status=="sold-out")?" disabled":"";
-        $linkRejectedClass = ($status=="rejected")?" disabled":"";
-        $linkInactiveClass = ($status=="inactive")?" disabled":"";
-        $linkPendingClass = ($status=="pending")?" disabled":"";
-        $linkImageMissingClass = ($status=="image-missing")?" disabled":"";
+            $linkAllClass = ($status=="all")?" disabled":"";
+            $linkSoldoutClass = ($status=="sold-out")?" disabled":"";
+            $linkRejectedClass = ($status=="rejected")?" disabled":"";
+            $linkInactiveClass = ($status=="inactive")?" disabled":"";
+            $linkPendingClass = ($status=="pending")?" disabled":"";
+            $linkImageMissingClass = ($status=="image-missing")?" disabled":"";
 
-        echo "<a tabindex='-1' class='padding $linkAllClass' href='$linkAll'>Tất cả</a>";
-        echo "<a tabindex='-1' class='padding $linkSoldoutClass' href='$linkSoldout'>Hết hàng</a>";
-        echo "<a tabindex='-1' class='padding $linkRejectedClass' href='$linkRejected'>Bị từ chối</a>";
-        echo "<a tabindex='-1' class='padding $linkInactiveClass' href='$linkInactive'>Đang tắt</a>";
-        echo "<a tabindex='-1' class='padding $linkPendingClass' href='$linkPending'>Đang chờ duyệt</a>";
-        echo "<a tabindex='-1' class='padding $linkImageMissingClass' href='$linkImageMissing'>Thiếu ảnh</a>";
-      ?> 
+            echo "<a tabindex='-1' class='padding $linkAllClass' href='$linkAll'>Tất cả</a>";
+            echo "<a tabindex='-1' class='padding $linkSoldoutClass' href='$linkSoldout'>Hết hàng</a>";
+            echo "<a tabindex='-1' class='padding $linkRejectedClass' href='$linkRejected'>Bị từ chối</a>";
+            echo "<a tabindex='-1' class='padding $linkInactiveClass' href='$linkInactive'>Đang tắt</a>";
+            echo "<a tabindex='-1' class='padding $linkPendingClass' href='$linkPending'>Đang chờ duyệt</a>";
+            echo "<a tabindex='-1' class='padding $linkImageMissingClass' href='$linkImageMissing'>Thiếu ảnh</a>";
+          ?> 
+        </div>
+
+        <form id="searchForm" action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
+        Search <input id="q" class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
+        <input type="hidden" name="status" value="<?php echo $_GET['status']; ?>">
+        <input id="offset" type="hidden" name="offset" value="<?php echo $offset; ?>">
+        <input id="limit" type="hidden" name="limit" value="<?php echo $limit; ?>">
+        <input id="nochild" type="hidden" name="nochild" value="<?php echo $nochild; ?>">
+        
+        <input id="cbshowextracol" type="checkbox" name="cbshowextracol" value="1">Show extra columns
+        <input id="cbfulledit" type="checkbox" name="cbfulledit" value="1">Edit mode
+        <input id="cb_showchildren" type="checkbox" name="cb_showchildren" value="1">Show children
+
+        <br>Filter 
+        <input type="text" id="filterName" name="filterName" placeholder="Name contain" value="<?php echo $filterName; ?>">
+        <input type="text" id="filterQty" name="filterQty" placeholder="Quantity less than" value="<?php echo $filterQty; ?>"> 
+
+        <textarea class="nowrap search skus" name="skus" placeholder="Input SKUs separated by line" rows="20" cols="50"><?php echo implode("\n", $skus);?></textarea><br>
+        <input id="cbbyskus" type="checkbox" name="byskus" value="1">Search by SKUs
+        <button id="searchBtn" class="padding" type="button">Search</button>
+        </form>
+        <div class="control-bar-1">
+        <span style="padding:5px;">Page</span>
+        </div>
+        <br>
+        <button id="btn_copy_all">Copy All Clipboard</button>
+        <button id="btn_copy_sku">Copy SKUs</button>
+        <button id="btn_copy_url">Copy LAZADA urls</button>
     </div>
-
-    <form id="searchForm" action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
-    Search <input id="q" class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
-    <input type="hidden" name="status" value="<?php echo $_GET['status']; ?>">
-    <input id="offset" type="hidden" name="offset" value="<?php echo $offset; ?>">
-    <input id="limit" type="hidden" name="limit" value="<?php echo $limit; ?>">
-    <input id="nochild" type="hidden" name="nochild" value="<?php echo $nochild; ?>">
-    
-    <input id="cbshowextracol" type="checkbox" name="cbshowextracol" value="1">Show extra columns
-    <input id="cbfulledit" type="checkbox" name="cbfulledit" value="1">Edit mode
-
-    <br>Filter 
-    <input type="text" id="filterName" name="filterName" placeholder="Name contain" value="<?php echo $filterName; ?>">
-    <input type="text" id="filterQty" name="filterQty" placeholder="Quantity less than" value="<?php echo $filterQty; ?>"> 
-
-    <textarea class="nowrap search skus" name="skus" placeholder="Input SKUs separated by line" rows="20" cols="50"><?php echo implode("\n", $skus);?></textarea><br>
-    <input id="cbbyskus" type="checkbox" name="byskus" value="1">Search by SKUs
-    <button id="searchBtn" class="padding" type="button">Search</button>
-    </form>
-    <div class="control-bar-1">
-    <span style="padding:5px;">Page</span>
-    </div>
-    <br>
-    <button id="btn_copy_all">Copy All Clipboard</button>
-    <button id="btn_copy_sku">Copy SKUs</button>
-    <button id="btn_copy_url">Copy LAZADA urls</button>
   </div>
   <div class="mainContent">
 
@@ -134,8 +139,14 @@ if($after) {
 //$products = getProducts($accessToken, '', $options);
 
 if($item_id) {
-    $sp = getProduct($token, "", $item_id);
-    printProducts(array($sp));
+    echo "<br><br><br>OK";
+    if($qname) { // show group by name, temporary fix API GetProductItem
+        $list = getProducts($token, $qname);
+        printProducts($list, $nochild);
+    } else {
+        $sp = getProduct($token, "", $item_id);
+        printProducts(array($sp));
+    }
 } else {
     if($byskus) {
         $options['skulist'] = $skus;
@@ -145,6 +156,7 @@ if($item_id) {
         $list = getProducts($token, $q, $options);
         $total = count($list);
     } else {
+        // limit = 30 , line41, from $REQUEST
         $list = getProductsPaging($token, $q, $options, $total);
         $pagecount = ceil($total/$limit);
     }
@@ -239,6 +251,14 @@ $(function(){
     $('.ex').toggleClass('on');
   });
 
+  // SHOW CHILDREN
+  $('#cb_showchildren').change(function(){
+    var v = parseInt($('#nochild').val());
+    v = (v+1)%2;
+    $('#nochild').val(v);
+    $("#searchForm").submit();
+  });
+
   // SHOW SEARCH BY LIST
   $('#cbbyskus').change(function(){
     $('.search').toggleClass('on');
@@ -256,7 +276,12 @@ $(function(){
         .done(function( data ) {
           if(data.code) {
               alert(data);
-          } 
+          } else {
+              alert("SUCCESS");
+          }
+        })
+        .fail(function() {
+          alert( "UNKNOWN ERROR" );
         });
   });
 
@@ -309,6 +334,7 @@ setTimeout(function(){
 
     $('#count').text("<?php echo count($list)." of ".$total; ?>");
 }, 1000);
+
 </script>
 </div>
 </body>

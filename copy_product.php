@@ -3,11 +3,6 @@ include_once "check_token.php";
 //require_once('src/show_errors.php');
 require_once('_main_functions.php');
 
-
-$itemId = isset($_REQUEST["item_id"]) ? $_REQUEST["item_id"] : "";
-$qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
-
-
 $sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
 $nsku = isset($_REQUEST["nsku"]) ? $_REQUEST["nsku"] : $sku . ".COPY";
 
@@ -41,11 +36,8 @@ $desc = isset($_REQUEST["desc"]) ? $_REQUEST["desc"] : "";
 $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : "";
 
 if($sku) {
-    if($action) {
-        $product = getProduct($accessToken, $sku);
-    } else {
-        $product = getProduct($accessToken, $sku, $qname);
-    }
+    $product = getProduct($accessToken, $sku);
+
     $cache = array();
     if($product) {
         if($action) {
@@ -85,11 +77,6 @@ if($sku) {
             createProduct($accessToken, $product);
 
         } else {
-            $sibling = null;
-            if(count($product['skus']) > 1) {
-                $sibling = $product; // for displaying all SKUs
-            }
-
             $i = getProductSkuIndex($product, $sku);
 
             //var_dump($product);
@@ -118,8 +105,6 @@ if($sku) {
             $desc = $product['attributes']['description'];
             $brand = $product['attributes']['brand'];
             $video = $product['attributes']['video'];
-
-            $status = isProductActive($product) ? "checked" : "";
         }
     } else {
         echo "INVALID ID";

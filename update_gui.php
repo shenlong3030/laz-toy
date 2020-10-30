@@ -4,9 +4,9 @@ include_once "check_token.php";
 require_once('_main_functions.php');
 
 
-
 $sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
 $itemId = isset($_REQUEST["item_id"]) ? $_REQUEST["item_id"] : "";
+//$qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
 
 $category = "";
 $images = array();
@@ -26,14 +26,14 @@ $name = "";
 $variation = "";
 $brand = "";
 
-if($sku) {
-    $product = getProduct($accessToken, "", $itemId);
+if($sku || $itemId) {
+    $product = getProduct($accessToken, $sku, $itemId, $qname);
 
     if($product) {
         $sibling = null;
-        if(count($product['skus']) > 1) {
+        //if(count($product['skus']) > 1) {
             $sibling = $product; // for displaying all SKUs
-        }
+        //}
 
         $i = getProductSkuIndex($product, $sku);
 
@@ -64,7 +64,7 @@ if($sku) {
         $brand = $product['attributes']['brand'];
         $video = $product['attributes']['video'];
 
-        $status = isProductActive($product) ? "checked" : "";
+        $status = isProductActive($product, $sku) ? "checked" : "";
     } else {
         echo "INVALID ID";
     }
@@ -231,6 +231,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <form action="update.php" method="POST" name="shortdescForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     <textarea class="nowrap" name="shortdesc" rows="2" cols="80"></textarea>
+    <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
     <input type="submit" value="Update short description"/>
     </form>
     
@@ -240,6 +241,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <form action="update.php" method="POST" name="descForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     <textarea class="nowrap" name="desc" rows="2" cols="80"></textarea>
+    <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
     <input type="submit" value="Update description"/>
     </form>
     
