@@ -29,9 +29,10 @@
 .selected,
 .padding.disabled,
 .pagenumber.disabled {
-  opacity: 0.5;
+  opacity: 0.8;
   cursor: default;
   color: red;
+  font-weight: bold;
 }
 .grouped.child {
 	background-color: #EDA;
