@@ -31,13 +31,13 @@ require_once('_main_functions.php');
         <tr>
             <td>Parent SKU</td>
             <td>Source SKU</td>
-            <td>SKU prefix</td>
-            <td>Kiot id</td>
-            <td>Name</td>
-            <td>Group</td>
+            <td >SKU prefix</td>
+            <td bgcolor="yellow">Kiot id</td>
+            <td bgcolor="yellow">Name</td>
+            <td bgcolor="yellow">Group</td>
             <td>Model</td>
             <td>Color</td>
-            <td>Qty</td>
+            <td bgcolor="yellow">Qty</td>
             <td>Price</td>
             <td>Images <input style="padding-left: 10px" type="checkbox" name="resetimages" value="1">Remove all source's images</td>
         </tr>
