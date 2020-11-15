@@ -302,9 +302,14 @@ function getProduct($accessToken, $sku, $item_id=null, $name=null){
     $c = getClient();
 
     $request = null;
-    if($item_id) {
+    if(empty($name)) {
         $request = new LazopRequest('/product/item/get','GET');
-        $request->addApiParam('item_id', (string)$item_id);
+        if(!empty($item_id)) {
+            $request->addApiParam('item_id', (string)$item_id);
+        }
+        if(!empty($sku)) {
+            $request->addApiParam('seller_sku', (string)$sku);
+        }
     } else {
         $request = new LazopRequest('/products/get','GET');
         $request->addApiParam('filter', 'all');
@@ -323,12 +328,18 @@ function getProduct($accessToken, $sku, $item_id=null, $name=null){
 
     $product = null;
     if($response["code"] == "0") {
-        if($item_id) {
+        if(empty($name)) {
             $product = $response["data"];
         } else {
             $product = $response["data"]['products'][0];
         }
         
+        // 30/10/2020
+        // current API have bug, sku_seller_list NOT working
+        // use this line to fix filter
+        if($sku) {
+            $product = getProductWithSingleSku($product, $sku);
+        }
     } else {
         //myvar_dump($response);
     }
@@ -1205,13 +1216,12 @@ function massAddChildProduct($accessToken, $data, $preview = 1) {
 }
 
 function massMoveChild($accessToken, $data, $preview) {
-    $time = substr(time(), -4);
     $created = array();
-    $cache = array();
     $parentCache = array();
     $product;
     foreach($data["skus"] as $index => $sku) {
         $product = getProduct($accessToken, $sku);
+
         if($product) {
             $product = prepareProductForCreating($product);
 
@@ -1277,8 +1287,15 @@ function massMoveChild($accessToken, $data, $preview) {
     foreach($created["sku"] as $index => $sku) {
         echo "<br>", $created["name"][$index], " # ", $sku, htmlLinkImages($created["imgs"][$index]);
     }
+
+    // XOA HET SKU GOC SAU KHI MOVE
     if(count($created["oldsku"])) {
-        delProducts($accessToken, $created["oldsku"]);
+        //delProducts($accessToken, $created["oldsku"]);
+
+        echo "<h2>NEXT, PLEASE DELETE THESE OLD SKUs</h2>";
+        foreach($created["oldsku"] as $index => $sku) {
+            echo "<br>", $sku;
+        }
     }
 }
 
@@ -1458,7 +1475,8 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                     // copy images
                     if(in_array("1", $options)) {
                         foreach ($imageindexes as $index) {
-                            $t = $index - 1;
+                            //$t = $index - 1;
+                            $t = $index;
                             $dict['Images'][$t] = $srcproduct['skus'][0]['Images'][$t];
                         }
                     }
@@ -1505,20 +1523,8 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                 }
 
                 //var_dump($product);
-                
-                // create XML payload from $product
-                $request = array("Product" => $product);
-                $xml = new ArrayToXML();
-                $payload = $xml->buildXML($request, 'Request');
-                
-                // log payload
-                //echo htmlentities($payload, ENT_COMPAT, 'UTF-8');
-                
-                $c = getClient();
-                $request = new LazopRequest('/product/update');
-                $request->addApiParam('payload', $payload);
-                
-                $response = json_decode($c->execute($request, $accessToken), true);
+                $response = saveProduct($accessToken, $product);
+
                 if($response["code"] == "0") {
                     myecho("success group : " . $product['Skus'][0]["SellerSku"]);
                 } else {

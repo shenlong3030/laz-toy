@@ -21,8 +21,6 @@ function prepareProductForUpdating($product) {
     if(isset($product['Attributes']['description_en'])) {
         $product['Attributes']['description_en'] = $product['Attributes']['description'];
     }
-
-    $product = unsetQuantity($product);
     
     // remove wrong keyName
     unset($product['attributes']);
@@ -133,7 +131,7 @@ function setProductPrice($product, $price, $sale_price = 0) {
         }
         
         $product['Skus'][0]['special_from_date'] = "2018-01-01";
-        $product['Skus'][0]['special_to_date'] = "2020-12-12";
+        $product['Skus'][0]['special_to_date'] = "2030-12-12";
     }
     return $product;
 }
@@ -234,6 +232,17 @@ function getProductItemId($product) {
     return $product['item_id'];
 }
 
+
+/*
+    return product with only 1 selected SKU
+*/
+function getProductWithSingleSku($product, $inputSku) {
+    $i = getProductSkuIndex($product, $inputSku);
+    $newProduct = $product;
+    $newProduct['skus'] = array_slice($product['skus'], $i, 1);
+    return $newProduct;
+}
+
 //######################################
 //CHECK region
 //######################################
@@ -310,7 +319,7 @@ function unsetQuantity($product){
 }
 
 /*
-    1 product , 1 sku
+    return list products, 1 product , 1 sku
 */
 function productsWithSingleSku($products) {
     $r = array();
