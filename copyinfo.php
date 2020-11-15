@@ -6,12 +6,17 @@ require_once('_main_functions.php');
 
 
 // get code param
-$sourcesku = isset($_POST['sourcesku']) ? $_POST['sourcesku'] : '';
-$input = isset($_POST['skus']) ? $_POST['skus'] : '';
+$sourcesku = isset($_REQUEST['sourcesku']) ? $_REQUEST['sourcesku'] : '';
+$input = isset($_REQUEST['skus']) ? $_REQUEST['skus'] : '';
 $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
-$options = isset($_POST['options']) ? $_POST['options'] : '';
 
-$str_imageindexes = val($_POST['imageindexes'], "1,2,3,4,5,6,7,8");
+$tmp = [];
+$tmp[] = $sourcesku;
+$skus = array_diff($skus, $tmp); // remove sourcesku from list skus
+
+$options = isset($_REQUEST['options']) ? $_REQUEST['options'] : '';
+
+$str_imageindexes = val($_REQUEST['imageindexes'], "1,2,3,4,5,6,7,8");
 $imageindexes = array_filter(explode(",", $str_imageindexes));
 ?>
 

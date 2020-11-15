@@ -194,8 +194,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <input type="submit" name="update-image" value="Update images"/>
 
     <br>
-    <input type="submit" name="update-image-children" value="Update all children"/>From image index
-    <input type="text" name="fromindex" value="1" size="3"/>
+    <input type="button" id="btn_update_children" value="Update all children"/>From image index
     </form>
 <?php
     foreach($images as $image) {
@@ -353,7 +352,6 @@ date_default_timezone_set("UTC");
         productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: 0});
     });
     $('input[name=qty]').keypress(function(event){
-      console.log("SHEN ENTER");
       var keycode = (event.keyCode ? event.keyCode : event.which);
       if(keycode == '13'){ // press ENTER
           var s = $(this).parent().find('input[name=sku]').val(); 
@@ -364,8 +362,19 @@ date_default_timezone_set("UTC");
     });
 
     $('#btn_change_sku').click(function (e) {
-        console.log("shen");
         $('#form_change_sku').css('display','block');
+    });
+    
+    $('#btn_update_children').click(function (e) {
+        var skus = "";
+        $("#tableProducts").find("td.sku").each(function(){
+            skus = skus + $(this).text() + "%0A";
+        });
+
+        var sourcesku = $(this).parent().find('input[name=sku]').val(); 
+        var url = "copyinfo.php?sourcesku=" + sourcesku + "&skus=" + skus;
+        console.log("shen", url);
+        window.open(url, '_blank');
     });
 
     $('#btn_copy_sku').click(function (e) {
