@@ -47,6 +47,8 @@ $colors = empty($input) ? array() : explode("\n", str_replace("\r", "", $input))
 $input = $_REQUEST['color_thumbnails'] ? $_REQUEST['color_thumbnails'] : '';
 $color_thumbnails = empty($input) ? array() : explode("\n", str_replace("\r", "", $input));
 
+$newSku = $_REQUEST['new_sku'] ? $_REQUEST['new_sku'] : '';
+
 if($accessToken && ($sku || $id)) {
     $response = 0;
     /*    
@@ -122,6 +124,8 @@ if($accessToken && ($sku || $id)) {
             $product = setProductVideo($product, $video);
         } elseif($color_thumbnails) {
             $product = setProductColorThumbnail($product, $colors, $color_thumbnails);
+        } elseif($newSku) {
+            $product = setProductSku($product, $newSku);
         }
 
         if(!$response) {

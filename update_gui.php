@@ -123,6 +123,13 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
     Source SKU: <input type="text" name="sku" size="70" value="<?php echo $sku?>"/>
     <input type="submit" value="Reload"/>
+    <input id="btn_change_sku" type="button" value="Change"/>
+    </form>
+
+    <form id="form_change_sku" class="ex" action="update.php" method="POST" name="nameForm" target="responseIframe">
+    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    Change SKU to: <input type="text" name="new_sku" size="70" value="<?php echo $sku?>"/>
+    <input type="submit" value="Change SKU"/>
     </form>
 
     <a style="color:red" href="<?php echo $addChildLink?>" target="_blank">Add Child</a>
@@ -354,6 +361,11 @@ date_default_timezone_set("UTC");
           productUpdateWithAjaxQueue({ sku: s, action: "qty", qty: q});
       }
       event.stopPropagation();
+    });
+
+    $('#btn_change_sku').click(function (e) {
+        console.log("shen");
+        $('#form_change_sku').css('display','block');
     });
 
     $('#btn_copy_sku').click(function (e) {
