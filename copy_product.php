@@ -173,6 +173,8 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     </ul>
 <hr>
     <h3>Images</h3> <textarea class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
+    <a title="Editor" href="https://wm.xamve.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
+    <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
     <br/>
 <?php
     foreach($images as $image) {
@@ -188,7 +190,7 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 
 <hr>
 
-    Price <input type="text" name="price" value="<?php echo $price;?>" /> >> 
+    Price <input type="text" name="price" value="<?php echo $price;?>" />
     <input type="text" name="sale_price" value="<?php echo $sprice;?>" />
     From <input type="text" name="fromdate" value="<?php echo $fromdate;?>" />
     To <input type="text" name="todate" value="<?php echo $todate;?>" /><br>
@@ -203,10 +205,12 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 <hr>
     <h3>Short Description:</h3>
     <textarea class="nowrap" name="shortdesc" rows="2" cols="80"><?php echo $shortdesc;?></textarea>
+    <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
     <?php echo $shortdesc;?>
 <hr> 
     <h3>Description:</h3>
     <textarea class="nowrap" name="desc" rows="2" cols="80"><?php echo $desc;?></textarea>
+    <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
     <?php echo $desc;?>
 <hr> 
     <input type="hidden" name="action" value="create"/>
