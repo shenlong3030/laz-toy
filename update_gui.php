@@ -27,7 +27,8 @@ $variation = "";
 $brand = "";
 
 if($sku || $itemId) {
-    $product = getProduct($accessToken, $sku, $itemId, $qname);
+    $product = getProduct($accessToken, null, $itemId, $qname);
+    //var_dump("shen", $product);
 
     if($product) {
         $sibling = null;
@@ -36,8 +37,6 @@ if($sku || $itemId) {
         //}
 
         $i = getProductSkuIndex($product, $sku);
-
-        //var_dump($product);
         $images = array_filter($product['skus'][$i]['Images']);
         
         $category = $product['primary_category'];
@@ -183,7 +182,13 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <form action="update.php" method="POST" name="imageForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     <h3>Images</h3> <textarea class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
-    <input type="submit" value="Update images"/>
+    <a title="Editor" href="https://wm.xamve.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
+    <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
+    <input type="submit" name="update-image" value="Update images"/>
+
+    <br>
+    <input type="submit" name="update-image-children" value="Update all children"/>From image index
+    <input type="text" name="fromindex" value="1" size="3"/>
     </form>
 <?php
     foreach($images as $image) {
@@ -230,7 +235,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <h3>Short description:</h3>
     <form action="update.php" method="POST" name="shortdescForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
-    <textarea class="nowrap" name="shortdesc" rows="2" cols="80"></textarea>
+    <textarea class="nowrap" name="shortdesc" rows="2" cols="80"><?php echo $shortdesc;?></textarea>
     <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
     <input type="submit" value="Update short description"/>
     </form>
@@ -240,7 +245,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <h3>Description:</h3>
     <form action="update.php" method="POST" name="descForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
-    <textarea class="nowrap" name="desc" rows="2" cols="80"></textarea>
+    <textarea class="nowrap" name="desc" rows="2" cols="80"><?php echo $desc;?></textarea>
     <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
     <input type="submit" value="Update description"/>
     </form>
@@ -263,11 +268,92 @@ date_default_timezone_set("UTC");
 ?>
 
 <script type="text/javascript">
+
+    //######### AJAX QUEUE ######################################################################################
+      var ajaxManager = (function() {
+         var requests = [];
+
+         return {
+            addReq:  function(opt) {
+                requests.push(opt);
+            },
+            removeReq:  function(opt) {
+                if( $.inArray(opt, requests) > -1 )
+                    requests.splice($.inArray(opt, requests), 1);
+            },
+            run: function() {
+                var self = this,
+                    oriSuc;
+
+                if( requests.length ) {
+                    oriSuc = requests[0].complete;
+
+                    requests[0].complete = function() {
+                         if( typeof(oriSuc) === 'function' ) oriSuc();
+                         requests.shift();
+                         self.run.apply(self, []);
+                    };   
+
+                    $.ajax(requests[0]);
+                } else {
+                  self.tid = setTimeout(function() {
+                     self.run.apply(self, []);
+                  }, 1000);
+                }
+            },
+            stop:  function() {
+                requests = [];
+                clearTimeout(this.tid);
+            }
+         };
+      }());
+      ajaxManager.run(); 
+
+      function productUpdateWithAjaxQueue(params) {
+          // send response to this iframe
+          var myFrame = $("#responseIframe").contents().find('body'); 
+
+          ajaxManager.addReq({
+               type: 'POST',
+               url: 'update-api.php',
+               data: params,
+               success: function(data){
+                  var res = JSON.parse(data); // data is string, convert to obj
+                  var d = new Date();
+                  var n = d.toLocaleTimeString();
+
+                  if(parseInt(res.code)) {
+                    myFrame.prepend(n + data + '<br>'); 
+                  } else {
+                    myFrame.prepend(n + ' SUCCESS<br>'); 
+                  }
+               },
+               error: function(error){
+                  myFrame.prepend(n + ' FAILED<br>'); 
+               }
+          });
+      }
+    //##########################################################################################################
+    
     $("button[name='qtyaction'][value='+500']").click(function() {
-      $(this).parent().find('input[name=qty]').val('500'); 
+        $(this).parent().find('input[name=qty]').val('500'); 
+        var sku = $(this).parent().find('input[name=sku]').val(); 
+        productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: 500});
     });
     $("button[name='qtyaction'][value='=0']").click(function() {
-      $(this).parent().find('input[name=qty]').val('0'); 
+        $(this).parent().find('input[name=qty]').val('0'); 
+        var sku = $(this).parent().find('input[name=sku]').val(); 
+        productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: 0});
+    });
+    $('input[name=qty]').keypress(function(event){
+      console.log("SHEN ENTER");
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){ // press ENTER
+          var s = $(this).parent().find('input[name=sku]').val(); 
+          var q = $(this).parent().find('input[name=qty]').val(); 
+          productUpdateWithAjaxQueue({ sku: s, action: "qty", qty: q});
+      }
+      event.stopPropagation();
     });
 
     $('#btn_copy_sku').click(function (e) {

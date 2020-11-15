@@ -24,9 +24,10 @@ require_once('_main_functions.php');
       background-color: #FFF;
       width: 100%;
       z-index: 10;
+      margin-top: 50px;
     }
     .mainContent{
-      margin-top: 240px;
+      margin-top: 250px;
     }
     </style>
 </head>
@@ -59,8 +60,8 @@ $qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
 ?>
 
 <body>
+  <div class="floating-bar"><iframe id="responseIframe" name="responseIframe" width="100%" height="30"></iframe></div>
   <div class="control-bar">
-    <iframe id="responseIframe" name="responseIframe" width="100%" height="30"></iframe>
     <?php include('src/nav.php');?>
     <div class=control-container>
         <div class="control-bar-2">
@@ -184,11 +185,93 @@ function search() {
 }
 
 $(function(){
+
+  //######### AJAX QUEUE ######################################################################################
+  var ajaxManager = (function() {
+     var requests = [];
+
+     return {
+        addReq:  function(opt) {
+            requests.push(opt);
+        },
+        removeReq:  function(opt) {
+            if( $.inArray(opt, requests) > -1 )
+                requests.splice($.inArray(opt, requests), 1);
+        },
+        run: function() {
+            var self = this,
+                oriSuc;
+
+            if( requests.length ) {
+                oriSuc = requests[0].complete;
+
+                requests[0].complete = function() {
+                     if( typeof(oriSuc) === 'function' ) oriSuc();
+                     requests.shift();
+                     self.run.apply(self, []);
+                };   
+
+                $.ajax(requests[0]);
+            } else {
+              self.tid = setTimeout(function() {
+                 self.run.apply(self, []);
+              }, 1000);
+            }
+        },
+        stop:  function() {
+            requests = [];
+            clearTimeout(this.tid);
+        }
+     };
+  }());
+
+  ajaxManager.run(); 
+
+  function myAjaxQueueUpdate(params) {
+      // send response to this iframe
+      var myFrame = $("#responseIframe").contents().find('body'); 
+
+      ajaxManager.addReq({
+           type: 'POST',
+           url: 'update-api.php',
+           data: params,
+           success: function(data){
+              var res = JSON.parse(data); // data is string, convert to obj
+              var d = new Date();
+              var n = d.toLocaleTimeString();
+
+              if(parseInt(res.code)) {
+                myFrame.prepend(n + data + '<br>'); 
+              } else {
+                myFrame.prepend(n + ' SUCCESS<br>'); 
+              }
+           },
+           error: function(error){
+              myFrame.prepend(n + ' FAILED<br>'); 
+           }
+      });
+  }
+//##########################################################################################################
+
   $("button[name='qtyaction'][value='+500']").click(function() {
       $(this).parent().find('input[name=qty]').val('500'); 
+      var sku = $(this).parent().find('input[name=sku]').val(); 
+      myAjaxQueueUpdate({ sku: sku, action: "qty", qty: 500});
   });
   $("button[name='qtyaction'][value='=0']").click(function() {
       $(this).parent().find('input[name=qty]').val('0'); 
+      var sku = $(this).parent().find('input[name=sku]').val(); 
+      myAjaxQueueUpdate({ sku: sku, action: "qty", qty: 0});
+  });
+  $('input[name=qty]').keypress(function(event){
+    console.log("SHEN ENTER");
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == '13'){ // press ENTER
+        var s = $(this).parent().find('input[name=sku]').val(); 
+        var q = $(this).parent().find('input[name=qty]').val(); 
+        myAjaxQueueUpdate({ sku: s, action: "qty", qty: q});
+    }
+    event.stopPropagation();
   });
 
   $('#btn_copy_sku').click(function (e) {
@@ -270,18 +353,8 @@ $(function(){
       } else {
           status = 'inactive';
       }
-      
-      $.post( "update-api.php", { sku: this.id, skustatus: status })
-        .done(function( data ) {
-          if(data.code) {
-              alert(data);
-          } else {
-              alert("SUCCESS");
-          }
-        })
-        .fail(function() {
-          alert( "UNKNOWN ERROR" );
-        });
+
+      myAjaxQueueUpdate({ sku: this.id, action: "status", skustatus: status});
   });
 
   // $('table').on('click', '.grouped-icon', function(e){

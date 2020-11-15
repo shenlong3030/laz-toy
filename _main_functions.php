@@ -425,15 +425,11 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $cssclass .= ($selectedSku == $sellersku) ? ' selected' : '';
 
             $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
-            $qtyForm = '<form action="update.php" method="POST" name="qtyForm" target="responseIframe">
+            $qtyForm = '<div>
             <input name="sku" type="hidden" value="'.$sellersku.'"/>
             <input name="qty" type="text" size="4" value="'.$qty.'"/>
-
-            <! –– Press ENTER to submit, need this hidden input ––>
-            <input type="submit" tabindex="-1" name="qtyaction" value="update" hidden/>
-
-            <button style="padding:0px" class="btn btn-primary" type="submit" name="qtyaction" value="+500">+500</button>
-            <button style="padding:0px" class="btn btn-primary" type="submit" name="qtyaction" value="=0">=0</button></form>';
+            <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="+500">+500</button>
+            <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="=0">=0</button></div>';
             
             $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="price" type="text" size="8" value="'.$price1.'"/>--><input name="sale_price" type="text" size="8" value="'.$price2.'"/><input type="submit" tabindex="-1" value="↵" hidden/></form>';
             
