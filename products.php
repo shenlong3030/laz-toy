@@ -271,6 +271,16 @@ $(function(){
     }
     event.stopPropagation();
   });
+  $('input[type=checkbox][data-toggle=toggle]').change(function() {
+      var status;
+      if(this.checked) {
+          status = 'active';
+      } else {
+          status = 'inactive';
+      }
+
+      productUpdateWithAjaxQueue({ sku: this.id, action: "status", skustatus: status});
+  });
 
   $('#btn_copy_sku').click(function (e) {
       var text = "";
@@ -342,17 +352,6 @@ $(function(){
   // SHOW SEARCH BY LIST
   $('#cbbyskus').change(function(){
     $('.search').toggleClass('on');
-  });
-
-  $('input[type=checkbox][data-toggle=toggle]').change(function() {
-      var status;
-      if(this.checked) {
-          status = 'active';
-      } else {
-          status = 'inactive';
-      }
-
-      myAjaxQueueUpdate({ sku: this.id, action: "status", skustatus: status});
   });
 
   // $('table').on('click', '.grouped-icon', function(e){
