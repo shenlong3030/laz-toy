@@ -5,3 +5,7 @@ function copyToClipBoard(text) {
     document.execCommand("copy");
     $temp.remove();
 }
+
+function properText(text) {
+	return str = text.replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase());    
+}
