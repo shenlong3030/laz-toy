@@ -113,7 +113,7 @@ function getOrderItemsInfo($data) {
     $info = array();
     $info["name"] = "";
     $info["tracking_code"] = "";
-    $info["shipment_provider"] = "";
+    $info["shipping_provider_type"] = "";
     $info["img"] = "";
  
     foreach($data as $index=>$item) {
@@ -128,7 +128,7 @@ function getOrderItemsInfo($data) {
 
         $info["name"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$price.$kiotid.'</p>';
         $info["tracking_code"] = $item['tracking_code'] ? $item['tracking_code'] : $info["tracking_code"];
-        $info["shipment_provider"] = $item['shipment_provider'];
+        $info["shipping_provider_type"] = $item['shipping_provider_type'];
 
         // show image of all items, include canceled items
         $info["img"] .= '<a target="_blank" href="'.$item['product_main_image'].'"><img border="0" src="'.$item['product_main_image'].'" height="50"></a><br>';
@@ -168,7 +168,7 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         echo '<tr class="'.$orderStatus.'">';
         echo '<td style="display:none;">'.$orderId.'</td>';
         echo '<td class="index">'.($offset+$index+1).'</td>';
-            
+
         if($status == 'delivered') {
             echo '<td class="order">'.$orderNumber.'</td>';
         } else {
@@ -179,8 +179,8 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
             $item = $order['orderItems'];
 
             // kiem tra hoa toc
-            preg_match('/aha/i', $item['shipment_provider'], $m);
-            $shipType = count($m) ? "Hỏa tốc " : "";
+            preg_match('/p2p/i', $item['shipping_provider_type'], $m);
+            $shipType = count($m) ? '<span style="color:red">Hỏa tốc </span>' : '';
 
             echo '<td>'.$shipType.$item['tracking_code'].'</td>';
             echo '<td></td>'; // tracking code link cell
