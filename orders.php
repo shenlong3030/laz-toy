@@ -49,8 +49,12 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=canceled&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đơn hàng huỷ</a>
 <?php if($GLOBALS['status']=='canceled') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
 
-<a href="<?php echo $_SERVER['PHP_SELF'];?>?offset=0&limit=500&status=delivered&sortby=updated_at&shopid=&needfull=0<?php echo $GLOBALS['shopid']?>">Đơn hàng phát thành công</a>
+<a href="<?php echo $_SERVER['PHP_SELF'];?>?offset=0&limit=100&status=delivered&sortby=updated_at&shopid=&needfull=1<?php echo $GLOBALS['shopid']?>">Đơn hàng phát thành công</a>
 <?php if($GLOBALS['status']=='delivered') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
+
+<a href="<?php echo $_SERVER['PHP_SELF'];?>?offset=0&limit=100&status=failed&sortby=updated_at&shopid=&needfull=1<?php echo $GLOBALS['shopid']?>">Đơn hàng thất bại</a>
+<?php if($GLOBALS['status']=='failed') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
+
 </div>
 <hr>
 
@@ -68,7 +72,7 @@ echo "<p><b>10 đơn hàng bị huỷ gần đây nhất<b></p>";
 echo '<table border="1"><tbody>';
 
 $token = $GLOBALS["accessToken"];
-$list = getOrders($token, 'canceled', 0, 10, $sortBy, 1);
+$list = getOrders($token, 'canceled', 0, 10, 'updated_at', 1);
 printOrders($token, $list , 0, $status);
 
 echo '</tbody></table></div><hr>';

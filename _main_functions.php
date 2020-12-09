@@ -207,8 +207,9 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         $cdate = preg_replace('/(\+0700)/i', '', $order["created_at"]);
         echo '<td><b>'.$cdate.'</b></td>';
         
-        //echo '<td>'.$order["updated_at"].'</td>'; 
-        echo '<td></td>';
+        $udate = preg_replace('/(\+0700)/i', '', $order["updated_at"]);
+        echo '<td>'.$udate.'</td>'; 
+        //echo '<td></td>';
         
         echo '<td>'.$price.'</td>';
         echo '<td>'.$itemCount.'</td>';
