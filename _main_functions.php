@@ -276,7 +276,7 @@ function getProductsPaging($accessToken, $q, $options, &$total_products=null){
         $request->addApiParam('limit', (string)$options['limit']);
     }
     if(isset($options['after'])) {
-        //$request->addApiParam('create_after', (string)$options['after']);
+        $request->addApiParam('create_after', (string)$options['after']);
     }
     //$request->addApiParam('create_after', '2010-01-01T00:00:00+0700';
     //$request->addApiParam('update_after','2010-01-01T00:00:00+0700');

@@ -54,6 +54,7 @@ $filterQty = val($_GET['filterQty'], "");
 $item_id = $_GET['item_id'] ? $_GET['item_id'] : '';
 $nochild = $_GET['nochild'] ? $_GET['nochild'] : 0;
 $after = $_GET['after'] ? $_GET['after'] : '';
+$aDate = date("Y-m-d", time() - 3600*24*1);
 
 $qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
 
@@ -104,7 +105,8 @@ $qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
 
         <br>Filter 
         <input type="text" id="filterName" name="filterName" placeholder="Name contain" value="<?php echo $filterName; ?>">
-        <input type="text" id="filterQty" name="filterQty" placeholder="Quantity less than" value="<?php echo $filterQty; ?>"> 
+        <input type="text" id="filterQty" name="filterQty" placeholder="Quantity less than" value="<?php echo $filterQty; ?>">
+        <span>&after=<?php echo $aDate; ?></span>
 
         <textarea class="nowrap search skus" name="skus" placeholder="Input SKUs separated by line" rows="20" cols="50"><?php echo implode("\n", $skus);?></textarea><br>
         <input id="cbbyskus" type="checkbox" name="byskus" value="1">Search by SKUs
