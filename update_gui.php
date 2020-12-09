@@ -26,9 +26,14 @@ $name = "";
 $variation = "";
 $brand = "";
 $color_thumbnail = "";
+$type_screen_guard = "";
 
 if($sku || $itemId) {
     $product = getProduct($accessToken, null, $itemId, $qname);
+
+    if($_COOKIE["dump"]){
+        var_dump($product);
+    }
 
     if($product) {
         $sibling = null;
@@ -46,8 +51,10 @@ if($sku || $itemId) {
         $l = $product['skus'][$i]['package_length'];
         $content = $product['skus'][$i]['package_content'];
         $qty = $product['skus'][$i]['quantity'];
-        $variation = $product['skus'][$i]['_compatible_variation_'];
-        
+        $variation = $product['skus'][$i]['Variation'];
+        $variation = $product['skus'][$i]['Variation'];
+        $type_screen_guard = $product['skus'][$i]['type_screen_guard'];
+
         $color = $product['skus'][$i]['color_family'];
         $color_thumbnail = $product['skus'][$i]['color_thumbnail'];
         $model = $product['skus'][$i]['compatibility_by_model'];
@@ -81,15 +88,6 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>UPDATE</title>
-    <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
-
-    <script src="//code.jquery.com/jquery-1.11.1.js"></script>
-    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-    <!-- bxSlider Javascript file -->
-    <script src="./js/controls.js"></script>
-    <script src="./js/jquery.tablesorter.min.js"></script>
-    
-    <link rel="stylesheet" type="text/css" href="css/style.css">
 
     <?php include('src/head.php');?>
 
@@ -126,7 +124,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <input id="btn_change_sku" type="button" value="Change"/>
     </form>
 
-    <form id="form_change_sku" class="ex" action="update.php" method="POST" name="nameForm" target="responseIframe">
+    <form id="form_change_sku" class="ex" action="update.php" method="POST" name="skuForm" target="responseIframe">
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
     Change SKU to: <input type="text" name="new_sku" size="70" value="<?php echo $sku?>"/>
     <input type="submit" value="Change SKU"/>
@@ -146,12 +144,13 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <input type="submit" value="Update name"/>
     </form>
 <hr>
-    Variations : <?php echo $variation;?>
-<hr>
-    <form action="update.php" method="POST" name="colorForm" target="responseIframe">
+    <form action="update.php" method="POST" name="variationForm" target="responseIframe">
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    Variation <input type="text" name="variation" value="<?php echo $variation;?>" />
+    type_screen_guard <input type="text" name="type_screen_guard" value="<?php echo $type_screen_guard;?>" />
+    compatibility_by_model <input type="text" name="compatibility_by_model" value="<?php echo $model;?>" />
     color_family <input type="text" name="color_family" value="<?php echo $color;?>" />
-    <input type="submit" value="Update color"/>
+    <input type="submit" value="Update"/>
     </form>
 <hr>
     <form action="update_color_thumbnail_gui.php" method="GET" name="colorThumbnailForm" target="_blank">
@@ -159,12 +158,6 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     color_thumbnail <input type="text" name="color_thumbnail" value="<?php echo $color_thumbnail;?>" />
     <input type="submit" value="Update color_thumbnail"/>
     <img src="<?php echo $color_thumbnail;?>" width="30" height="30">
-    </form>
-<hr>
-    <form action="update.php" method="POST" name="modelForm" target="responseIframe">
-    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
-    compatibility_by_model <input type="text" name="compatibility_by_model" value="<?php echo $model;?>" />
-    <input type="submit" value="Update model"/>
     </form>
 <hr>
     <form action="update.php" method="POST" name="brandForm" target="responseIframe">

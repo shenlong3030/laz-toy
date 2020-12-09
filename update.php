@@ -4,20 +4,23 @@ require_once('_main_functions.php');
 
 //include_once "src/show_errors.php";
 
-//var_dump($_POST);
+//var_dump($_REQUEST);
 
-$sku = $_POST['sku'] ? $_POST['sku'] : 0;
-$qty = isset($_POST['qty']) ? $_POST['qty'] : '';
-$qtyaction = $_POST['qtyaction'];
-$price = $_POST['price'] ? $_POST['price'] : 0;
-$sale_price = $_POST['sale_price'] ? $_POST['sale_price'] : 0;
-$fromdate = $_POST['fromdate'] ? $_POST['fromdate'] : 0;
-$todate = $_POST['todate'] ? $_POST['todate'] : 0;
-$name = $_POST['name'] ? $_POST['name'] : '';
+$sku = $_REQUEST['sku'] ? $_REQUEST['sku'] : 0;
+$qty = isset($_REQUEST['qty']) ? $_REQUEST['qty'] : '';
+$qtyaction = $_REQUEST['qtyaction'];
+$price = $_REQUEST['price'] ? $_REQUEST['price'] : 0;
+$sale_price = $_REQUEST['sale_price'] ? $_REQUEST['sale_price'] : 0;
+$fromdate = $_REQUEST['fromdate'] ? $_REQUEST['fromdate'] : 0;
+$todate = $_REQUEST['todate'] ? $_REQUEST['todate'] : 0;
+$name = $_REQUEST['name'] ? $_REQUEST['name'] : '';
 
-$compatibility_by_model = $_POST['compatibility_by_model'] ? $_POST['compatibility_by_model'] : '';
-$category = $_POST['category'] ? $_POST['category'] : 0;
-$input = val($_POST['images']);
+$compatibility_by_model = $_REQUEST['compatibility_by_model'] ? $_REQUEST['compatibility_by_model'] : '';
+$variation = $_REQUEST['variation'] ? $_REQUEST['variation'] : '';
+$type_screen_guard = $_REQUEST['type_screen_guard'] ? $_REQUEST['type_screen_guard'] : '';
+
+$category = $_REQUEST['category'] ? $_REQUEST['category'] : 0;
+$input = val($_REQUEST['images']);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $temp = array();
@@ -27,15 +30,15 @@ foreach($images as $image) {
 $images = array_filter($temp);
 
 
-$shortdesc = $_POST['shortdesc'] ? $_POST['shortdesc'] : '';
-$desc = $_POST['desc'] ? $_POST['desc'] : '';
-$brand = $_POST['brand'] ? $_POST['brand'] : '';
+$shortdesc = $_REQUEST['shortdesc'] ? $_REQUEST['shortdesc'] : '';
+$desc = $_REQUEST['desc'] ? $_REQUEST['desc'] : '';
+$brand = $_REQUEST['brand'] ? $_REQUEST['brand'] : '';
 
-$weight = $_POST['weight'] ? $_POST['weight'] : '';
-$size_h = $_POST['size_h'] ? $_POST['size_h'] : '';
-$size_w = $_POST['size_w'] ? $_POST['size_w'] : '';
-$size_l = $_POST['size_l'] ? $_POST['size_l'] : '';
-$content = $_POST['content'] ? $_POST['content'] : '';
+$weight = $_REQUEST['weight'] ? $_REQUEST['weight'] : '';
+$size_h = $_REQUEST['size_h'] ? $_REQUEST['size_h'] : '';
+$size_w = $_REQUEST['size_w'] ? $_REQUEST['size_w'] : '';
+$size_l = $_REQUEST['size_l'] ? $_REQUEST['size_l'] : '';
+$content = $_REQUEST['content'] ? $_REQUEST['content'] : '';
 
 $video = $_REQUEST['video'] ? $_REQUEST['video'] : '';
 
@@ -101,12 +104,12 @@ if($accessToken && ($sku || $id)) {
         } elseif($name) {
             //echo "i5";
             $product = setProductName($product, $name);
-        } elseif($color_family) {
-            //echo "i6";
-            $product = setProductColor($product, $color_family);
-        } elseif($compatibility_by_model) {
+        } elseif($variation) {
             //echo "i7";
+            $product = setProductVariation($product, $variation);
             $product = setProductModel($product, $compatibility_by_model);
+            $product = setProductColor($product, $color_family);
+            $product = setProductTypeScreenGuard ($product, $type_screen_guard);
         } elseif($shortdesc) {
             //echo "i8";
             $product = setProductShortDescription($product, $shortdesc);
@@ -155,11 +158,11 @@ if($accessToken && ($sku || $id)) {
 /*
 if($accessToken) {
     // get code param
-    $sku = $_POST['sku'] ? $_POST['sku'] : '';
-    $qty = $_POST['qty'] ? $_POST['qty'] : '0';
-    $price = $_POST['price'] ? $_POST['price'] : '0';
-    $sale_price = $_POST['sale_price'] ? $_POST['sale_price'] : '0';
-    $name = $_POST['name'] ? $_POST['name'] : '';
+    $sku = $_REQUEST['sku'] ? $_REQUEST['sku'] : '';
+    $qty = $_REQUEST['qty'] ? $_REQUEST['qty'] : '0';
+    $price = $_REQUEST['price'] ? $_REQUEST['price'] : '0';
+    $sale_price = $_REQUEST['sale_price'] ? $_REQUEST['sale_price'] : '0';
+    $name = $_REQUEST['name'] ? $_REQUEST['name'] : '';
 
     $namePayload = '';
     if($name) {

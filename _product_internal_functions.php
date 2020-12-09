@@ -165,6 +165,17 @@ function setProductModel($product, $model) {
     return $product;
 }
 
+function setProductVariation($product, $value) {
+    $product['Skus'][0]['Variation'] = $value;
+    return $product;
+}
+
+function setProductTypeScreenGuard($product, $value) {
+    $product['Skus'][0]['type_screen_guard'] = $value;
+    return $product;
+}
+
+
 function setProductShortDescription($product, $value) {
     $product['Attributes']['short_description'] = $value;
 

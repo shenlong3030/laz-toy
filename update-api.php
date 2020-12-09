@@ -27,22 +27,18 @@ if($accessToken && $sku) {
                         "message" => "Invalid sku"
                     );
             }
-
-            echo json_encode($response);
             break;
 
         case 'qty':
             $response = updateQuantityWithAPI($accessToken, $sku, $qty);
-            echo json_encode($response);
             break;
         
         default:
             # code...
             break;
     }
-
-
-    
+    sleep(1);
+    echo json_encode($response);
 }
 
 ?>
