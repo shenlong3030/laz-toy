@@ -17,7 +17,7 @@ $skus = array_diff($skus, $tmp); // remove sourcesku from list skus
 $options = isset($_REQUEST['options']) ? $_REQUEST['options'] : '';
 
 $str_imageindexes = val($_REQUEST['imageindexes'], "1,2,3,4,5,6,7,8");
-$imageindexes = array_filter(explode(",", $str_imageindexes));
+$imageindexes = array_filter(explode(",", $str_imageindexes), 'is_numeric');
 ?>
 
 <!DOCTYPE html>
