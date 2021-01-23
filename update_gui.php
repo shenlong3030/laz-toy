@@ -176,7 +176,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
         <li>4528 : miếng dán</li>
         <li>4523 : ốp lưng</li>
         <li>11029 : cáp sạc</li>
-        <li>11496 : miếng dán đồng hồ</li>
+        <li>10100418 : miếng dán đồng hồ</li>
     </ul>
 <hr>
     <form action="update.php" method="POST" name="imageForm" target="responseIframe">
