@@ -56,7 +56,7 @@ $nochild = $_GET['nochild'] ? $_GET['nochild'] : 0;
 $after = $_GET['after'] ? $_GET['after'] : '';
 $aDate = date("Y-m-d", time() - 3600*24*1);
 
-$qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
+//$qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
 
 ?>
 
