@@ -379,9 +379,10 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
     /* cột 4 */echo '<th class="editmode on">&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
     /* cột 5 */echo '<th class="editmode name form">&#x25BC NAME Form<b>'; // name form
 
-    /* cột 6 */echo '<th class="color">&#x25BC Color</th>'; 
-    /* cột 7 */echo '<th class="model">&#x25BC Model</th>'; 
-
+    /* cột 6 */echo '<th class="model">&#x25BC Model</th>'; 
+    /* cột 7 */echo '<th class="color">&#x25BC Color</th>'; 
+    /* cột 7.1 */echo '<th class="attr"></th>'; 
+    
     /* cột 8 */echo '<th class="editmode on">&#x25BCPRICE</th>'; // price form, display:none
     /* cột 9 */echo '<th class="editmode on">&#x25BCSALE PRICE</th>'; // price form, display:none
     /* cột 10 */echo '<th class="editmode price form">&#x25BCPRICE Form</th>';  // price form, display:none
@@ -416,8 +417,11 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
             $imgs = $sku['Images'];
             $color = $sku['color_family'];
-            $model = $sku['compatibility_by_model'] ? $sku['compatibility_by_model'] : "_";
+            $model = $sku['compatibility_by_model'] ? $sku['compatibility_by_model'] : "";
+            $otherAttributes = getProductAttributes($product, $index);
             $color_thumbnail = $sku['color_thumbnail'];
+
+            $selection = implode(',', array_filter(array($variation, $type, $color)));
 
             $variation = $sku['_compatible_variation_'];
             switch ($primary_category) {
@@ -461,8 +465,9 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             /* cột 4 */echo '<td class="editmode name on padding info">'.$nameLink.'</td>';
             /* cột 5 */echo '<td class="editmode name form">'.$nameForm.'</td>';
             
-            /* cột 6 */echo '<td class="info">'.$color.'</td>';
-            /* cột 7 */echo '<td class="info">'.$model.'</td>';
+            /* cột 6 */echo '<td class="info">'.$model.'</td>';
+            /* cột 7 */echo '<td class="info">'.$color.'</td>';
+            /* cột 7.1 */echo '<td class="info">'.$otherAttributes.'</td>';
             
             // visible
             /* cột 8 */echo '<td class="editmode price on">'.$price1.'</td>';
@@ -1141,31 +1146,27 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
             //... do nothing
         } else {
             $product = setProductAssociatedSku($product, $sku);
-
             $kiotids = $inputdata["kiotids"];
-            $colors = $inputdata["colors"];
-            $models = $inputdata["models"];
+            $attrList = $inputdata["attrList"];
+            $attrValues = $inputdata["attrValues"];
 
             $cache = array();
             $time = substr(time(), -4);
             foreach($inputdata["qtys"] as $index => $value) {
                 $kiotid = $kiotids[$index] ? $kiotids[$index] : "";
-                $color = $colors[$index] ? $colors[$index] : "";
-                $model = $models[$index] ? $models[$index] : "";
 
-                if($model) {
-                    $product = setProductModel($product, $model);
+                $values = array();
+                foreach ($attrList as $i => $attr) {
+                    $values[] = $attrValues[$i][$index] ? $attrValues[$i][$index] : "";
                 }
-                if($color) {
-                    $product = setProductColor($product, $color);
-                }
+                $product = setProductAttributes($product, $attrList, $values);
                 
                 // set NAME
                 if(!empty($newName)) {
                     $product = setProductName($product, $newName);
                 }
 
-                $newSku = generateSku($skuprefix, 0, $model, $color, $kiotid);
+                $newSku = generateSku1($skuprefix, "", $values, $kiotid);
                 $product = setProductSku($product, $newSku);
                 
                 if(isset($inputdata["qtys"][$index])) {

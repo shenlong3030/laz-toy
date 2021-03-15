@@ -303,7 +303,7 @@ $(function(){
   });
 
   $('#btn_copy_all').click(function (e) {
-    var numberOfInfoColumns = 17;
+    var numberOfInfoColumns = 18;
     var text = "";
     $("table.main").find("td.info").each(function(index, value){
         text = text + $(this).text();

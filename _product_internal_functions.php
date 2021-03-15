@@ -175,6 +175,17 @@ function setProductTypeScreenGuard($product, $value) {
     return $product;
 }
 
+function setProductAttributes($product, $attrList, $values) {
+    foreach ($attrList as $i => $attr) {
+        $product['Skus'][0][$attr] = $values[$i];
+    }
+    return $product;
+}
+
+function setProductAttribute($product, $attr, $value) {
+    $product['Skus'][0][$attr] = $value;
+    return $product;
+}
 
 function setProductShortDescription($product, $value) {
     $product['Attributes']['short_description'] = $value;
@@ -253,6 +264,38 @@ function getProductWithSingleSku($product, $inputSku) {
     $newProduct['skus'] = array_slice($product['skus'], $i, 1);
     return $newProduct;
 }
+
+/*
+    define all product attributes except model, color
+*/
+function getProductAttributeNames($withoutModelColor=TRUE) {
+    $list = array(
+        "compatibility_by_model",
+        "color_family",
+        "Variation",
+        "type_screen_guard",
+        "smartwear_size"
+    );
+    if($withoutModelColor) {
+        $list = array_slice($list, 2);
+    }
+    return $list;
+}
+
+/*
+    return string all attributes except color, model
+*/
+function getProductAttributes($product, $skuIndex, $withoutModelColor=TRUE) {
+    $attributes = getProductAttributeNames($withoutModelColor);
+    $values = array();
+
+    foreach ($attributes as $i => $attr) {
+        $values[] = $product['skus'][$skuIndex][$attr];
+    }
+    $values = array_filter($values);
+    return implode(",", $values);
+}
+
 
 //######################################
 //CHECK region

@@ -39,11 +39,21 @@ $newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 $input = $_POST['col'][0];
 $kiotids = explode("\n", str_replace("\r", "", $input));
 
+$attrList = $_POST['attr']; //$attrList is array
+$attrValues = array();
+
 $input = $_POST['col'][1];
-$colors = explode("\n", str_replace("\r", "", $input));
+$attrValues[] = explode("\n", str_replace("\r", "", $input)); //$attrValues[0] is array
 
 $input = $_POST['col'][2];
-$models = explode("\n", str_replace("\r", "", $input));
+$attrValues[] = explode("\n", str_replace("\r", "", $input)); //$attrValues[1] is array
+
+$variationPos = array_search('Variation', $attrList);
+if($variationPos) {
+    repositionArrayElement($attrList, $variationPos, 0);
+    repositionArrayElement($attrValues, $variationPos, 0);
+}
+
 
 $input = $_POST['col'][3];
 $qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
@@ -56,8 +66,8 @@ $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $inputdata = array(
     "kiotids" => $kiotids,
-    "colors" => $colors,
-    "models" => $models,
+    "attrList" => $attrList,
+    "attrValues" => $attrValues,
     "images" => $images,
     "appendtime" => $appendtime,
     "skuprefix" => $skuprefix,

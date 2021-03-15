@@ -139,17 +139,19 @@ function make_short_sku($sku) {
     'SAMSUNG' =>'SAM',
     'HUAWEI' =>'HW',
     'REDMI' => 'RM',
-    'ASUS' => '',
+    'ASUS.ZENFONE' => 'ZEN',
     'ZENFONE' => 'ZEN',
     'MOTOROLA' => 'MOTO',
     'NOKIA'=>'NK',
     'XIAOMI'=>'XM',
     'OPPO'=>'OP',
-    'REALME'=>'REAL',
+    'REALME'=>'RL',
     'HONOR'=>'HN',
+    'VIVO'=>'VO',
     'VSMART'=>'VS',
     '.PLUS'=>'P',
-
+    'GALAXY.WATCH.'=>'G.W',
+    '\.\.\.\.'=>'',
     '\.\.\.'=>'',
     '\.\.'=>'.'
     );
@@ -218,5 +220,47 @@ function generateSku($skuprefix, $group, $model, $color, $kiotid) {
     return $newSku;
 }
 
+function generateSku1($skuprefix, $group, $attributes, $kiotid) {
+    $skuprefix = trim($skuprefix, "_");
+    $kiotid = trim($kiotid);
+    $attributes = array_map("trim", $attributes);
+
+    $parts = array();
+    $parts[] = $skuprefix;
+    $parts[] = $group;
+
+    $details = array();
+    $details = array_merge($details, $attributes);
+    $details[] = $kiotid;
+    $details = array_filter($details); // remove empty string
+    $detailStr = implode('.', $details);
+    $parts[] = $detailStr;
+
+    $parts = array_filter($parts); // remove empty string
+    $newSku = implode("__", $parts);
+    $newSku = vn_to_str($newSku);
+
+    $newSku = make_short_sku($newSku);
+    return $newSku;
+}
+
+/**
+ * Reposition an array element by its key.
+ *
+ * @param array      $array The array being reordered.
+ * @param string|int $key They key of the element you want to reposition.
+ * @param int        $order The position in the array you want to move the element to. (0 is first)
+ *
+ * @throws \Exception
+ */
+function repositionArrayElement(array &$array, $key, int $order): void
+{
+    if(($a = array_search($key, array_keys($array))) === false){
+        throw new \Exception("The {$key} cannot be found in the given array.");
+    }
+    $p1 = array_splice($array, $a, 1);
+    $p2 = array_splice($array, 0, $order);
+    $array = array_merge($p2, $p1, $array);
+}
 
 ?>
