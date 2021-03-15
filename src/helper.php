@@ -9,9 +9,11 @@ function myecho($val, $caller="") {
     echo $val;
 }
 
-function myvar_dump($val) {
-    echo "<br>";
-    var_dump($val);
+function debug_log($val) {
+    if($_COOKIE["debug"]){
+        echo "<br>";
+        var_dump($val);
+    }
 }
 
 

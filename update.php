@@ -104,7 +104,7 @@ if($accessToken && ($sku || $id)) {
         } elseif($name) {
             //echo "i5";
             $product = setProductName($product, $name);
-        } elseif($variation) {
+        } elseif($_REQUEST['change-attr']) {
             //echo "i7";
             $product = setProductVariation($product, $variation);
             $product = setProductModel($product, $compatibility_by_model);

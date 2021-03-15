@@ -30,10 +30,7 @@ $type_screen_guard = "";
 
 if($sku || $itemId) {
     $product = getProduct($accessToken, null, $itemId, $qname);
-
-    if($_COOKIE["dump"]){
-        var_dump($product);
-    }
+    debug_log($product);
 
     if($product) {
         $sibling = null;
@@ -51,7 +48,6 @@ if($sku || $itemId) {
         $l = $product['skus'][$i]['package_length'];
         $content = $product['skus'][$i]['package_content'];
         $qty = $product['skus'][$i]['quantity'];
-        $variation = $product['skus'][$i]['Variation'];
         $variation = $product['skus'][$i]['Variation'];
         $type_screen_guard = $product['skus'][$i]['type_screen_guard'];
 
@@ -146,6 +142,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 <hr>
     <form action="update.php" method="POST" name="variationForm" target="responseIframe">
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    <input type="hidden" id="change-attr" name="change-attr" value="1">
     Variation <input type="text" name="variation" value="<?php echo $variation;?>" />
     type_screen_guard <input type="text" name="type_screen_guard" value="<?php echo $type_screen_guard;?>" />
     compatibility_by_model <input type="text" name="compatibility_by_model" value="<?php echo $model;?>" />
