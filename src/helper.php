@@ -234,12 +234,18 @@ function generateSku1($skuprefix, $group, $attributes, $kiotid) {
     $details[] = $kiotid;
     $details = array_filter($details); // remove empty string
     $detailStr = implode('.', $details);
+    $detailStr = vn_to_str($detailStr);
+    $detailStr = make_short_sku($detailStr);
+
+    // remove first duplicate word
+    // SAM.SAM.A50  ==> SAM.A50
+    $pattern = '/\b(\w+)\b\s*\.\s*(?=.*\1)/';
+    $detailStr = preg_replace($pattern, "", $detailStr);
     $parts[] = $detailStr;
 
     $parts = array_filter($parts); // remove empty string
     $newSku = implode("__", $parts);
     $newSku = vn_to_str($newSku);
-
     $newSku = make_short_sku($newSku);
     return $newSku;
 }
