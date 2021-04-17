@@ -93,11 +93,11 @@ $aDate = date("Y-m-d", time() - 3600*24*1);
         </div>
 
         <form id="searchForm" action="<?php echo $_SERVER['PHP_SELF']?>" method="GET">
+        <input id="nochild" type="hidden" name="nochild" value="<?php echo $nochild; ?>">
         Search <input id="q" class="search text on" type="text" name="q" placeholder="Search by name" size="100" value="<?php echo $_GET['q']; ?>">
         <input type="hidden" name="status" value="<?php echo $_GET['status']; ?>">
         <input id="offset" type="hidden" name="offset" value="<?php echo $offset; ?>">
         <input id="limit" type="hidden" name="limit" value="<?php echo $limit; ?>">
-        <input id="nochild" type="hidden" name="nochild" value="<?php echo $nochild; ?>">
         
         <input id="cbshowextracol" type="checkbox" name="cbshowextracol" value="1">Show extra columns
         <input id="cbfulledit" type="checkbox" name="cbfulledit" value="1">Edit mode
