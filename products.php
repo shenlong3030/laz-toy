@@ -119,6 +119,9 @@ $aDate = date("Y-m-d", time() - 3600*24*1);
         <button id="btn_copy_all">Copy All Clipboard</button>
         <button id="btn_copy_sku">Copy SKUs</button>
         <button id="btn_copy_url">Copy LAZADA urls</button>
+
+        <button id="btn_all_sku_qty_zero" disabled>All qty=0</button>
+        <button id="btn_all_sku_inactive" disabled>All inactive</button>
     </div>
   </div>
   <div class="mainContent">
@@ -231,6 +234,7 @@ $(function(){
     function productUpdateWithAjaxQueue(params) {
         // send response to this iframe
         var myFrame = $("#responseIframe").contents().find('body'); 
+        var actionName = " CHANGE " + params['action'];
 
         ajaxManager.addReq({
              type: 'POST',
@@ -244,11 +248,11 @@ $(function(){
                 if(parseInt(res.code)) {
                   myFrame.prepend(n + data + '<br>'); 
                 } else {
-                  myFrame.prepend(n + ' SUCCESS<br>'); 
+                  myFrame.prepend(n + actionName + ' SUCCESS<br>'); 
                 }
              },
              error: function(error){
-                myFrame.prepend(n + ' FAILED<br>'); 
+                myFrame.prepend(n + actionName + ' FAILED<br>'); 
              }
         });
     }
@@ -282,6 +286,22 @@ $(function(){
       }
 
       productUpdateWithAjaxQueue({ sku: this.id, action: "status", skustatus: status});
+  });
+
+  $('#btn_all_sku_qty_zero').click(function (e) {
+      $("#tableProducts").find("td.sku").each(function(){
+          var sku = $(this).text();
+          productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: 0});
+          console.log("qty to zero, sku: " + sku);
+      });
+  });
+
+  $('#btn_all_sku_inactive').click(function (e) {
+      $("#tableProducts").find("td.sku").each(function(){
+          var sku = $(this).text();
+          productUpdateWithAjaxQueue({ sku: sku, action: "status", skustatus: 'inactive'});
+          console.log("set inactive, sku: " + sku);
+      });
   });
 
   $('#btn_copy_sku').click(function (e) {
