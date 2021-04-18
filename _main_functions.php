@@ -232,10 +232,10 @@ function getProducts($accessToken, $q = '', $options){
     do {
         $products = getProductsPaging($accessToken, $q, $options);
         $count = count($products);
-        $skusCount = getSkusCount($products);
+        //$skusCount = getSkusCount($products);
 
         $options['offset'] += $count;
-        $allProducts = array_merge($allProducts, $products);
+        $allProducts = array_merge($allProducts, (array)$products);
         usleep(200000);
     } while($count == $options['limit']);
 
