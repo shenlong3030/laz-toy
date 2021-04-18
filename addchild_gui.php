@@ -50,8 +50,24 @@ Possible Attributes : <?php echo implode(",", $attrNames)?><br><br>
     <tbody>
         <tr>
             <td>Kiod ID</td>
-            <td><input type="text" name="attr[]" value="compatibility_by_model"></td>
-            <td><input type="text" name="attr[]" value="color_family"></td>
+            <td>
+                <select name="attr[]">
+                  <option value="color_family">color_family</option>
+                  <option value="compatibility_by_model" selected>compatibility_by_model</option>
+                  <option value="Variation">Variation</option>
+                  <option value="type_screen_guard">type_screen_guard</option>
+                  <option value="smartwear_size">smartwear_size</option>
+                </select>
+            </td>
+            <td>
+                <select name="attr[]">
+                  <option value="color_family" selected>color_family</option>
+                  <option value="compatibility_by_model" >compatibility_by_model</option>
+                  <option value="Variation">Variation</option>
+                  <option value="type_screen_guard">type_screen_guard</option>
+                  <option value="smartwear_size">smartwear_size</option>
+                </select>
+            </td>
             <td>Quantity</td>
             <td>Price</td>
             <td>Image links</td>
