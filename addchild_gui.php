@@ -29,9 +29,12 @@ date_default_timezone_set("UTC");
 
 $sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
 
-preg_match('/(.+__.+__)/', $sku, $match);
-$initskuprefix = count($match) ? $match[1] : "";
-$skuprefix = isset($_POST['skuprefix']) ? $_POST['skuprefix'] : $initskuprefix;
+// CL.21D__IP.11.6.1  -->  CL.21D__
+$skuprefix = preg_replace('/(?!.+__)(.+)/', '__', $sku);
+
+// if wrong format --> skuprefix = ""
+$skuprefix = ($skuprefix == '__')?'':$skuprefix;
+
 $appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
 $newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 $attrNames = getProductAttributeNames(FALSE);
