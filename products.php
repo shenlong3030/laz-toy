@@ -122,6 +122,8 @@ $aDate = date("Y-m-d", time() - 3600*24*1);
 
         <button id="btn_all_sku_qty_zero" disabled>All qty=0</button>
         <button id="btn_all_sku_inactive" disabled>All inactive</button>
+        <button id="btn_all_sku_change_price" disabled>All price = </button>
+        <input id="input_all_price" type="text">
     </div>
   </div>
   <div class="mainContent">
@@ -244,15 +246,16 @@ $(function(){
                 var res = JSON.parse(data); // data is string, convert to obj
                 var d = new Date();
                 var n = d.toLocaleTimeString();
+                var sku = " " + params.sku + " ";
 
                 if(parseInt(res.code)) {
                   myFrame.prepend(n + data + '<br>'); 
                 } else {
-                  myFrame.prepend(n + actionName + ' SUCCESS<br>'); 
+                  myFrame.prepend(n + sku + actionName + ' SUCCESS<br>'); 
                 }
              },
              error: function(error){
-                myFrame.prepend(n + actionName + ' FAILED<br>'); 
+                myFrame.prepend(n + sku + actionName + ' FAILED<br>'); 
              }
         });
     }
@@ -302,6 +305,17 @@ $(function(){
           productUpdateWithAjaxQueue({ sku: sku, action: "status", skustatus: 'inactive'});
           console.log("set inactive, sku: " + sku);
       });
+  });
+
+  $('#btn_all_sku_change_price').click(function (e) {
+      var price = parseInt($('#input_all_price').val());
+      $("#tableProducts").find("td.sku").each(function(){
+          var sku = $(this).text();
+          productUpdateWithAjaxQueue({ sku: sku, action: "price", sprice: price});
+          console.log("change price sku: " + sku + " price=" + price);
+      });
+      //$('input[name=sale_price]').val(price);
+      //$('td.sale_price').html(price);
   });
 
   $('#btn_copy_sku').click(function (e) {

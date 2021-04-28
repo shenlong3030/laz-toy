@@ -472,7 +472,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             
             // visible
             /* cột 8 */echo '<td class="editmode price on">'.$price1.'</td>';
-            /* cột 9 */echo '<td class="editmode price on info">'.$price2.'</td>';
+            /* cột 9 */echo '<td class="editmode sale_price on info">'.$price2.'</td>';
             
             // hidden 
             /* cột 10 */echo '<td class="editmode price form">'.$priceForm.'</td>';
@@ -868,7 +868,7 @@ function updateQuantityWithAPI($accessToken, $sku, $qty) {
     return $response;
 }
 
-function updatePricesWithAPI($accessToken, $sku, $price, $sale_price, $fromdate = "2018-01-01", $todate = "2028-01-01") {
+function updatePricesWithAPI($accessToken, $sku, $price, $sale_price, $fromdate = "2020-01-01", $todate = "2028-01-01") {
     $pricePayload = '';
     $salePayload = '';
     

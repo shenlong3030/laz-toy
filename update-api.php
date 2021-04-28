@@ -6,6 +6,7 @@ $sku = isset($_REQUEST['sku']) ? $_REQUEST['sku'] : 0;
 $skustatus = isset($_REQUEST['skustatus']) ? $_REQUEST['skustatus'] : 'inactive';
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 $qty = isset($_REQUEST['qty']) ? $_REQUEST['qty'] : 0;
+$sprice = isset($_REQUEST['sprice']) ? $_REQUEST['sprice'] : 0;
 
 if($accessToken && $sku) {
     $response = 0;
@@ -31,6 +32,10 @@ if($accessToken && $sku) {
 
         case 'qty':
             $response = updateQuantityWithAPI($accessToken, $sku, $qty);
+            break;
+
+        case 'price':
+            $response = updatePricesWithAPI($accessToken, $sku, null, $sprice);
             break;
         
         default:
