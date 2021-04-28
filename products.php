@@ -297,6 +297,7 @@ $(function(){
           productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: 0});
           console.log("qty to zero, sku: " + sku);
       });
+      $("#tableProducts").find('input[name=qty]').val('0'); 
   });
 
   $('#btn_all_sku_inactive').click(function (e) {
@@ -305,6 +306,7 @@ $(function(){
           productUpdateWithAjaxQueue({ sku: sku, action: "status", skustatus: 'inactive'});
           console.log("set inactive, sku: " + sku);
       });
+      $("#tableProducts").find('input[type=checkbox][data-toggle=toggle]').bootstrapToggle('off'); 
   });
 
   $('#btn_all_sku_change_price').click(function (e) {
