@@ -29,14 +29,14 @@ $color_thumbnail = "";
 $type_screen_guard = "";
 
 if($sku || $itemId) {
-    $product = getProduct($accessToken, null, $itemId, $qname);
+    $product = getProduct($accessToken, $sku, $itemId, $qname);
     debug_log($product);
 
     if($product) {
-        $sibling = null;
-        //if(count($product['skus']) > 1) {
-            $sibling = $product; // for displaying all SKUs
-        //}
+        if(empty($itemId)) {
+            $itemId = getProductItemId($product);
+        }
+        $sibling = getProduct($accessToken, null, $itemId, null);;
 
         $i = getProductSkuIndex($product, $sku);
         $images = array_filter($product['skus'][$i]['Images']);
@@ -178,13 +178,14 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 <hr>
     <form action="update.php" method="POST" name="imageForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
-    <h3>Images</h3> <textarea class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
+    <h3>Images</h3> <textarea id="imagelinks" class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
     <a title="Editor" href="https://wm.xamve.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
     <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
     <input type="submit" name="update-image" value="Update images"/>
 
     <br>
-    <input type="button" id="btn_update_children" value="Update all children"/>From image index
+    <input type="button" id="btn_update_children" value="Update all children"/>
+    <input type="button" id="btn_copy_single_line" value="Copy images single line"/>
     </form>
 <?php
     foreach($images as $image) {
@@ -374,8 +375,14 @@ date_default_timezone_set("UTC");
 
         var sourcesku = $(this).parent().find('input[name=sku]').val(); 
         var url = "copyinfo.php?sourcesku=" + sourcesku + "&skus=" + skus;
-        console.log("shen", url);
         window.open(url, '_blank');
+    });
+
+    $('#btn_copy_single_line').click(function (e) {
+        var images = $("#imagelinks").val();
+        var arrayOfLines = images.match(/[^\r\n]+/g);
+        var singleLine = arrayOfLines.join(" ");
+        copyToClipBoard(singleLine);
     });
 
     $('#btn_copy_sku').click(function (e) {
