@@ -71,6 +71,7 @@ if($sku) {
             $images = migrateImages($accessToken, $images, $cache);
             $product = setProductImages($product, $images, TRUE);
 
+            $nsku = trim($nsku);
             $nsku = vn_urlencode($nsku);
             $nsku = make_short_sku($nsku);
             $product = setProductSku($product, $nsku);
