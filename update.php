@@ -15,6 +15,7 @@ $fromdate = $_REQUEST['fromdate'] ? $_REQUEST['fromdate'] : 0;
 $todate = $_REQUEST['todate'] ? $_REQUEST['todate'] : 0;
 $name = $_REQUEST['name'] ? $_REQUEST['name'] : '';
 
+$color_family = $_REQUEST['color_family'] ? $_REQUEST['color_family'] : '';
 $compatibility_by_model = $_REQUEST['compatibility_by_model'] ? $_REQUEST['compatibility_by_model'] : '';
 $variation = $_REQUEST['variation'] ? $_REQUEST['variation'] : '';
 $type_screen_guard = $_REQUEST['type_screen_guard'] ? $_REQUEST['type_screen_guard'] : '';

@@ -7,6 +7,7 @@ require_once('src/helper.php');
 
 function prepareProductForUpdating($product) {
     // fix keyName
+    $product['ItemId'] = $product['item_id'];
     $product['Attributes'] = $product['attributes'];
     $product['Skus'] = $product['skus'];
     $product['PrimaryCategory'] = $product['primary_category'];
