@@ -334,6 +334,7 @@ function getProduct($accessToken, $sku, $item_id=null, $name=null){
         } else {
             $product = $response["data"]['products'][0];
         }
+        debug_log($response["request_id"]);
         
         // 30/10/2020
         // current API have bug, sku_seller_list NOT working
@@ -1116,6 +1117,7 @@ function saveProduct($accessToken, $product) {
     $request = array("Product" => $product);
     $xml = new ArrayToXML();
     $payload = $xml->buildXML($request, 'Request');
+    //echo htmlentities($payload);
     
     $c = getClient();
     $request = new LazopRequest('/product/update');
