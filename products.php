@@ -39,7 +39,7 @@ $count = 0;
 date_default_timezone_set("UTC");
     
 $offset = $_GET['offset'] ? $_GET['offset'] : 0;
-$limit = $_GET['limit'] ? $_GET['limit'] : 30;
+$limit = $_GET['limit'] ? $_GET['limit'] : 10;
 $status = $_GET['status'] ? $_GET['status'] : 'all';
 
 $q = $_GET['q'] ? $_GET['q'] : '';
