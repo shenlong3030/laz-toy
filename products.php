@@ -61,7 +61,7 @@ $aDate = date("Y-m-d", time() - 3600*24*1);
 ?>
 
 <body>
-  <div class="floating-bar"><iframe id="responseIframe" name="responseIframe" width="100%" height="30"></iframe></div>
+  <div class="floating-bar"><iframe id="responseIframe" name="responseIframe" width="600" height="30"></iframe></div>
   <div class="control-bar">
     <?php include('src/nav.php');?>
     <div class=control-container>
