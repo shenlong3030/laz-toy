@@ -87,7 +87,8 @@ $list = null;
 if($status == 'all') {
     // get pending orders
     $pendingOrders = getAllOrders($accessToken, "pending", $sortBy, $needFullOrderInfo);
-    $readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy, $needFullOrderInfo);
+    //$readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy, $needFullOrderInfo);
+    $readyOrders = getAllOrders($accessToken, "toship", $sortBy, $needFullOrderInfo);
     
     $list = array_merge($pendingOrders, $readyOrders);
 } elseif($status == 'pending' || $status == 'ready_to_ship' || $status == 'shipped') {
