@@ -34,26 +34,40 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
 <hr>
 
 <div class="menu">
+<span>
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=all&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Tất cả</a>
-<?php if($GLOBALS['status']=='all') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>   
+<?php if($GLOBALS['status']=='all') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>  
+</span> 
 
+<span>
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=pending&needfull=1">Đơn hàng mới</a>
 <span class="count" id="pending"></span>
+</span>
 
+<span>
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=ready_to_ship&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đơn hàng SS giao đi</a>
 <span class="count" id="ready_to_ship"></span>
+</span>
 
+<span>
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=shipped&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đơn hàng đang đi phát</a>
-<?php if($GLOBALS['status']=='shipped') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
+<span class="count" id="shipped"></span>
+</span>
 
+<span>
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?status=canceled&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đơn hàng huỷ</a>
-<?php if($GLOBALS['status']=='canceled') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
+<span class="count" id="canceled"></span>
+</span>
 
+<span>
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?offset=0&limit=100&status=delivered&sortby=updated_at&shopid=&needfull=1<?php echo $GLOBALS['shopid']?>">Đơn hàng phát thành công</a>
-<?php if($GLOBALS['status']=='delivered') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
+<span class="count" id="delivered"></span>
+</span>
 
+<span>
 <a href="<?php echo $_SERVER['PHP_SELF'];?>?offset=0&limit=100&status=failed&sortby=updated_at&shopid=&needfull=1<?php echo $GLOBALS['shopid']?>">Đơn hàng thất bại</a>
-<?php if($GLOBALS['status']=='failed') echo '<span class="count" id="'.$GLOBALS['status'].'">(0)</span>';?>
+<span class="count" id="failed"></span>
+</span>
 
 </div>
 <hr>
@@ -141,7 +155,9 @@ echo "</div>";
 //========================================================================
 // update COUNT
 setTimeout(function(){
-    $("#<?php echo $GLOBALS['status'];?>").text("(<?php echo $GLOBALS['count'];?>)");
+    var st = "<?php echo $GLOBALS['status'];?>";
+    $("#" + st).text("(<?php echo $GLOBALS['count'];?>)");
+    $("#" + st).parent().css("background","lightgreen");
 }, 1000);
 
 $('table').on('click', '.paymentMethod', function(e){
