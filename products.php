@@ -120,10 +120,11 @@ $aDate = date("Y-m-d", time() - 3600*24*1);
         <button id="btn_copy_sku">Copy SKUs</button>
         <button id="btn_copy_url">Copy LAZADA urls</button>
 
-        <button id="btn_all_sku_qty_zero" disabled>All qty=0</button>
-        <button id="btn_all_sku_inactive" disabled>All inactive</button>
-        <button id="btn_all_sku_change_price" disabled>All price = </button>
+        <button class="all_btn" id="btn_all_sku_qty_zero" disabled>All qty=0</button>
+        <button class="all_btn" id="btn_all_sku_inactive" disabled>All inactive</button>
+        <button class="all_btn" id="btn_all_sku_change_price" disabled>All price = </button>
         <input id="input_all_price" type="text">
+        <input id="cbunlock" type="checkbox" name="cbunlock" value="0">
     </div>
   </div>
   <div class="mainContent">
@@ -390,6 +391,10 @@ $(function(){
   // SHOW SEARCH BY LIST
   $('#cbbyskus').change(function(){
     $('.search').toggleClass('on');
+  });
+
+  $('#cbunlock').change(function(){
+    $('.all_btn').prop('disabled', function(i, v) { return !v; });
   });
 
   // $('table').on('click', '.grouped-icon', function(e){
