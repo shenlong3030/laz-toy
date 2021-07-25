@@ -152,6 +152,14 @@ function getOrdersItems($accessToken, $orderIds){
 }
 
 function printOrders($token, $orders, $offset = 0, $status = "") {
+    echo '<table border="1">';
+    echo '<thead><tr>';
+    for($i=0; $i<16; $i++) {
+        echo '<th>&#x25BC </th>';
+    }
+    echo '</tr></thead>';
+    echo '<tbody>';
+
     foreach($orders as $index=>$order) {
         $orderId = $order['order_id'];
         $orderNumber = $order['order_number'];
@@ -166,8 +174,8 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         $price = $order['price'];
         
         echo '<tr class="'.$orderStatus.'">';
-        echo '<td style="display:none;">'.$orderId.'</td>';
-        echo '<td class="index">'.($offset+$index+1).'</td>';
+        echo '<td class="order_id">'.$orderId.'</td>';
+        echo '<td class="order_index">'.($offset+$index+1).'</td>';
 
         if($status == 'delivered') {
             echo '<td class="order">'.$orderNumber.'</td>';
@@ -182,16 +190,16 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
             preg_match('/p2p/i', $item['shipping_provider_type'], $m);
             $shipType = count($m) ? '<span style="color:red">Hỏa tốc </span>' : '';
 
-            echo '<td>'.$shipType.$item['tracking_code'].'</td>';
-            echo '<td></td>'; // tracking code link cell
+            echo '<td class="order_tracking_code">'.$shipType.$item['tracking_code'].'</td>';
+            echo '<td class"order_tracking_link"></td>'; // tracking code link cell
             
-            echo '<td></td>'; // $address cell
+            echo '<td class="order_address"></td>'; // $address cell
             
-            echo '<td>'.$cusName.'</td>';
-            echo '<td><b>'.$cusPhone.'</b></td>';
-            echo '<td>'.$item['name'].'</td>';
-            echo '<td class="paymentMethod">'.$paymentMethod.'</td>';
-            echo '<td>'.$item["img"].'</td>';
+            echo '<td class="order_cus_name">'.$cusName.'</td>';
+            echo '<td class="order_cus_phone"><b>'.$cusPhone.'</b></td>';
+            echo '<td class="order_item_names">'.$item['name'].'</td>';
+            echo '<td class="order_paymentMethod">'.$paymentMethod.'</td>';
+            echo '<td class="order_item_images">'.$item["img"].'</td>';
         }
         
         $date1 = new DateTime($order["created_at"]);
@@ -202,19 +210,21 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         $txtNgay = ($days?($days.' ngày '):'');
         $txtGio = ($hours?($hours.' giờ'):'');
         
-        echo '<td class="age">'.$txtNgay.$txtGio.'</td>';
+        echo '<td class="order_age">'.$txtNgay.$txtGio.'</td>';
         
         $cdate = preg_replace('/(\+0700)/i', '', $order["created_at"]);
-        echo '<td><b>'.$cdate.'</b></td>';
+        echo '<td class="order_c_date"><b>'.$cdate.'</b></td>';
         
         $udate = preg_replace('/(\+0700)/i', '', $order["updated_at"]);
-        echo '<td>'.$udate.'</td>'; 
+        echo '<td class="order_u_date">'.$udate.'</td>'; 
         //echo '<td></td>';
         
-        echo '<td>'.$price.'</td>';
-        echo '<td>'.$itemCount.'</td>';
+        echo '<td class="order_price">'.$price.'</td>';
+        echo '<td class="order_item_count">'.$itemCount.'</td>';
         echo '</tr>';
     }
+
+    echo '</tbody></table>';
 }
 
 //####################################################################

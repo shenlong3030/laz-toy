@@ -27,6 +27,22 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
     <link rel="shortcut icon" type="image/x-icon" href="./ico/cart.ico" />
 
     <?php include('src/head.php');?>
+
+    <!–– Hide column with CSS 
+        column 1 : order_id
+        column 5 : tracking_link
+        column 6 : address
+    ––>
+    <style>
+        table th:nth-child(1),
+        table td:nth-child(1),
+        table th:nth-child(5),
+        table td:nth-child(5),
+        table th:nth-child(6),
+        table td:nth-child(6) {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -83,19 +99,16 @@ include "nav.php";
 // print 10 canceled orders
 echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif; height:400px; overflow:auto;'>";
 echo "<p><b>10 đơn hàng bị huỷ gần đây nhất<b></p>";
-echo '<table border="1"><tbody>';
 
 $token = $GLOBALS["accessToken"];
 $list = getOrders($token, 'canceled', 0, 10, 'updated_at', 1);
 printOrders($token, $list , 0, $status);
-
-echo '</tbody></table></div><hr>';
+echo "</div>";
 //========================================================================
 
 //========================================================================
 // print selected order list
 echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif;'>";
-echo '<table border="1"><tbody>';
 
 $list = null;
 if($status == 'all') {
@@ -146,7 +159,6 @@ echo "</h2>";
 
 printOrders($token, $list, 0, $status);
 
-echo '</tbody></table><br><hr>';
 echo "</div>";
 //========================================================================
 ?>
@@ -160,15 +172,7 @@ setTimeout(function(){
     $("#" + st).parent().css("background","lightgreen");
 }, 1000);
 
-$('table').on('click', '.paymentMethod', function(e){
-   //$(this).closest('tr').remove();
-   $(this).closest('tr').addClass("hide");
-})
-
-$('table').on('click', '.age', function(e){
-   //$(this).closest('tr').remove();
-   $(this).closest('tr').siblings().removeClass("hide");
-})
+$('table').tablesorter();
 
 //========================================================================
 </script>
