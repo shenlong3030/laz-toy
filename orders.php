@@ -61,7 +61,7 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
 </span>
 
 <span>
-<a href="<?php echo $_SERVER['PHP_SELF'];?>?status=ready_to_ship&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đơn hàng SS giao đi</a>
+<a href="<?php echo $_SERVER['PHP_SELF'];?>?status=toship&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đóng gói và SS</a>
 <span class="count" id="ready_to_ship"></span>
 </span>
 

@@ -17,7 +17,7 @@
 .contentlist .order { padding-left: 1em; padding-right: 1em;}
 .contentlist tr.canceled p.canceled {text-decoration: line-through;}
 .contentlist tr.canceled {background-color: lightgray;}
-.contentlist tr.ready_to_ship td.index {background-color:gold;}
+.contentlist tr.ready_to_ship td.order_index {background-color:lightgreen;}
 .nowrap {
     white-space: nowrap;
 }
