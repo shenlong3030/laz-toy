@@ -344,7 +344,7 @@ function getProduct($accessToken, $sku, $item_id=null, $name=null){
         } else {
             $product = $response["data"]['products'][0];
         }
-        debug_log($response["request_id"]);
+        debug_log("get product request id: " . $response["request_id"]);
         
         // 30/10/2020
         // current API have bug, sku_seller_list NOT working
@@ -1135,6 +1135,9 @@ function saveProduct($accessToken, $product) {
     $res = $c->execute($request, $accessToken);
     //var_dump($res);
     $res = json_decode($res, true);
+
+    debug_log("update request id: " . $res["request_id"]);
+    
     return $res;
 }
 
