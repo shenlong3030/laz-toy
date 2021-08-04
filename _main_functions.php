@@ -421,7 +421,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $price1 = $sku['price'];
             $price2 = $sku['special_price'];
             $qty = $sku['quantity'];
-            $reservedStock = $sku['occupiedStock'];
+            $reservedStock = $sku['multiWarehouseInventories'][0]['occupyQuantity'];
             $url = $sku['Url'];
             $sellersku = $sku['SellerSku'];
             $shopsku = $sku['ShopSku'];
