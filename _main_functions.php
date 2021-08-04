@@ -50,12 +50,12 @@ function getOrderLinkPostfix(){
 }
 
 // valid status : pending, canceled, ready_to_ship, delivered, returned, shipped and failed
-function getAllOrders($accessToken, $status = 'pending', $sortBy = 'created_at', $getOrderItems = null){
+function getAllOrders($accessToken, $status = 'pending', $sortBy = 'created_at', $needOrderItems = null){
     $limit = 50;
 
     $list = array();
     for($i=0; $i<($limit*100); $i+=$limit) {
-        $nextlist = getOrders($accessToken, $status, $i, $limit, $sortBy, $getOrderItems);
+        $nextlist = getOrders($accessToken, $status, $i, $limit, $sortBy, $needOrderItems);
         $list = array_merge($list, $nextlist);
 
         if(count($nextlist) < $limit) {
@@ -65,7 +65,7 @@ function getAllOrders($accessToken, $status = 'pending', $sortBy = 'created_at',
     return $list;
 }
 
-function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100, $sortBy = 'created_at', $getOrderItems = null){
+function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100, $sortBy = 'created_at', $needOrderItems = null){
     $c = getClient();
     $request = getRequest('/orders/get','GET');
 
@@ -84,7 +84,7 @@ function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100,
     if($response["code"] == "0") {
         $list = $response['data']['orders'];
 
-        if($getOrderItems) {
+        if($needOrderItems) {
             $orderIds = array_column($list, "order_id");
             $ordersItems = getOrdersItems($accessToken, $orderIds);
 
@@ -100,21 +100,13 @@ function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100,
     return $list;
 }
 
-function getOrderItems($accessToken, $orderId){
-    $c = new LazopClient($GLOBALS['apiUrl'],$GLOBALS['appKey'],$GLOBALS['appSecret']);
-    $request = new LazopRequest('/order/items/get','GET');
-    $request->addApiParam('order_id', $orderId);
-    $response = json_decode($c->execute($request, $accessToken), true);
-    //var_dump($response);
-    return getOrderItemsInfo($response['data']);
-}
-
 function getOrderItemsInfo($data) {
     $info = array();
     $info["name"] = "";
     $info["tracking_code"] = "";
     $info["shipping_provider_type"] = "";
     $info["img"] = "";
+    $info["buyer_id"] = "";
  
     foreach($data as $index=>$item) {
         // extract color or model from 'Variation'
@@ -127,8 +119,16 @@ function getOrderItemsInfo($data) {
         $price = " Giá:" . $item['paid_price'];
 
         $info["name"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$price.$kiotid.'</p>';
-        $info["tracking_code"] = $item['tracking_code'] ? $item['tracking_code'] : $info["tracking_code"];
-        $info["shipping_provider_type"] = $item['shipping_provider_type'];
+        
+        if(empty($info["tracking_code"])) {
+            $info["tracking_code"] = $item['tracking_code'];
+        }
+        if(empty($info["shipping_provider_type"])) {
+            $info["shipping_provider_type"] = $item['shipping_provider_type'];
+        }
+        if(empty($info["buyer_id"])) {
+            $info["buyer_id"] = $item['buyer_id'];
+        }
 
         // show image of all items, include canceled items
         $info["img"] .= '<a target="_blank" href="'.$item['product_main_image'].'"><img border="0" src="'.$item['product_main_image'].'" height="50"></a><br>';
@@ -136,6 +136,7 @@ function getOrderItemsInfo($data) {
     return $info;
 }
 
+// API GetMultipleOrderItems
 function getOrdersItems($accessToken, $orderIds){
     $strIds = "[" . implode(",", $orderIds) . "]";
     $c = new LazopClient($GLOBALS['apiUrl'],$GLOBALS['appKey'],$GLOBALS['appSecret']);
@@ -145,7 +146,11 @@ function getOrdersItems($accessToken, $orderIds){
     //var_dump($response);
 
     $data = $response['data'];
+    
+    // re-format array, 'order_id' => 'order_items.value'
     $ordersItems = array_column($data, "order_items", "order_id");
+
+    // re-map array, 'order_id' => 'getOrderItemsInfo(order_items.value)'
     $ordersItems =array_map('getOrderItemsInfo', $ordersItems);
 
     return $ordersItems;
@@ -180,7 +185,7 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         if($status == 'delivered') {
             echo '<td class="order">'.$orderNumber.'</td>';
         } else {
-            echo '<td class="order"><a target="_blank" href="https://sellercenter.lazada.vn/order/detail/'.$orderNumber . getOrderLinkPostfix().'">'.$orderNumber.'</a></td>';
+            echo '<td class="order"><a target="_blank" href="https://sellercenter.lazada.vn/apps/order/detail?tradeOrderId='.$orderId.'">'.$orderNumber.'</a></td>';
         }
 
         if(isset($order['orderItems'])) {
@@ -195,7 +200,10 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
             
             echo '<td class="order_address"></td>'; // $address cell
             
-            echo '<td class="order_cus_name">'.$cusName.'</td>';
+            $chatLink = 'https://sellercenter.lazada.vn/apps/im/window?buyerId=' . $item['buyer_id'];
+            $chatHtml = '<a tabIndex="-1" target="_blank" href="'.$chatLink.'" class="message-icon fa fa-comment" style="color:deepskyblue"></a>';
+
+            echo '<td class="order_cus_name">'.$cusName.$chatHtml.'</td>';
             echo '<td class="order_cus_phone"><b>'.$cusPhone.'</b></td>';
             echo '<td class="order_item_names">'.$item['name'].'</td>';
             echo '<td class="order_paymentMethod">'.$paymentMethod.'</td>';
