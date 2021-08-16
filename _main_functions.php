@@ -113,12 +113,17 @@ function getOrderItemsInfo($data) {
         $variation = make_short_order_variation($item['variation']);
         preg_match('/KV(\d+)/', $item['sku'], $m);
         $kiotid = count($m)==2 ? $m[1] : "";
+
+        $sellersku = $item['sku'];
+        $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
+        $editHtml = '<a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>';
+
         if(!empty($kiotid)) {
             $kiotid = " Kiotviet:" . $kiotid;
         }
         $price = " Giá:" . $item['paid_price'];
 
-        $info["name"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$price.$kiotid.'</p>';
+        $info["name"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$price.$kiotid.$editHtml.'</p>';
         
         if(empty($info["tracking_code"])) {
             $info["tracking_code"] = $item['tracking_code'];
