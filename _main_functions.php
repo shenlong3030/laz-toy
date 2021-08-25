@@ -1491,77 +1491,80 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
         $list = productsWithSingleSku($list);
 
         foreach($list as $product) {
-                $product = prepareProductForUpdating($product);
-                
-                $size = count($product['Skus']);
-                for($i=0; $i<$size; $i++) {
-                    $dict = &$product['Skus'][$i];
-                    $sku = $dict["SellerSku"];
+            debug_log($product);
+            
+            $product = prepareProductForUpdating($product);
 
-                    // if special_price = 0, cause error
-                    if(empty($dict['special_price'])) {
-                        $dict['special_price'] = $dict['price'] - 1000;
-                    }
+            $size = count($product['Skus']);
+            for($i=0; $i<$size; $i++) {
+                $dict = &$product['Skus'][$i];
+                $sku = $dict["SellerSku"];
 
-                    // copy images
-                    if(in_array("1", $options)) {
-                        foreach ($imageindexes as $index) {
-                            //$t = $index - 1;
-                            $t = $index;
-                            $dict['Images'][$t] = $srcproduct['skus'][0]['Images'][$t];
-                        }
-                    }
-
-                    // copy prices
-                    if(in_array("2", $options)) {
-                        //echo "<hr>2<hr>";
-                        $dict['price'] = $srcproduct['skus'][0]['price'];
-                        $dict['special_price'] = $srcproduct['skus'][0]['special_price'];
-                        $dict['special_to_date'] = $srcproduct['skus'][0]['special_to_date'];
-                        $dict['special_from_date'] = $srcproduct['skus'][0]['special_from_date'];
-                    }
-
-                    // copy size, weight, package content
-                    if(in_array("4", $options)) {
-                        //echo "<hr>4<hr>";
-                        $dict['package_width'] = $srcproduct['skus'][0]['package_width'];
-                        $dict['package_height'] = $srcproduct['skus'][0]['package_height'];
-                        $dict['package_length'] = $srcproduct['skus'][0]['package_length'];
-                        $dict['package_weight'] = $srcproduct['skus'][0]['package_weight'];
-                        $dict['package_content'] = $srcproduct['skus'][0]['package_content'];
-                    }
-                }
-                
-                // copy desc
-                if(in_array("3", $options)) {
-                    //echo "<hr>3<hr>";
-                    $product['Attributes']['short_description'] = $srcproduct['attributes']['short_description'];
+                // if special_price = 0, cause error
+                if(empty($dict['special_price'])) {
+                    $dict['special_price'] = $dict['price'] - 1000;
                 }
 
-                // copy desc
+                // copy images
+                if(in_array("1", $options)) {
+                    foreach ($imageindexes as $index) {
+                        //$t = $index - 1;
+                        $t = $index;
+                        $dict['Images'][$t] = $srcproduct['skus'][0]['Images'][$t];
+                    }
+                }
+
+                // copy prices
+                if(in_array("2", $options)) {
+                    //echo "<hr>2<hr>";
+                    $dict['price'] = $srcproduct['skus'][0]['price'];
+                    $dict['special_price'] = $srcproduct['skus'][0]['special_price'];
+                    $dict['special_to_date'] = $srcproduct['skus'][0]['special_to_date'];
+                    $dict['special_from_date'] = $srcproduct['skus'][0]['special_from_date'];
+                }
+
+                // copy size, weight, package content
                 if(in_array("4", $options)) {
-                    //echo "<hr>3<hr>";
-                    if(in_array("4.1", $options)) {
-                        // replace duplicated
-                        if(strpos($product['Attributes']['description'], $srcproduct['attributes']['description']) !== false){
-                            $product['Attributes']['description'] = str_replace($srcproduct['attributes']['description'], "", $product['Attributes']['description']);
-                        }
-                        $product['Attributes']['description'] .= $srcproduct['attributes']['description'];
-                    } else {
-                        $product['Attributes']['description'] = $srcproduct['attributes']['description'];
+                    //echo "<hr>4<hr>";
+                    $dict['package_width'] = $srcproduct['skus'][0]['package_width'];
+                    $dict['package_height'] = $srcproduct['skus'][0]['package_height'];
+                    $dict['package_length'] = $srcproduct['skus'][0]['package_length'];
+                    $dict['package_weight'] = $srcproduct['skus'][0]['package_weight'];
+                    $dict['package_content'] = $srcproduct['skus'][0]['package_content'];
+                }
+            }
+            
+            // copy desc
+            if(in_array("3", $options)) {
+                //echo "<hr>3<hr>";
+                $product['Attributes']['short_description'] = $srcproduct['attributes']['short_description'];
+            }
+
+            // copy desc
+            if(in_array("4", $options)) {
+                //echo "<hr>3<hr>";
+                if(in_array("4.1", $options)) {
+                    // replace duplicated
+                    if(strpos($product['Attributes']['description'], $srcproduct['attributes']['description']) !== false){
+                        $product['Attributes']['description'] = str_replace($srcproduct['attributes']['description'], "", $product['Attributes']['description']);
                     }
-
-                }
-
-                //var_dump($product);
-                $response = saveProduct($accessToken, $product);
-
-                if($response["code"] == "0") {
-                    myecho("success group : " . $product['Skus'][0]["SellerSku"]);
+                    $product['Attributes']['description'] .= $srcproduct['attributes']['description'];
                 } else {
-                    myecho("failed group : " . $product['Skus'][0]["SellerSku"] . " : ");
+                    $product['Attributes']['description'] = $srcproduct['attributes']['description'];
                 }
-                usleep(500000);
+
+            }
+
+            //var_dump($product);
+            $response = saveProduct($accessToken, $product);
+
+            if($response["code"] == "0") {
+                myecho("success group : " . $product['Skus'][0]["SellerSku"]);
+            } else {
+                myecho("failed group : " . $product['Skus'][0]["SellerSku"] . " : ");
+                var_dump($response);
+            }
+            usleep(500000);
         }
 
         // sleep 0.5s
