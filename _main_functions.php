@@ -482,12 +482,16 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $groupLink = "https://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";
             $groupHtml = '<a tabIndex="-1" target="_blank" href="'.$groupLink.'" class="grouped-icon fas fa fa-th-list" style="color:red"></a>';
             $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?item_id=$item_id&sku=$sellersku";
+
+
+            $lazEditLink = "https://sellercenter.lazada.vn/apps/product/publish?productId=$item_id";
+            $lazEditHtml = '<a target="_blank" href="'.$lazEditLink.'" class="fa fa-edit" style="color:blue" tabindex="-1"></a>';
             
             /* cột 1 */echo '<td class="sku on padding info">'. ($isGrouped?$groupHtml:"") .$sellersku.'</td>';
 
             /* cột 2 */echo '<td class="info">'.$qty.'</td>';
             /* cột 3 */echo '<td>'.$reservedTxt.$qtyForm.'</td>';
-            /* cột 4 */echo '<td class="editmode name on padding info">'.$nameLink.'</td>';
+            /* cột 4 */echo '<td class="editmode name on padding info">'.$nameLink.$lazEditHtml.'</td>';
             /* cột 5 */echo '<td class="editmode name form">'.$nameForm.'</td>';
             
             /* cột 6 */echo '<td class="info">'.$model.'</td>';
