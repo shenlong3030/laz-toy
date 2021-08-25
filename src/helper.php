@@ -127,6 +127,9 @@ function make_short_sku($sku) {
     'COMBO' => 'CB',
 
     'TRONG.SUOT' => 'TRONG',
+
+    'KINH.TRONG' => 'KT',
+    'KINH.FULL' => 'KF',
     
     'OP.DEO' => 'OD',
     'OP.LUNG' => 'OL',
