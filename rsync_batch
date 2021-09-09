@@ -1,0 +1,1 @@
+rsync -avP --exclude='.git' /Volumes/DATA/SOURCE_CODE/laz-toy/ xamve@172.96.185.192:/home/xamve/toy1.phukiensh.com/lazop
