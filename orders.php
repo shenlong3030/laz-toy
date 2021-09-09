@@ -34,12 +34,10 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
         column 6 : address
     ––>
     <style>
-        table th:nth-child(1),
+        table th:nth-child(1), 
         table td:nth-child(1),
         table th:nth-child(5),
-        table td:nth-child(5),
-        table th:nth-child(6),
-        table td:nth-child(6) {
+        table td:nth-child(5) {
             display: none;
         }
     </style>
@@ -71,7 +69,7 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
 </span>
 
 <span>
-<a href="<?php echo $_SERVER['PHP_SELF'];?>?status=canceled&needfull=1&shopid=<?php echo $GLOBALS['shopid']?>">Đơn hàng huỷ</a>
+<a href="<?php echo $_SERVER['PHP_SELF'];?>?status=canceled&needfull=1&shopid=&sortby=updated_at<?php echo $GLOBALS['shopid']?>">Đơn hàng huỷ</a>
 <span class="count" id="canceled"></span>
 </span>
 
@@ -101,7 +99,7 @@ echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif; he
 echo "<p><b>10 đơn hàng bị huỷ gần đây nhất<b></p>";
 
 $token = $GLOBALS["accessToken"];
-$list = getOrders($token, 'canceled', 0, 10, 'updated_at', 1);
+$list = getOrders($token, 'canceled', 10, 'updated_at', 1);
 printOrders($token, $list , 0, $status);
 echo "</div>";
 //========================================================================
@@ -110,26 +108,22 @@ echo "</div>";
 // print selected order list
 echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif;'>";
 
+
+ // status: unpaid, pending, canceled, ready_to_ship, delivered, returned, shipped, failed. 
+ // New status: topack, toship
+
 $list = null;
 if($status == 'all') {
     // get pending orders
-    $pendingOrders = getAllOrders($accessToken, "pending", $sortBy, $needFullOrderInfo);
+    $pendingOrders = getOrders($accessToken, "pending", 200, $sortBy, $needFullOrderInfo);
     //$readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy, $needFullOrderInfo);
-    $readyOrders = getAllOrders($accessToken, "toship", $sortBy, $needFullOrderInfo);
+    $readyOrders = getOrders($accessToken, "toship", 200, $sortBy, $needFullOrderInfo);
     
     $list = array_merge($pendingOrders, $readyOrders);
-} elseif($status == 'pending' || $status == 'ready_to_ship' || $status == 'shipped') {
-    $list = getAllOrders($accessToken, $status, $sortBy, $needFullOrderInfo);
+} elseif($status == 'canceled' || $status == 'delivered' || $status == 'returned' || $status == 'failed') {
+    $list = getOrders($accessToken, $status, 100, $sortBy, $needFullOrderInfo);
 } else {
-    $list = array();
-    for($i=0; $i<$limit; $i+=100) {
-        $nextlist = getOrders($accessToken, $status, $i + $offset, 100, $sortBy, $needFullOrderInfo);
-        $list = array_merge($list, $nextlist);
-
-        if(count($nextlist) < 100) {
-            break;
-        }
-    }
+    $list = getOrders($accessToken, $status, 200, $sortBy, $needFullOrderInfo);
 }
 
 // resort merged list

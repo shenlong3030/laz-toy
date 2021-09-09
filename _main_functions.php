@@ -50,22 +50,21 @@ function getOrderLinkPostfix(){
 }
 
 // valid status : pending, canceled, ready_to_ship, delivered, returned, shipped and failed
-function getAllOrders($accessToken, $status = 'pending', $sortBy = 'created_at', $needOrderItems = null){
-    $limit = 50;
+function getOrders($accessToken, $status = 'pending', $limit = '100', $sortBy = 'created_at', $needOrderItems = null){
+    $initPageSize = 50;
+    $i = 0;
+    $all = array();
+    do {
+        $pageSize = min($initPageSize, $limit - count($all)); // Ex: limit=120, last pageSize=20 (not 50)
+        $list = getOrdersByOffset($accessToken, $status, $i, $pageSize, $sortBy, $needOrderItems);
+        $all = array_merge($all, $list);
+        $i += $pageSize;
+    } while (count($list) == $pageSize && count($all) < $limit);
 
-    $list = array();
-    for($i=0; $i<($limit*100); $i+=$limit) {
-        $nextlist = getOrders($accessToken, $status, $i, $limit, $sortBy, $needOrderItems);
-        $list = array_merge($list, $nextlist);
-
-        if(count($nextlist) < $limit) {
-            break;
-        }
-    }
-    return $list;
+    return $all;
 }
 
-function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = 100, $sortBy = 'created_at', $needOrderItems = null){
+function getOrdersByOffset($accessToken, $status = 'pending', $offset = 0, $limit = 100, $sortBy = 'created_at', $needOrderItems = null){
     $c = getClient();
     $request = getRequest('/orders/get','GET');
 
@@ -174,7 +173,9 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         $orderId = $order['order_id'];
         $orderNumber = $order['order_number'];
         $shipping = $order['address_shipping'];
-        $address = $shipping['address1'].'<br>,'.$shipping['address2'].','.$shipping['address3'].','.$shipping['address4'].','.$shipping['address5'];
+        //$address = $shipping['address1'].'<br>,'.$shipping['address2'].','.$shipping['address3'].','.$shipping['address4'].','.$shipping['address5'];
+        $address = $shipping['address3'];
+        
         $cusName = $shipping['first_name'].' '.$shipping['last_name'];
         $cusPhone = preg_replace('/(^84)(\d+)/i', '$2', $shipping['phone']);
         $itemCount = $order['items_count'];
@@ -203,7 +204,7 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
             echo '<td class="order_tracking_code">'.$shipType.$item['tracking_code'].'</td>';
             echo '<td class"order_tracking_link"></td>'; // tracking code link cell
             
-            echo '<td class="order_address"></td>'; // $address cell
+            echo "<td class='order_address'>{$address}</td>"; // $address cell
             
             $chatLink = 'https://sellercenter.lazada.vn/apps/im/window?buyerId=' . $item['buyer_id'];
             $chatHtml = '<a tabIndex="-1" target="_blank" href="'.$chatLink.'" class="message-icon fa fa-comment" style="color:deepskyblue"></a>';
