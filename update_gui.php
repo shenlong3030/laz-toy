@@ -179,7 +179,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
     <form action="update.php" method="POST" name="imageForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     <h3>Images</h3> <textarea id="imagelinks" class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
-    <a title="Editor" href="https://wm.xamve.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
+    <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
     <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
     <input type="submit" name="update-image" value="Update images"/>
 
