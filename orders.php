@@ -7,7 +7,7 @@ require_once('_main_functions.php');
 $count = 0;
 
 $offset = $_GET['offset'] ? $_GET['offset'] : 0;
-$limit = $_GET['limit'] ? $_GET['limit'] : 100;
+$limit = $_GET['limit'] ? $_GET['limit'] : 0;
 
 // pending, canceled, ready_to_ship, delivered, returned, shipped, failed
 $status = $_GET['status'] ? $_GET['status'] : 'pending';
@@ -113,17 +113,27 @@ echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif;'>"
  // New status: topack, toship
 
 $list = null;
+
 if($status == 'all') {
     // get pending orders
-    $pendingOrders = getOrders($accessToken, "pending", 200, $sortBy, $needFullOrderInfo);
+    if(empty($limit)) {
+        $limit = 500;
+    }
+    $pendingOrders = getOrders($accessToken, "pending", $limit, $sortBy, $needFullOrderInfo);
     //$readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy, $needFullOrderInfo);
-    $readyOrders = getOrders($accessToken, "toship", 200, $sortBy, $needFullOrderInfo);
+    $readyOrders = getOrders($accessToken, "toship", $limit, $sortBy, $needFullOrderInfo);
     
     $list = array_merge($pendingOrders, $readyOrders);
 } elseif($status == 'canceled' || $status == 'delivered' || $status == 'returned' || $status == 'failed') {
-    $list = getOrders($accessToken, $status, 100, $sortBy, $needFullOrderInfo);
+    if(empty($limit)) {
+        $limit = 100;
+    }
+    $list = getOrders($accessToken, $status, $limit, $sortBy, $needFullOrderInfo);
 } else {
-    $list = getOrders($accessToken, $status, 200, $sortBy, $needFullOrderInfo);
+    if(empty($limit)) {
+        $limit = 500;
+    }
+    $list = getOrders($accessToken, $status, $limit, $sortBy, $needFullOrderInfo);
 }
 
 // resort merged list
