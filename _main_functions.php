@@ -1493,7 +1493,7 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
         $list = getProducts($accessToken, '', $options1);
 
         //  1 product , 1 sku , for updating
-        $list = productsWithSingleSku($list);
+        // $list = productsWithSingleSku($list);
 
         foreach($list as $product) {
             debug_log($product);

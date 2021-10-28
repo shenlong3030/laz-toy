@@ -149,7 +149,7 @@ if($accessToken && ($sku || $id)) {
         if($resCode == "0") {
             echo '<p style="background-color:lightgreen">'.$dateStr.' SUCCESS</p>';
         } else {
-            echo '<p style="background-color:red">'.$dateStr.' ERROR: '.$response["message"].'</p>';
+            echo '<p style="background-color:red">'.$dateStr.' ERROR: '. json_encode($response) .'</p>';
             myvar_dump($response);
         }
     }
