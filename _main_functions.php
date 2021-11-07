@@ -106,6 +106,7 @@ function getOrderItemsInfo($data) {
     $info["shipping_provider_type"] = "";
     $info["img"] = "";
     $info["buyer_id"] = "";
+    $info["package_id"] = "";
  
     foreach($data as $index=>$item) {
         // extract color or model from 'Variation'
@@ -132,6 +133,9 @@ function getOrderItemsInfo($data) {
         }
         if(empty($info["buyer_id"])) {
             $info["buyer_id"] = $item['buyer_id'];
+        }
+        if(empty($info["package_id"])) {
+            $info["package_id"] = $item['package_id'];
         }
 
         // show image of all items, include canceled items
@@ -191,6 +195,7 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         if($status == 'delivered') {
             echo '<td class="order">'.$orderNumber.'</td>';
         } else {
+            //https://sellercenter.lazada.vn/order/detail/314699198254809/15605
             echo '<td class="order"><a target="_blank" href="https://sellercenter.lazada.vn/apps/order/detail?tradeOrderId='.$orderId.'">'.$orderNumber.'</a></td>';
         }
 
@@ -212,7 +217,14 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
             echo '<td class="order_cus_name">'.$cusName.$chatHtml.'</td>';
             echo '<td class="order_cus_phone"><b>'.$cusPhone.'</b></td>';
             echo '<td class="order_item_names">'.$item['name'].'</td>';
-            echo '<td class="order_paymentMethod">'.$paymentMethod.'</td>';
+
+            $repackHtml = "";
+            if(!empty($item['package_id'])) {
+                $repackLink = "https://$_SERVER[HTTP_HOST]/lazop/order-api.php?action=repack&package_id={$item['package_id']}";
+                $repackHtml = '<a tabIndex="-1" target="_blank" href="'.$repackLink.'" class="fa fa-reply" style="color:gray"></a>';
+            }
+
+            echo '<td class="order_paymentMethod">'.$paymentMethod.$repackHtml.'</td>';
             echo '<td class="order_item_images">'.$item["img"].'</td>';
         }
         
@@ -240,6 +252,14 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
 
     echo '</tbody></table>';
 }
+
+function setRepack($accessToken, $packageId){
+    $c = getClient();
+    $request = new LazopRequest('/order/repack');
+    $request->addApiParam('package_id',$packageId);
+    var_dump($c->execute($request, $accessToken));
+}
+
 
 //####################################################################
 // Get products region
