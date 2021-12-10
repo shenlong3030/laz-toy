@@ -1,8 +1,8 @@
 <?php
 
-$appKey = '121289';
-$appSecret = 'KcrgzBR1pZzxScZe68oqsjb7XLqur0aE';
-$appLink = 'https://toy1.phukiensh.com/lazop';
+$appKey = '';
+$appSecret = '';
+$appLink = '';
 
 // Authentication Link
 $authLink = 'https://auth.lazada.com/oauth/authorize?response_type=code&force_auth=true&redirect_uri='.$appLink.'&client_id='.$appKey;
