@@ -6,8 +6,8 @@ require_once('_main_functions.php');
 
 date_default_timezone_set("UTC");
 
-$deloption = val($_POST['deloption'], 1);
-$input = isset($_POST['skus']) ? $_POST['skus'] : "";
+$deloption = val($_REQUEST['deloption'], 1);
+$input = isset($_REQUEST['skus']) ? $_REQUEST['skus'] : "";
 $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 ?>
