@@ -72,7 +72,8 @@ function getOrdersByOffset($accessToken, $status = 'pending', $offset = 0, $limi
     if($status != 'all') {
     	$request->addApiParam('status',$status);
     }
-    $request->addApiParam('sort_direction','DESC');
+    //$request->addApiParam('sort_direction','DESC');
+    $request->addApiParam('sort_direction','ASC');
     $request->addApiParam('offset',$offset);
     $request->addApiParam('limit', $limit);
     $request->addApiParam('sort_by', $sortBy);
