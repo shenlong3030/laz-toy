@@ -414,7 +414,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
     // nguyên nhân không sort được : do số lượng TH và số lượng cột không khớp với nhau, 
     // cột ẩn thì phải có TH ẩn đi kèm
 
-    echo '<table id="tableProducts" class="main tablesorter" border="1" style="width:105%">';
+    echo '<table id="tableProducts" class="main tablesorter" border="1" style="width:100%">';
     echo '<thead><tr>';
     /* cột 1 */echo '<th class="sku on">&#x25BC SKU</th>';
 
