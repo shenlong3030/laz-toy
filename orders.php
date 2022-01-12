@@ -119,26 +119,31 @@ echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif;'>"
 
 $list = null;
 
-if($status == 'all') {
-    // get pending orders
-    if(empty($limit)) {
-        $limit = 500;
-    }
-    $pendingOrders = getOrders($accessToken, "pending", $limit, $sortBy, $needFullOrderInfo);
-    //$readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy, $needFullOrderInfo);
-    $readyOrders = getOrders($accessToken, "toship", $limit, $sortBy, $needFullOrderInfo);
-    
-    $list = array_merge($pendingOrders, $readyOrders);
-} elseif($status == 'canceled' || $status == 'delivered' || $status == 'returned' || $status == 'failed') {
-    if(empty($limit)) {
-        $limit = 100;
-    }
-    $list = getOrders($accessToken, $status, $limit, $sortBy, $needFullOrderInfo);
-} else {
-    if(empty($limit)) {
-        $limit = 500;
-    }
-    $list = getOrders($accessToken, $status, $limit, $sortBy, $needFullOrderInfo);
+switch ($status) {
+    case 'all':
+        // get pending orders
+        if(empty($limit)) {
+            $limit = 500;
+        }
+        $pendingOrders = getOrders($accessToken, "pending", $limit, $sortBy, $needFullOrderInfo, "ASC");
+        //$readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy, $needFullOrderInfo);
+        $readyOrders = getOrders($accessToken, "toship", $limit, $sortBy, $needFullOrderInfo, "ASC");
+        
+        $list = array_merge($pendingOrders, $readyOrders);
+        break;
+    case "pending":
+    case "toship":
+    case "topack":
+        if(empty($limit)) {
+            $limit = 500;
+        }
+        $list = getOrders($accessToken, $status, $limit, $sortBy, $needFullOrderInfo, "ASC");
+        break;
+    default:
+        if(empty($limit)) {
+            $limit = 100;
+        }
+        $list = getOrders($accessToken, $status, $limit, $sortBy, $needFullOrderInfo);
 }
 
 // resort merged list
