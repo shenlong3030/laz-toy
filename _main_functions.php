@@ -50,13 +50,13 @@ function getOrderLinkPostfix(){
 }
 
 // valid status : pending, canceled, ready_to_ship, delivered, returned, shipped and failed
-function getOrders($accessToken, $status = 'pending', $limit = '100', $sortBy = 'created_at', $needOrderItems = null){
+function getOrders($accessToken, $status = 'pending', $limit = '100', $sortBy = 'created_at', $needOrderItems = null, $sortDirection = 'DESC'){
     $initPageSize = 50;
     $i = 0;
     $all = array();
     do {
         $pageSize = min($initPageSize, $limit - count($all)); // Ex: limit=120, last pageSize=20 (not 50)
-        $list = getOrdersByOffset($accessToken, $status, $i, $pageSize, $sortBy, $needOrderItems);
+        $list = getOrdersByOffset($accessToken, $status, $i, $pageSize, $sortBy, $needOrderItems, $sortDirection);
         $all = array_merge($all, $list);
         $i += $pageSize;
     } while (count($list) == $pageSize && count($all) < $limit);
@@ -64,7 +64,7 @@ function getOrders($accessToken, $status = 'pending', $limit = '100', $sortBy = 
     return $all;
 }
 
-function getOrdersByOffset($accessToken, $status = 'pending', $offset = 0, $limit = 100, $sortBy = 'created_at', $needOrderItems = null){
+function getOrdersByOffset($accessToken, $status = 'pending', $offset = 0, $limit = 100, $sortBy = 'created_at', $needOrderItems = null, $sortDirection = 'DESC'){
     $c = getClient();
     $request = getRequest('/orders/get','GET');
 
@@ -72,8 +72,9 @@ function getOrdersByOffset($accessToken, $status = 'pending', $offset = 0, $limi
     if($status != 'all') {
     	$request->addApiParam('status',$status);
     }
-    //$request->addApiParam('sort_direction','DESC');
-    $request->addApiParam('sort_direction','ASC');
+    $request->addApiParam('sort_direction', $sortDirection);
+    //$request->addApiParam('sort_direction','ASC');
+
     $request->addApiParam('offset',$offset);
     $request->addApiParam('limit', $limit);
     $request->addApiParam('sort_by', $sortBy);
@@ -193,12 +194,14 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         echo '<td class="order_id">'.$orderId.'</td>';
         echo '<td class="order_index">'.($offset+$index+1).'</td>';
 
-        if($status == 'delivered') {
-            echo '<td class="order">'.$orderNumber.'</td>';
-        } else {
-            //https://sellercenter.lazada.vn/order/detail/314699198254809/15605
-            echo '<td class="order"><a target="_blank" href="https://sellercenter.lazada.vn/apps/order/detail?tradeOrderId='.$orderId.'">'.$orderNumber.'</a></td>';
-        }
+        // if($status == 'delivered') {
+        //     echo '<td class="order">'.$orderNumber.'</td>';
+        // } else {
+        //     //https://sellercenter.lazada.vn/order/detail/314699198254809/15605
+        //     echo '<td class="order"><a target="_blank" href="https://sellercenter.lazada.vn/apps/order/detail?tradeOrderId='.$orderId.'">'.$orderNumber.'</a></td>';
+        // }
+
+        echo '<td class="order"><a target="_blank" href="https://sellercenter.lazada.vn/apps/order/detail?tradeOrderId='.$orderId.'">'.$orderNumber.'</a></td>';
 
         if(isset($order['orderItems'])) {
             $item = $order['orderItems'];
