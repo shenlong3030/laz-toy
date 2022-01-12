@@ -420,7 +420,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
 
     echo '<table id="tableProducts" class="main tablesorter" border="1" style="width:100%">';
     echo '<thead><tr>';
-    /* cột 1 */echo '<th class="sku on">&#x25BC SKU</th>';
+    /* cột 1 */echo '<th class="sku on">&#x25BC SKU (count='.count($products[0]['skus']).')</th>'; //count skus of fist product.
 
     /* cột 2 */echo '<th>&#x25BC QTY</th>';
     /* cột 3 */echo '<th></th>';  //quantity form
