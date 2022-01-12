@@ -340,7 +340,8 @@ date_default_timezone_set("UTC");
     $("button[name='qtyaction'][value='=0']").click(function() {
         $(this).parent().find('input[name=qty]').val('0'); 
         var sku = $(this).parent().find('input[name=sku]').val(); 
-        productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: 0});
+        var q = $(this).closest('td').find('.reservedStock').text(); 
+        productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: q});
     });
     $('input[name=qty]').keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -381,7 +382,7 @@ date_default_timezone_set("UTC");
     $('#btn_copy_single_line').click(function (e) {
         var images = $("#imagelinks").val();
         var arrayOfLines = images.match(/[^\r\n]+/g);
-        var singleLine = arrayOfLines.join(" ");
+        var singleLine = arrayOfLines.join("\t");
         copyToClipBoard(singleLine);
     });
 

@@ -489,7 +489,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $cssclass .= ($index == 0) ? ' parent' : ' child';
             $cssclass .= ($selectedSku == $sellersku) ? ' selected' : '';
 
-            $reservedTxt = $reservedStock ? '<span style="color:red">('.$reservedStock.' )</span>' : '';
+            $reservedTxt = $reservedStock ? '(<span class="reservedStock">'.$reservedStock.'</span>)' : '';
             $qtyForm = '<div>
             <input name="sku" type="hidden" value="'.$sellersku.'"/>
             <input name="qty" type="text" size="4" value="'.$qty.'"/>
