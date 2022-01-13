@@ -655,10 +655,9 @@ function createProduct($accessToken, $product) {
     $request->addApiParam('payload', $payload);
 
     $res = json_decode($c->execute($request, $accessToken), true);
-    $sku = $product['Skus'][0]['SellerSku'];
     
     if($res["code"] == "0") {
-        myecho("success : " . $sku);
+        myecho("success : " . getProductSkusText($product));
         return 1;
     } else {
         myecho("CREATE FAILED: " . $sku);
@@ -1197,7 +1196,11 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
 
     if($product) {     
         $product = prepareProductForCreating($product);
-        $backupimages = $product['Skus'][0]['Images'];
+
+        // clone original sku dict
+        $clonedSku = $product['Skus'][0];
+        // remove skus[0]
+        unset($product['Skus'][0]);
 
         $created = array();
         if($cloneby == 'original') {
@@ -1208,56 +1211,72 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
             $attrList = $inputdata["attrList"];
             $attrValues = $inputdata["attrValues"];
 
+            // set NAME
+            if(!empty($newName)) {
+                $product = setProductName($product, $newName);
+            }
+
             $cache = array();
             $time = substr(time(), -4);
             foreach($inputdata["qtys"] as $index => $value) {
+                // init new sku dict
+                $skuDict = $clonedSku;
                 $kiotid = $kiotids[$index] ? $kiotids[$index] : "";
 
+                // set attributes
                 $values = array();
                 foreach ($attrList as $i => $attr) {
-                    $values[] = $attrValues[$i][$index] ? $attrValues[$i][$index] : "";
+                    $skuDict[$attr] = $attrValues[$i][$index] ? $attrValues[$i][$index] : "";
+                    $values[] = $skuDict[$attr];
                 }
-                $product = setProductAttributes($product, $attrList, $values);
                 
-                // set NAME
-                if(!empty($newName)) {
-                    $product = setProductName($product, $newName);
-                }
-
+                // set sku
                 $newSku = generateSku1($skuprefix, "", $values, $kiotid);
-                $product = setProductSku($product, $newSku);
-                
+                $skuDict['SellerSku'] = $newSku;
+
+                // set qty
                 if(isset($inputdata["qtys"][$index])) {
                     $qty = $inputdata["qtys"][$index];
-                    $product = setProductQuantity($product, $qty);
+                    $skuDict['quantity'] = $qty;
                 }
 
+                // set price
                 if(isset($inputdata["prices"][$index])) {
                     $price = $inputdata["prices"][$index];
-                    $product = setProductPrice($product, $price);
+                    $skuDict['price'] = round($price * 1.3 / 100) * 100;
+                    $skuDict['special_price'] = $price;
+                    $skuDict['special_from_date'] = "2020-01-01";
+                    $skuDict['special_to_date'] = "2030-12-12";
                 }
 
-                // set imagesaddChild
-                $product['Skus'][0]['Images'] = $backupimages;
+                // set images
                 if(isset($inputdata["images"][$index])) {
                     // migrate images
                     $images = migrateImages($accessToken, $inputdata["images"][$index], $cache);
-                    $product = setProductImages($product, $images, FALSE);       
-                } else {
-                    $product = setProductImages($product, $backupimages, TRUE);   
-                }
-                 
-                if(!intval($preview)) {
-                    createProduct($accessToken, $product);
-                } else {
-                    myecho("PREVIEWING ...");
+                    foreach($images as $index => $url) {
+                        if (is_url($url)) {
+                            $skuDict['Images'][$index] = $url;
+                        } else {
+                            if(!empty($url)) {
+                                myecho("INVALID URL : " + $images[$index], __FUNCTION__);
+                            }
+                        }
+                    }      
                 }
                 
+                $product['Skus'][] = $skuDict;
+
                 // store to print
                 $created["sku"][] = $newSku;
                 $created["associatedsku"][] = $sku;
                 $created["name"][] = $product['Attributes']["name"];
-                $created["img"][] = $product['Skus'][0]['Images'];
+                $created["img"][] = $skuDict['Images'];
+            }
+
+            if(!intval($preview)) {
+                createProduct($accessToken, $product);
+            } else {
+                myecho("PREVIEWING ...");
             }
         }
         

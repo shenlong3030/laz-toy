@@ -251,6 +251,14 @@ function getProductSkuIndex($product, $inputSku) {
     return $pos;
 }
 
+function getProductSkusText($product) {
+    $text = "";
+    foreach($product['Skus'] as $skuIndex=>$sku) {
+        $text .= $sku['SellerSku'] . "<br>";
+    }
+    return $text;
+}
+
 function getProductItemId($product) {
     return $product['item_id'];
 }
