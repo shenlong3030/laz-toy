@@ -343,7 +343,7 @@ date_default_timezone_set("UTC");
         $(this).parent().find('input[name=qty]').val('0'); 
         var sku = $(this).parent().find('input[name=sku]').val(); 
         var q = $(this).closest('td').find('.reservedStock').text(); 
-        productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: q});
+        productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: q?q:0});
     });
     $('input[name=qty]').keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
