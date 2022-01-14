@@ -75,6 +75,7 @@ if($sku || $itemId) {
 $addChildLink = "https://$_SERVER[HTTP_HOST]/lazop/addchild_gui.php?sku=$sku&name=$name";
 $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
+$copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
 
 ?>
 
@@ -128,6 +129,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 
     <a style="color:red" href="<?php echo $addChildLink?>" target="_blank">Add Child</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyLink?>" target="_blank">Copy</a>
+    <a style="color:red;padding-left: 20px" href="<?php echo $copyToLink?>" target="_blank">Copy To</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Clone to new product</a>
 <hr>
 
