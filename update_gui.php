@@ -142,6 +142,15 @@ $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
     <input type="submit" value="Update name"/>
     </form>
 <hr>
+    <form action="update.php" method="POST" name="pricesForm" target="responseIframe">
+    <input type="hidden" name="sku" value="<?php echo $sku;?>" />
+    Price <input type="text" name="price" value="<?php echo $price;?>" /> >> 
+    <input type="text" name="sale_price" value="<?php echo $sprice;?>" />
+    From <input type="text" name="fromdate" value="<?php echo $fromdate;?>" />
+    To <input type="text" name="todate" value="<?php echo $todate;?>" /><br>
+    <input type="submit" value="Update prices"/>
+    </form>
+<hr>
     <form action="update.php" method="POST" name="variationForm" target="responseIframe">
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
     <input type="hidden" id="change-attr" name="change-attr" value="1">
@@ -210,17 +219,9 @@ $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
 
     <input type="submit" value="Update quantity"/>
     </form>
+
 <hr>
-    <form action="update.php" method="POST" name="pricesForm" target="responseIframe">
-    <input type="hidden" name="sku" value="<?php echo $sku;?>" />
-    Price <input type="text" name="price" value="<?php echo $price;?>" /> >> 
-    <input type="text" name="sale_price" value="<?php echo $sprice;?>" />
-    From <input type="text" name="fromdate" value="<?php echo $fromdate;?>" />
-    To <input type="text" name="todate" value="<?php echo $todate;?>" /><br>
-    <input type="submit" value="Update prices"/>
-    </form>
-<hr>
-    <form action="update.php" method="POST" name="pricesForm" target="responseIframe">
+    <form action="update.php" method="POST" name="sizeForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
 
     Weight: <input type="text" name="weight" size="5" value="<?php echo $weight;?>"/> kg<br>
