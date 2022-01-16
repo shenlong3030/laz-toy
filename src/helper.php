@@ -250,7 +250,7 @@ function generateSku1($skuprefix, $group, $attributes, $kiotid) {
     $newSku = implode("__", $parts);
     $newSku = vn_to_str($newSku);
     $newSku = make_short_sku($newSku);
-    return $newSku;
+    return strtoupper($newSku);
 }
 
 /**
