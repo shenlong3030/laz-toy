@@ -14,10 +14,13 @@
 }
 .menu a { padding-left: 4em; }
 .menu .count {color: red;}
-.contentlist .order { padding-left: 1em; padding-right: 1em;}
-.contentlist p.canceled {text-decoration: line-through;}
-.contentlist tr.canceled {background-color: lightgray;}
-.contentlist tr.ready_to_ship td.order_index {background-color:lightgreen;}
+.ordersList .order { padding-left: 1em; padding-right: 1em;}
+.ordersList tr.ready_to_ship td.order_index {background-color:lightgreen;}
+.ordersList p.canceled {text-decoration: line-through;}
+
+.canceledList p.canceled {text-decoration: line-through;}
+.canceledList tr.canceled {background-color: lightgray;}
+
 .nowrap {
     white-space: nowrap;
 }

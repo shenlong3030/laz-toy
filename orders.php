@@ -100,7 +100,7 @@ include "nav.php";
 
 //========================================================================
 // print 10 canceled orders
-echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif; height:400px; overflow:auto;'>";
+echo "<div class='canceledList' style='font:14px/21px Arial,tahoma,sans-serif; height:400px; overflow:auto;'>";
 echo "<p><b>10 đơn hàng bị huỷ gần đây nhất<b></p>";
 
 $token = $GLOBALS["accessToken"];
@@ -111,7 +111,7 @@ echo "</div>";
 
 //========================================================================
 // print selected order list
-echo "<div class='contentlist' style='font:14px/21px Arial,tahoma,sans-serif;'>";
+echo "<div class='ordersList' style='font:14px/21px Arial,tahoma,sans-serif;'>";
 
 
  // status: unpaid, pending, canceled, ready_to_ship, delivered, returned, shipped, failed. 
