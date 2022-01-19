@@ -48,6 +48,7 @@ $attrValues[] = explode("\n", str_replace("\r", "", $input)); //$attrValues[0] i
 $input = $_POST['col'][2];
 $attrValues[] = explode("\n", str_replace("\r", "", $input)); //$attrValues[1] is array
 
+// move Variation to index 0 --> fix SKU format
 $variationPos = array_search('Variation', $attrList);
 if($variationPos) {
     repositionArrayElement($attrList, $variationPos, 0);
