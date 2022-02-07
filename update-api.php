@@ -32,6 +32,16 @@ if($accessToken && $sku) {
 
         case 'qty':
             $response = updateQuantityWithAPI($accessToken, $sku, $qty);
+            
+            // force active product
+            if($qty == 500) {
+                $product = getProduct($accessToken, $sku);
+                if($product) {
+                    $product = prepareProductForUpdating($product);
+                    $product['Skus'][0]['Status'] = 'active';
+                    $response['reactive'] = saveProduct($accessToken, $product);
+                }
+            }
             break;
 
         case 'price':
