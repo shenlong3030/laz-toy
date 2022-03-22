@@ -1548,6 +1548,11 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                 $dict = &$product['Skus'][$i];
                 $sku = $dict["SellerSku"];
 
+                if(!in_array($sku, $skus)){
+                    // only do copy for skus in destination list
+                    continue;
+                }
+
                 // if special_price = 0, cause error
                 if(empty($dict['special_price'])) {
                     $dict['special_price'] = $dict['price'] - 1000;
@@ -1556,9 +1561,7 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
                 // copy images
                 if(in_array("1", $options)) {
                     foreach ($imageindexes as $index) {
-                        //$t = $index - 1;
-                        $t = $index;
-                        $dict['Images'][$t] = $srcproduct['skus'][0]['Images'][$t];
+                        $dict['Images'][$index] = $srcproduct['skus'][0]['Images'][$index];
                     }
                 }
 

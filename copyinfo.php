@@ -44,7 +44,7 @@ $imageindexes = array_filter(explode(",", $str_imageindexes), 'is_numeric');
     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']?>">
         Copy from SKU <input name="sourcesku" size="80" value="<?php echo $sourcesku; ?>"><br><br>
         Copy options:<br>
-        <input type="checkbox" name="options[]" value="1" checked>Images <input name="imageindexes" size="15" value="<?php echo $str_imageindexes?>"><br>
+        <input type="checkbox" name="options[]" value="1" checked>Images <input name="imageindexes" size="15" value="<?php echo $str_imageindexes?>"> Main image is [0]<br>
         <input type="checkbox" name="options[]" value="2" checked>Prices<br>
         <input type="checkbox" name="options[]" value="3" checked>Short Descriptions<br>
         <input type="checkbox" name="options[]" value="4" checked>Descriptions <input type="checkbox" name="options[]" value="4.1">Append (not replace)<br><br>
