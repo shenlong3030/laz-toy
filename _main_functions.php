@@ -215,7 +215,7 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
             
             echo "<td class='order_address'>{$address}</td>"; // $address cell
             
-            $chatLink = 'https://sellercenter.lazada.vn/apps/im/window?buyerId=' . $item['buyer_id'];
+            $chatLink = 'https://sellercenter.lazada.vn/apps/im/window?isWindowOpen=true&buyerId=' . $item['buyer_id'];
             $chatHtml = '<a tabIndex="-1" target="_blank" href="'.$chatLink.'" class="message-icon fa fa-comment" style="color:deepskyblue"></a>';
 
             echo '<td class="order_cus_name">'.$cusName.$chatHtml.'</td>';
