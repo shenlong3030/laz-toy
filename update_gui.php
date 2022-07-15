@@ -108,6 +108,8 @@ $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
     <button id="btn_copy_all">Copy All Clipboard</button>
     <button id="btn_copy_sku">Copy SKUs</button>
     <button id="btn_copy_url">Copy LAZADA urls</button>
+    <button id="btn_del">DEL</button>
+    <button id="btn_edit_price">Edit price</button>
     <?php echo printProducts(array($sibling), false, $sku);?>
     </div>
 <?php } ?>
@@ -366,6 +368,13 @@ date_default_timezone_set("UTC");
         productUpdateWithAjaxQueue({ sku: this.id, action: "status", skustatus: status});
     });
 
+    $('#btn_del').click(function(e){
+        $('a.fa').toggle("hide");
+    });
+
+    $('#btn_edit_price').click(function(e){
+        $('.price').toggle("hide");
+    });
 
     $('#btn_change_sku').click(function (e) {
         $('#form_change_sku').css('display','block');

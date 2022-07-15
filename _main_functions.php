@@ -430,11 +430,9 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
 
     /* cột 6 */echo '<th class="model">&#x25BC Model</th>'; 
     /* cột 7 */echo '<th class="color">&#x25BC Color</th>'; 
-    /* cột 7.1 */echo '<th class="attr"></th>'; 
+    /* cột 8 */echo '<th class="attr"></th>'; 
     
-    /* cột 8 */echo '<th class="editmode on">&#x25BCPRICE</th>'; // price form, display:none
-    /* cột 9 */echo '<th class="editmode on">&#x25BCSALE PRICE</th>'; // price form, display:none
-    /* cột 10 */echo '<th class="editmode price form">&#x25BCPRICE Form</th>';  // price form, display:none
+    /* cột 9 */echo '<th class="price">&#x25BCPRICE</th>'; // price form, display:none
 
     echo '<th></th>'; // edit button
     echo '<th></th>'; // active button
@@ -496,7 +494,12 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="+500">+500</button>
             <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="=0">=0</button></div>';
             
-            $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="price" type="text" size="8" value="'.$price1.'"/>--><input name="sale_price" type="text" size="8" value="'.$price2.'"/><input type="submit" tabindex="-1" value="↵" hidden/></form>';
+            $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe">
+                <input name="sku" type="hidden" value="'.$sellersku.'"/>
+                <input name="price" type="hidden" size="6" value="'.$price1.'"/>
+                <input name="sale_price" type="text" size="6" value="'.$price2.'"/>
+                <input type="submit" tabindex="-1" value="↵" hidden/>
+                </form>';
             
             $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="50" value="'.$name.'"/><input type="submit" tabindex="-1" value="↵" hidden/></form>';
             
@@ -507,6 +510,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $groupLink = "https://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";
             $groupHtml = '<a tabIndex="-1" target="_blank" href="'.$groupLink.'" class="grouped-icon fas fa fa-th-list" style="color:red"></a>';
             $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?item_id=$item_id&sku=$sellersku";
+            $delLink = "https://$_SERVER[HTTP_HOST]/lazop/del.php?skus=$sellersku";
 
 
             $lazEditLink = "https://sellercenter.lazada.vn/apps/product/publish?productId=$item_id";
@@ -521,20 +525,25 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             
             /* cột 6 */echo '<td class="info">'.$model.'</td>';
             /* cột 7 */echo '<td class="info">'.$color.'</td>';
-            /* cột 7.1 */echo '<td class="info">'.$otherAttributes.'</td>';
+            /* cột 8 */echo '<td class="info">'.$otherAttributes.'</td>';
             
             // visible
-            /* cột 8 */echo '<td class="editmode price on">'.$price1.'</td>';
-            /* cột 9 */echo '<td class="editmode sale_price on info">'.$price2.'</td>';
-            
-            // hidden 
-            /* cột 10 */echo '<td class="editmode price form">'.$priceForm.'</td>';
+            /* cột 9, price*/
+            echo '<td>';
+            echo '<s>'.$price1.'</s>&nbsp;';
+            echo '<span class="price" >'.$price2.'</span>';
+            echo '<span class="price form" style="display:none">'.$priceForm.'</span>';
+            echo '</td>';
 
-            // Edit button
-            /* cột 11 */echo '<td><a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a></td>';
+            /* cột 10 */
+            // edit button + del button
+            echo '<td>
+                <a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>
+                <a target="_blank" href="'.$delLink.'" class="fa fa-trash" style="color:green;display:none" tabindex="-1"></a>
+                </td>';
 
             // Active toggle button
-            // bootstrap code (need bootstrap css and bootstraptoggle css + js)
+            /* cột 13 *///bootstrap code (need bootstrap css and bootstraptoggle css + js)
             $status = ($sku['Status'] == "active") ? "checked" : "";
             echo '<td><input id="'. $sellersku .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
 
