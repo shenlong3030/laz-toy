@@ -150,8 +150,8 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
     Source SKU: <input type="text" name="sku" size="70" value="<?php echo $sku?>" style="background:lightgray" readonly/>
 <hr>
-    NEW SKU: <input type="text" name="nsku" size="70" value="<?php echo $nsku?>"/><br/>
-    Name: <input type="text" name="name" size="70" value="<?php echo $name?>"/><br/>
+    NEW SKU: <input style="background: lightgreen" type="text" name="nsku" size="70" value="<?php echo $nsku?>"/><br/>
+    Name: <input style="background: lightgreen" type="text" name="name" size="70" value="<?php echo $name?>"/><br/>
 <hr>
     Variations : <?php echo $variation;?>
 <hr>
@@ -173,8 +173,8 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
         <li>11496 : miếng dán đồng hồ</li>
     </ul>
 <hr>
-    <h3>Images</h3> <textarea class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
-    <a title="Editor" href="https://wm.xamve.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
+    <h3>Images</h3> <textarea style="background: lightgreen" class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
+    <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
     <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
     <br/>
 <?php
