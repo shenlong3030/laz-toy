@@ -417,7 +417,7 @@ date_default_timezone_set("UTC");
       });
 
       $('#btn_copy_all').click(function (e) {
-        var numberOfInfoColumns = 18;
+        var numberOfInfoColumns = 17;
         var text = "";
         $("table.main").find("td.info").each(function(index, value){
             text = text + $(this).text();
