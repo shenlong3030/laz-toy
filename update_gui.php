@@ -9,6 +9,7 @@ $itemId = isset($_REQUEST["item_id"]) ? $_REQUEST["item_id"] : "";
 //$qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
 
 $category = "";
+$productImages = array();
 $images = array();
 $weight = "";
 $h = "";
@@ -40,6 +41,8 @@ if($sku || $itemId) {
 
         $i = getProductSkuIndex($product, $sku);
         $images = array_filter($product['skus'][$i]['Images']);
+
+        $productImages = $product['images'];
         
         $category = $product['primary_category'];
         $weight = $product['skus'][$i]['package_weight'];
@@ -189,9 +192,26 @@ $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
         <li>10100418 : miếng dán đồng hồ</li>
     </ul>
 <hr>
+    <form action="update.php" method="POST" name="mainImageForm" target="responseIframe">
+    <input type="hidden" name="sku" value="<?php echo $sku;?>" />
+    <h3>Product Images</h3> <textarea id="imagelinks" class="nowrap" name="product_images" rows="6" cols="80"><?php echo implode("\n", $productImages);?></textarea>
+    <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
+    <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
+    <input type="submit" name="update-image" value="Update images"/>
+
+    <br>
+    <input type="button" id="btn_update_children" value="Update all children"/>
+    <input type="button" id="btn_copy_single_line" value="Copy images single line"/>
+    </form>
+<?php
+    foreach($productImages as $image) {
+        echo htmlLinkImage($image);
+    }
+?>
+<hr>
     <form action="update.php" method="POST" name="imageForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
-    <h3>Images</h3> <textarea id="imagelinks" class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
+    <h3>SKU Images</h3> <textarea id="imagelinks" class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
     <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
     <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
     <input type="submit" name="update-image" value="Update images"/>

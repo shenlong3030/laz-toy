@@ -21,14 +21,22 @@ $variation = $_REQUEST['variation'] ? $_REQUEST['variation'] : '';
 $type_screen_guard = $_REQUEST['type_screen_guard'] ? $_REQUEST['type_screen_guard'] : '';
 
 $category = $_REQUEST['category'] ? $_REQUEST['category'] : 0;
+
 $input = val($_REQUEST['images']);
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
-
 $temp = array();
 foreach($images as $image) {
     $temp = array_merge($temp, preg_split("/\s+/", $image));
 }
 $images = array_filter($temp);
+
+$input = val($_REQUEST['product_images']);
+$productImages = array_filter(explode("\n", str_replace("\r", "", $input))); // split by newline
+$temp = array();
+foreach($productImages as $image) {
+    $temp = array_merge($temp, preg_split("/\s+/", $image));    // split by space
+}
+$productImages = array_filter($temp);
 
 
 $shortdesc = $_REQUEST['shortdesc'] ? $_REQUEST['shortdesc'] : '';
@@ -86,7 +94,11 @@ if($accessToken && ($sku || $id)) {
         if ($images) {
             // migrate images
             $images = migrateImages($accessToken, $images, $cache);
-            $product = setProductImages($product, $images, TRUE);   
+            $product = setProductSKUImages($product, $images, TRUE);   
+        } elseif($productImages) {
+            // migrate images
+            $images = migrateImages($accessToken, $productImages, $cache);
+            $product = setProductImages($product, $images, TRUE);
         } elseif (!empty($qtyaction)){
             if($qtyaction == "+500") {
                 $qty = 500;

@@ -69,7 +69,7 @@ if($sku) {
             $product['Skus'][0]['special_to_date'] = $todate;
 
             $images = migrateImages($accessToken, $images, $cache);
-            $product = setProductImages($product, $images, TRUE);
+            $product = setProductSKUImages($product, $images, TRUE);
 
             $nsku = trim($nsku);
             $nsku = vn_urlencode($nsku);

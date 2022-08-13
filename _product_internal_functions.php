@@ -101,6 +101,24 @@ function setProductAssociatedSku($product, $sku) {
 // $fromindex : just setImages after this index
 function setProductImages($product, $images, $reset=FALSE, $fromindex = 0) {
     if($reset) {
+         $product['Images'] = array();
+    }
+    foreach($images as $index => $url) {
+        if (is_url($url)) {
+            $product['Images'][$index + $fromindex] = $url;
+        } else {
+            if(!empty($url)) {
+                myecho("INVALID URL : " + $images[$index], __FUNCTION__);
+            }
+        }
+    }
+    return $product;
+}
+
+// migrage images before setting
+// $fromindex : just setImages after this index
+function setProductSKUImages($product, $images, $reset=FALSE, $fromindex = 0) {
+    if($reset) {
          $product['Skus'][0]['Images'] = array();
     }
     foreach($images as $index => $url) {

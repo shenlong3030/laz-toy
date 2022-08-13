@@ -452,6 +452,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
         $name = $attrs['name'];
         $item_id = $product['item_id'];
         $primary_category = $product['primary_category'];
+        $productImages = $product['images'];
 
         foreach($product['skus'] as $index=>$sku) {
             $price1 = $sku['price'];
@@ -550,9 +551,11 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             // print image thumbnail
             $thumbNailElements = array();
             $urlElements = array();
+
+            $imgs = array_merge($productImages, array("https://a.b"), $imgs);
             if(is_array($imgs)) {
 
-                // color_thumbnail column
+                // product_image column
                 $thumb = '<a tabindex="-1" target="_blank" href="'.$color_thumbnail.'"><img alt="thumb" src="'.$color_thumbnail.'" height="50"></a>';
                 $thumb = empty($color_thumbnail) ? "" : $thumb;
                 array_push($thumbNailElements, '<td class="image thumb on">'.$thumb.'</td>');
@@ -762,9 +765,9 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                     if(isset($data["images"][$index])) {
                         // migrate images
                         $images = migrateImages($accessToken, $data["images"][$index], $cache);
-                        $product = setProductImages($product, $images, $resetimages);       
+                        $product = setProductSKUImages($product, $images, $resetimages);       
                     } else {
-                        $product = setProductImages($product, $backupimages, TRUE);   
+                        $product = setProductSKUImages($product, $backupimages, TRUE);   
                     }
                 }   
 
@@ -888,9 +891,9 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
             if(strlen($image) > 20) {
                 // migrate images
                 $images = migrateImages($accessToken, $image, $cache);
-                $product = setProductImages($product, $images, $resetimages);       
+                $product = setProductSKUImages($product, $images, $resetimages);       
             } else {
-                $product = setProductImages($product, $backupimages, TRUE);   
+                $product = setProductSKUImages($product, $backupimages, TRUE);   
             }
 
             if(!$preview) {
@@ -1140,7 +1143,7 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
                 $imageindex = ($imageindex > 0 && $imageindex < 9) ? $imageindex : 0;
                 
                 $images = migrateImages($accessToken, $data["images"][$index], $cache);
-                $product = setProductImages($product, $images, FALSE, $imageindex);
+                $product = setProductSKUImages($product, $images, FALSE, $imageindex);
             }
             
             if(isset($data["actives"][$index])) {
