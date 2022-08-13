@@ -1,16 +1,40 @@
+
 <?php
 // To understand product structure, see this link below
 // https://open.lazada.com/doc/api.htm?spm=a2o9m.11193487.0.0.3ac413fers8uIL#/api?cid=5&path=/product/create
 
 require_once('src/helper.php');
 
-
-function prepareProductForUpdating($product) {
-    // fix keyName
-    $product['ItemId'] = $product['item_id'];
+function prepareProduct($product) {
+    // fix key
     $product['Attributes'] = $product['attributes'];
     $product['Skus'] = $product['skus'];
     $product['PrimaryCategory'] = $product['primary_category'];
+
+    // remove wrong keyName
+    unset($product['attributes']);
+    unset($product['skus']);
+    unset($product['primary_category']);
+
+    ////////////////////////////////////////////////////
+    // HARDCORE (remove if possible)
+    ////////////////////////////////////////////////////
+    // fix bug API khong the update
+    unset($product['variation']);
+
+    // fix bug API khong the copyInfo
+    unset($product['Attributes']['warranty_type']);
+    unset($product['Attributes']['Hazmat']);
+
+    ////////////////////////////////////////////////////
+    return $product;
+}
+
+function prepareProductForUpdating($product) {
+    $product = prepareProduct($product);
+
+    // fix key
+    $product['ItemId'] = $product['item_id'];
 
     // remove english name, desc, short_desc
     if(isset($product['Attributes']["name_en"])) {
@@ -22,34 +46,23 @@ function prepareProductForUpdating($product) {
     if(isset($product['Attributes']['description_en'])) {
         $product['Attributes']['description_en'] = $product['Attributes']['description'];
     }
-    
-    // remove wrong keyName
-    unset($product['attributes']);
-    unset($product['skus']);
-    unset($product['primary_category']);
-    
+
     return $product;
 }
 
-function prepareProductForCreating($product) {
-    $product = prepareProductForUpdating($product);
-    
-    // clear all images before creating
-    //$product['Skus'][0]['Images'] = array();
+function prepareProductForCreating($product, $keepAllSkus = FALSE) {
+    $product = prepareProduct($product);
     
     // keep skus[0], remove all others
-    $product['Skus'] = array_splice($product['Skus'], 0, 1);
+    if(!keepAllSkus) {
+        $product['Skus'] = array_splice($product['Skus'], 0, 1);
 
-    // force active product
-    $product['Skus'][0]['Status'] = "active";
-    
-    $product['Skus'][0]['SellerSku'] = "";
+        // force active product
+        $product['Skus'][0]['Status'] = "active";
+        $product['Skus'][0]['SellerSku'] = "";
+    }
 
     // remove name_en
-    unset($product['attributes']["name_en"]);
-    unset($product['attributes']['short_description_en']);
-    unset($product['attributes']['description_en']);
-
     unset($product['Attributes']["name_en"]);
     unset($product['Attributes']['short_description_en']);
     unset($product['Attributes']['description_en']);
@@ -78,7 +91,9 @@ function setProductSku($product, &$sku) {
 }
 
 function setProductAssociatedSku($product, $sku) {
-    $product['AssociatedSku'] = $sku;
+    if(!empty($sku)) {
+       $product['AssociatedSku'] = $sku;
+    }
     return $product;
 }
 

@@ -73,7 +73,7 @@ if($sku || $itemId) {
 }
 
 $addChildLink = "https://$_SERVER[HTTP_HOST]/lazop/addchild_gui.php?sku=$sku&name=$name";
-$cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
+$cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=$sku";
 $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
 
@@ -131,8 +131,8 @@ $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
 
     <a style="color:red" href="<?php echo $addChildLink?>" target="_blank">Add Child</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyLink?>" target="_blank">Copy</a>
-    <a style="color:red;padding-left: 20px" href="<?php echo $copyToLink?>" target="_blank">Copy To</a>
-    <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Clone to new product</a>
+    <a style="color:red;padding-left: 20px" href="<?php echo $copyToLink?>" target="_blank">Copy info to</a>
+    <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Copy all SKU</a>
 <hr>
 
 <input id="<?php echo $sku;?>" type="checkbox" data-toggle="toggle" <?php echo $status;?>>
