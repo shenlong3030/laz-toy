@@ -51,12 +51,13 @@ if($sku || $itemId) {
         $l = $product['skus'][$i]['package_length'];
         $content = $product['skus'][$i]['package_content'];
         $qty = $product['skus'][$i]['quantity'];
-        $variation = $product['skus'][$i]['Variation'];
-        $type_screen_guard = $product['skus'][$i]['type_screen_guard'];
+        
+        $variation = $product['skus'][$i]['saleProp']['Variation'];
+        $type_screen_guard = $product['skus'][$i]['saleProp']['type_screen_guard'];
 
-        $color = $product['skus'][$i]['color_family'];
+        $color = $product['skus'][$i]['saleProp']['color_family'];
         $color_thumbnail = $product['skus'][$i]['color_thumbnail'];
-        $model = $product['skus'][$i]['compatibility_by_model'];
+        $model = $product['skus'][$i]['saleProp']['compatibility_by_model'];
         
         $price = $product['skus'][$i]['price'];
         $sprice = $product['skus'][$i]['special_price'];

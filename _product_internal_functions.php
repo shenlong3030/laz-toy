@@ -26,6 +26,12 @@ function prepareProduct($product) {
     unset($product['Attributes']['warranty_type']);
     unset($product['Attributes']['Hazmat']);
 
+    // fix API update with saleProp
+    unset($product['Skus'][0]['compatibility_by_model']);
+    unset($product['Skus'][0]['color_family']);
+    unset($product['Skus'][0]['type_screen_guard']);
+    unset($product['Skus'][0]['Variation']);
+
     ////////////////////////////////////////////////////
     return $product;
 }
@@ -176,7 +182,7 @@ function setProductQuantity($product, $val) {
 }
 
 function setProductColor($product, $color) {
-    $product['Skus'][0]['color_family'] = $color;
+    $product['Skus'][0]['saleProp']['color_family'] = $color;
     return $product;
 }
 
@@ -195,29 +201,29 @@ function setProductColorThumbnail($product, $colors, $thumbnails) {
 }
 
 function setProductModel($product, $model) {
-    $product['Skus'][0]['compatibility_by_model'] = $model;
+    $product['Skus'][0]['saleProp']['compatibility_by_model'] = $model;
     return $product;
 }
 
 function setProductVariation($product, $value) {
-    $product['Skus'][0]['Variation'] = $value;
+    $product['Skus'][0]['saleProp']['Variation'] = $value;
     return $product;
 }
 
 function setProductTypeScreenGuard($product, $value) {
-    $product['Skus'][0]['type_screen_guard'] = $value;
+    $product['Skus'][0]['saleProp']['type_screen_guard'] = $value;
     return $product;
 }
 
 function setProductAttributes($product, $attrList, $values) {
     foreach ($attrList as $i => $attr) {
-        $product['Skus'][0][$attr] = $values[$i];
+        $product['Skus'][0]['saleProp'][$attr] = $values[$i];
     }
     return $product;
 }
 
 function setProductAttribute($product, $attr, $value) {
-    $product['Skus'][0][$attr] = $value;
+    $product['Skus'][0]['saleProp'][$attr] = $value;
     return $product;
 }
 

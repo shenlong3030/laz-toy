@@ -464,9 +464,13 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $shopsku = $sku['ShopSku'];
             $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
             $imgs = $sku['Images'];
-            $color = $sku['color_family'];
-            $model = $sku['compatibility_by_model'] ? $sku['compatibility_by_model'] : "";
-            $otherAttributes = getProductAttributes($product, $index);
+            $color = $sku['saleProp']['color_family'];
+            $model = $sku['saleProp']['compatibility_by_model'] ? $sku['saleProp']['compatibility_by_model'] : "";
+            
+            unset($sku['saleProp']['color_family']);
+            unset($sku['saleProp']['compatibility_by_model']);
+            $otherAttributes = implode(",", $sku['saleProp']);
+
             $color_thumbnail = $sku['color_thumbnail'];
 
             $selection = implode(',', array_filter(array($variation, $type, $color)));
@@ -1238,8 +1242,8 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
                 // set attributes
                 $values = array();
                 foreach ($attrList as $i => $attr) {
-                    $skuDict[$attr] = $attrValues[$i][$index] ? $attrValues[$i][$index] : "";
-                    $values[] = $skuDict[$attr];
+                    $skuDict['saleProp'][$attr] = $attrValues[$i][$index] ? $attrValues[$i][$index] : "";
+                    $values[] = $skuDict['saleProp'][$attr];
                 }
                 
                 // set sku
