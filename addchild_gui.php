@@ -52,7 +52,6 @@ Possible Attributes : <?php echo implode(",", $attrNames)?><br><br>
 <table>
     <tbody>
         <tr>
-            <td>Kiod ID</td>
             <td>
                 <select name="attr[]">
                   <option value="color_family">color_family</option>
@@ -76,7 +75,6 @@ Possible Attributes : <?php echo implode(",", $attrNames)?><br><br>
             <td>Image links</td>
         </tr>
         <tr>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="30"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="30"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>

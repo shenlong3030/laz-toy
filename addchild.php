@@ -36,17 +36,15 @@ $skuprefix = isset($_POST['skuprefix']) ? $_POST['skuprefix'] : $initskuprefix;
 $appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
 $newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 
-$input = $_POST['col'][0];
-$kiotids = explode("\n", str_replace("\r", "", $input));
-
-$attrList = $_POST['attr']; //$attrList is array
-$attrValues = array();
-
-$input = $_POST['col'][1];
-$attrValues[] = explode("\n", str_replace("\r", "", $input)); //$attrValues[0] is array
-
-$input = $_POST['col'][2];
-$attrValues[] = explode("\n", str_replace("\r", "", $input)); //$attrValues[1] is array
+$saleProps = array();
+foreach ($_REQUEST['attr'] as $i => $prop) {
+    $input = $_POST['col'][$i];
+    if(!empty($input)) {
+        $lines = explode("\n", str_replace("\r", "", $input)); // lines is array
+        $saleProps[$prop] = $lines;
+        // $saleProps['compatibility_by_model'] = $lines
+    }
+}
 
 // move Variation to index 0 --> fix SKU format
 $variationPos = array_search('Variation', $attrList);
@@ -56,19 +54,18 @@ if($variationPos) {
 }
 
 
-$input = $_POST['col'][3];
+$input = $_POST['col'][2];
 $qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
 
-$input = $_POST['col'][4];
+$input = $_POST['col'][3];
 $prices = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
 
-$input = $_POST['col'][5];
+$input = $_POST['col'][4];
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 $inputdata = array(
     "kiotids" => $kiotids,
-    "attrList" => $attrList,
-    "attrValues" => $attrValues,
+    "saleProps" => $saleProps,
     "images" => $images,
     "appendtime" => $appendtime,
     "skuprefix" => $skuprefix,

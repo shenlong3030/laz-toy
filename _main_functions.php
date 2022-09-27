@@ -672,6 +672,8 @@ function createProduct($accessToken, $product) {
 
     $res = json_decode($c->execute($request, $accessToken), true);
     
+    debug_log($product);
+
     if($res["code"] == "0") {
         myecho("success : " . getProductSkusText($product));
         return 1;
@@ -1224,8 +1226,7 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
         } else {
             $product = setProductAssociatedSku($product, $sku);
             $kiotids = $inputdata["kiotids"];
-            $attrList = $inputdata["attrList"];
-            $attrValues = $inputdata["attrValues"];
+            $saleProps = $inputdata["saleProps"];
 
             // set NAME
             if(!empty($newName)) {
@@ -1241,9 +1242,11 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
 
                 // set attributes
                 $values = array();
-                foreach ($attrList as $i => $attr) {
-                    $skuDict['saleProp'][$attr] = $attrValues[$i][$index] ? $attrValues[$i][$index] : "";
-                    $values[] = $skuDict['saleProp'][$attr];
+                foreach ($saleProps as $prop => $inputList) {
+                    if($inputList[$index]) {
+                        $skuDict['saleProp'][$prop] = $inputList[$index];
+                    }
+                    $values[] = $skuDict['saleProp'][$prop];
                 }
                 
                 // set sku

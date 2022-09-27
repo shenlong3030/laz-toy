@@ -10,6 +10,9 @@ $name = isset($_REQUEST["name"]) ? $_REQUEST["name"] : "";
 $color = isset($_REQUEST["color_family"]) ? $_REQUEST["color_family"] : "";
 $color_thumbnail = isset($_REQUEST["color_thumbnail"]) ? $_REQUEST["color_thumbnail"] : "";
 $model = isset($_REQUEST["compatibility_by_model"]) ? $_REQUEST["compatibility_by_model"] : "";
+$type = isset($_REQUEST["type_screen_guard"]) ? $_REQUEST["type_screen_guard"] : "";
+$variation = isset($_REQUEST["Variation"]) ? $_REQUEST["Variation"] : "";
+
 $brand = isset($_REQUEST["brand"]) ? $_REQUEST["brand"] : "";
 $category = isset($_REQUEST["category"]) ? $_REQUEST["category"] : "";
 
@@ -57,11 +60,20 @@ if($sku) {
             $product['Skus'][0]['package_length'] = $l;
             $product['Skus'][0]['package_content'] = $content;
             $product['Skus'][0]['quantity'] = $qty;
-            $product['Skus'][0]['_compatible_variation_'] = $variation;
             
-            $product['Skus'][0]['color_family'] = $color;
             $product['Skus'][0]['color_thumbnail'] = $color_thumbnail;
-            $product['Skus'][0]['compatibility_by_model'] = $model;
+            if($color) {
+                $product['Skus'][0]['saleProp']['color_family'] = $color;
+            }
+            if($model) {
+                $product['Skus'][0]['saleProp']['compatibility_by_model'] = $model;
+            }
+            if($type) {
+                $product['Skus'][0]['saleProp']['type_screen_guard'] = $type;
+            }
+            if($variation) {
+                $product['Skus'][0]['saleProp']['Variation'] = $variation;
+            }
             
             $product['Skus'][0]['price'] = $price;
             $product['Skus'][0]['special_price'] = $sprice;
