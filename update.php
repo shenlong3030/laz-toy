@@ -146,6 +146,7 @@ if($accessToken && ($sku || $id)) {
 
         if(!$response) {
             $response = saveProduct($accessToken, $product);
+            debug_log($product);
         }
         
     } else {

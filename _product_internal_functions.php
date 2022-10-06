@@ -26,13 +26,33 @@ function prepareProduct($product) {
     unset($product['Attributes']['warranty_type']);
     unset($product['Attributes']['Hazmat']);
 
-    // fix API update with saleProp
-    unset($product['Skus'][0]['compatibility_by_model']);
-    unset($product['Skus'][0]['color_family']);
-    unset($product['Skus'][0]['type_screen_guard']);
-    unset($product['Skus'][0]['Variation']);
+    $product = fixProductSaleProp($product);
 
     ////////////////////////////////////////////////////
+    return $product;
+}
+
+function fixProductSaleProp($product) {
+    foreach ($product['Skus'] as $i => $skuDict) {
+        if(!empty($skuDict['compatibility_by_model'])) {
+            $product['Skus'][$i]['saleProp']['compatibility_by_model'] = $skuDict['compatibility_by_model'];
+        }
+        if(!empty($skuDict['color_family'])) {
+            $product['Skus'][$i]['saleProp']['color_family'] = $skuDict['color_family'];
+        }
+        if(!empty($skuDict['type_screen_guard'])) {
+            $product['Skus'][$i]['saleProp']['type_screen_guard'] = $skuDict['type_screen_guard'];
+        }
+        if(!empty($skuDict['Variation'])) {
+            $product['Skus'][$i]['saleProp']['Variation'] = $skuDict['Variation'];
+        }
+
+        // remove old key
+        unset($product['Skus'][$i]['compatibility_by_model']);
+        unset($product['Skus'][$i]['color_family']);
+        unset($product['Skus'][$i]['type_screen_guard']);
+        unset($product['Skus'][$i]['Variation']);
+    }
     return $product;
 }
 
