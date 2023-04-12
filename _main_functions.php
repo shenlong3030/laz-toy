@@ -191,7 +191,7 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         $price = $order['price'];
         
         echo '<tr class="'.$orderStatus.'">';
-        echo '<td class="order_id">'.$orderId.'</td>';
+        echo '<td class="order_status have_background">'.substr($orderStatus,0,2).'</td>';
         echo '<td class="order_index">'.($offset+$index+1).'</td>';
 
         // if($status == 'delivered') {
@@ -227,9 +227,8 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
                 $repackLink = "https://$_SERVER[HTTP_HOST]/lazop/order-api.php?action=repack&package_id={$item['package_id']}";
                 $repackHtml = '<a tabIndex="-1" target="_blank" href="'.$repackLink.'" class="fa fa-reply" style="color:gray"></a>';
             }
-
-            echo '<td class="order_paymentMethod">'.$paymentMethod.$repackHtml.'</td>';
             echo '<td class="order_item_images">'.$item["img"].'</td>';
+            echo '<td class="order_paymentMethod">'.$paymentMethod.$repackHtml.'</td>';
         }
         
         $date1 = new DateTime($order["created_at"]);

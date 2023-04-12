@@ -34,8 +34,6 @@ $needFullOrderInfo = isset($_GET['needfull']) ? $_GET['needfull'] : 1;
         column 6 : address
     ––>
     <style>
-        table th:nth-child(1), 
-        table td:nth-child(1),
         table th:nth-child(5),
         table td:nth-child(5) {
             display: none;

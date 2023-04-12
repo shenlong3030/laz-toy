@@ -14,7 +14,7 @@
 .menu a { padding-left: 4em; }
 .menu .count {color: red;}
 .ordersList .order { padding-left: 1em; padding-right: 1em;}
-.ordersList tr.ready_to_ship td.order_index {background-color:lightgreen;}
+.ordersList tr.ready_to_ship td.have_background {background-color:lightgreen;}
 .ordersList p.canceled {text-decoration: line-through;}
 
 .canceledList p.canceled {text-decoration: line-through;}
