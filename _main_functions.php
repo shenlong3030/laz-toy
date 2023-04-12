@@ -855,13 +855,13 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
             if($model) {
                 $product = setProductModel($product, $model);
             } else {
-                unset($product['Skus'][0]['compatibility_by_model']); 
+                unset($product['Skus'][0]['saleProp']['compatibility_by_model']); 
             }
 
             if($color) {
                 $product = setProductColor($product, $color);
             } else {
-                unset($product['Skus'][0]['color_family']);
+                unset($product['Skus'][0]['saleProp']['color_family']);
             }
             
             $newSku = generateSku($skuprefix, $group, $model, $color, $kiotid);
@@ -902,6 +902,7 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
             }
 
             if(!$preview) {
+                $product = setProductActive($product, 1);
                 createProduct($accessToken, $product);
                 usleep(300000);
             }

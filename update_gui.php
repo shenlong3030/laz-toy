@@ -81,6 +81,7 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=$s
 $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
 $moveToLink = "https://$_SERVER[HTTP_HOST]/lazop/movechild.php";
+$copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__X1";
 
 ?>
 
@@ -139,6 +140,7 @@ $moveToLink = "https://$_SERVER[HTTP_HOST]/lazop/movechild.php";
     <a style="color:red;padding-left: 20px" href="<?php echo $copyToLink?>" target="_blank">Copy info to</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Copy all SKU</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $moveToLink?>" target="_blank">Move to</a>
+    <a style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau?>" target="_blank">Copy from CL mẫu</a>
 <hr>
 
 <input id="<?php echo $sku;?>" type="checkbox" data-toggle="toggle" <?php echo $status;?>>

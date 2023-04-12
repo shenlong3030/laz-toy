@@ -384,7 +384,7 @@ function isProductActive($product, $inputSku=""){
 
 function fixProductRemoveSlashFromModel($product) {
     foreach($product['Skus'] as $skuIndex=>$sku) {
-        $product['Skus'][$skuIndex]['compatibility_by_model'] = str_replace("/", ",", $product['Skus'][$skuIndex]['compatibility_by_model']);         
+        $product['Skus'][$skuIndex]['saleProp']['compatibility_by_model'] = str_replace("/", ",", $product['Skus'][$skuIndex]['compatibility_by_model']);         
     }   
     return $product;
 }
@@ -396,8 +396,8 @@ function fixProductSetDefaultBrand($product) {
 
 function fixProductSetDefaultColorAndModel($product) {
     foreach($product['Skus'] as $skuIndex=>$sku) {
-        $product['Skus'][$skuIndex]['compatibility_by_model'] = "..." . $skuIndex;
-        $product['Skus'][$skuIndex]['color_family'] = "...";    
+        $product['Skus'][$skuIndex]['saleProp']['compatibility_by_model'] = "..." . $skuIndex;
+        $product['Skus'][$skuIndex]['saleProp']['color_family'] = "...";    
         $product['Skus'][$skuIndex]['Status'] = "inactive";    
     }
     return $product;
@@ -405,7 +405,7 @@ function fixProductSetDefaultColorAndModel($product) {
 
 function fixProductSetRandomModel($product) {
     foreach($product['Skus'] as $skuIndex=>$sku) {
-        $product['Skus'][$skuIndex]['compatibility_by_model'] = time() . "." . $skuIndex;
+        $product['Skus'][$skuIndex]['saleProp']['compatibility_by_model'] = time() . "." . $skuIndex;
         $product['Skus'][$skuIndex]['Status'] = "inactive";    
     }
     return $product;
@@ -413,7 +413,7 @@ function fixProductSetRandomModel($product) {
 
 function fixProductModel($product) {
     foreach($product['Skus'] as $skuIndex=>$sku) {
-        $product['Skus'][$skuIndex]['compatibility_by_model'] = '...';   
+        $product['Skus'][$skuIndex]['saleProp']['compatibility_by_model'] = '...';   
     }
     return $product;
 }
