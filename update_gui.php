@@ -80,8 +80,8 @@ $addChildLink = "https://$_SERVER[HTTP_HOST]/lazop/addchild_gui.php?sku=$sku&nam
 $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=$sku";
 $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
-$moveToLink = "https://$_SERVER[HTTP_HOST]/lazop/movechild.php";
-$copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__X1";
+$moveToLink = "https://$_SERVER[HTTP_HOST]/lazop/movechild.php?sku=$sku";
+$copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__X1&associated_sku=$sku";
 
 ?>
 
@@ -394,7 +394,7 @@ date_default_timezone_set("UTC");
     });
 
     $('#btn_del').click(function(e){
-        $('a.fa').toggle("hide");
+        $('a.fa-trash').toggle("hide");
     });
 
     $('#btn_edit_price').click(function(e){

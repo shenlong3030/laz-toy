@@ -12,14 +12,7 @@ require_once('_main_functions.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MOVE CHILD</title>
-    <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
-    <script src="//code.jquery.com/jquery-1.11.1.js"></script>
-    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-    <!-- bxSlider Javascript files -->
-    <script src="./js/controls.js"></script>
-    <script src="./js/jquery.tablesorter.min.js"></script>
-    
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <?php include('src/head.php');?>
 </head>
 
 <?php
@@ -28,9 +21,13 @@ require_once('_main_functions.php');
 date_default_timezone_set("UTC");
 
 $preview = val($_POST['preview']);
-
 $input = $_POST['col'][0];
-$skus = array_filter(explode("\n", str_replace("\r", "", $input)));
+$sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
+$skus = array($sku);
+
+if(!empty($input)) {
+    $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
+}
 
 $input = $_POST['col'][1];
 $newParentSkus = array_filter(explode("\n", str_replace("\r", "", $input)));
