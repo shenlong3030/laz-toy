@@ -13,14 +13,7 @@ exit(1);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ADD CHILD</title>
-    <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
-    <script src="//code.jquery.com/jquery-1.11.1.js"></script>
-    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-    <!-- bxSlider Javascript file -->
-    <script src="./js/controls.js"></script>
-    <script src="./js/jquery.tablesorter.min.js"></script>
-    
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <?php include('src/head.php');?>
 </head>
 
 <?php

@@ -123,6 +123,8 @@ function pre_process_skus($list) {
 }
 
 function make_short_sku($sku) {
+    $sku = vn_urlencode($sku);
+
     $dict = array(
     'COMBO' => 'CB',
 

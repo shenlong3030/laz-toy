@@ -7,6 +7,11 @@
 
 require_once('src/helper.php');
 
+function isLazadaImage($url) {
+    return false;
+    //return preg_match("/slatic.net/i", $url);
+}
+
 // return migrated image url or ERROR MESSAGE
 function migrateImage($accessToken, $imageUrl, $retry = 3) {
     $output = '';

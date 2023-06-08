@@ -4,10 +4,6 @@ require_once('src/helper.php');
 require_once('./_migrate_image_functions.php');
 require_once('./_product_internal_functions.php');
 
-function isLazadaImage($url) {
-    return preg_match("/slatic.net/i", $url);
-}
-
 //####################################################################
 // Get client/request region
 //####################################################################
@@ -1282,7 +1278,9 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
                         }
                     }      
                 }
-                
+                // force active
+                $skuDict['Status'] = "active";
+
                 $product['Skus'][] = $skuDict;
 
                 // store to print
