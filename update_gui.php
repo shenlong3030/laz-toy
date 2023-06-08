@@ -82,6 +82,7 @@ $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
 $moveToLink = "https://$_SERVER[HTTP_HOST]/lazop/movechild.php?sku=$sku";
 $copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__X1&associated_sku=$sku";
+$copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?sku=CL.ALL__MAU.XX__X1&associated_sku=$sku";
 
 ?>
 
@@ -141,6 +142,7 @@ $copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sk
     <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Copy all SKU</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $moveToLink?>" target="_blank">Move to</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau?>" target="_blank">Copy from CL mẫu</a>
+    <a style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau2?>" target="_blank">Copy from CL mẫu 2</a>
 <hr>
 
 <input id="<?php echo $sku;?>" type="checkbox" data-toggle="toggle" <?php echo $status;?>>
@@ -267,14 +269,13 @@ $copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sk
     <input type="submit" value="Update short description"/>
     </form>
     
-    <?php echo $shortdesc;?>
 <hr> 
     <h3>Description:</h3>
     <form action="update.php" method="POST" name="descForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     <textarea class="nowrap" name="desc" rows="2" cols="80"><?php echo $desc;?></textarea>
     <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
-    <input type="submit" value="Update description"/>
+    <input type="submit" value="Update description + short desc"/>
     </form>
     
     <?php echo $desc;?>
@@ -348,11 +349,13 @@ date_default_timezone_set("UTC");
                   var res = JSON.parse(data); // data is string, convert to obj
                   var d = new Date();
                   var n = d.toLocaleTimeString();
+                  const randomColor = Math.floor(Math.random()*16777215).toString(16);
+                  const htmlColor = "#" + randomColor;
 
                   if(parseInt(res.code)) {
-                    myFrame.prepend(n + data + '<br>'); 
+                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + data + '</p>'); 
                   } else {
-                    myFrame.prepend(n + ' SUCCESS<br>'); 
+                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + 'SUCCESS</p>');
                   }
                },
                error: function(error){

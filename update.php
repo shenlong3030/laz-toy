@@ -128,6 +128,7 @@ if($accessToken && ($sku || $id)) {
             $product = setProductShortDescription($product, $shortdesc);
         } elseif($desc) {
             //echo "i9";
+            $product = setProductShortDescription($product, $desc);
             $product = setProductDescription($product, $desc);
         } elseif($brand) {
             //echo "i9";
@@ -160,7 +161,9 @@ if($accessToken && ($sku || $id)) {
         $resCode = $response["code"];
         
         if($resCode == "0") {
-            echo '<p style="background-color:lightgreen">'.$dateStr.' SUCCESS</p>';
+            $rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
+            $color = '#'.$rand[rand(6,15)].$rand[rand(6,15)].$rand[rand(6,15)].$rand[rand(6,15)].$rand[rand(6,15)].$rand[rand(6,15)];
+            echo '<p style="background-color:'.$color.'">'.$dateStr.' SUCCESS</p>';
         } else {
             echo '<p style="background-color:red">'.$dateStr.' ERROR: '. json_encode($response) .'</p>';
             myvar_dump($response);

@@ -53,6 +53,11 @@ if($accessToken && $sku) {
             break;
     }
     sleep(1);
+
+    if($response["code"]=="0") {
+        $response["message"]="SUCCESS";
+    }
+
     echo json_encode($response);
 }
 
