@@ -300,6 +300,10 @@ function setProductActive($product, $value) {
 //GET region
 //######################################
 
+function getProductName($product) {
+    return $product['Attributes'] ? $product['Attributes']["name"] : $product['attributes']["name"];
+}
+
 function getProductSkuIndex($product, $inputSku) {
     $pos = -1;
     foreach($product['skus'] as $skuIndex=>$sku) {

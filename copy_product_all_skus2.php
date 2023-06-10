@@ -12,6 +12,9 @@ $selectedVariations = val($_REQUEST["variations"], "");
 $newSkuPrefix = val($_REQUEST["new_sku_prefix"], "");
 $associatedSku = val($_REQUEST["associated_sku"], "");
 
+$models = val($_REQUEST['models'], null);
+$models = array_filter(explode("\n", str_replace("\r", "", $models)));
+
 $productName;
 $srcSkuList;
 $variationList;
@@ -27,29 +30,40 @@ if($sku) {
         $product = getProduct($accessToken, null, $itemId);
         $product = prepareProductForCreating($product, TRUE);
         $productSkus = $product['Skus'];
+        unset($product['Skus']); // remove all old SKU dict
 
         if($action) {
             $product = setProductAssociatedSku($product, $associatedSku);
             $product['Attributes']['name'] = $newName;
 
-            foreach ($productSkus as $i=>$item) {
-                $oldSku = $item['SellerSku']; 
-                // break if not selected for copying
-                if(!in_array($oldSku, $selectedVariations)){
-                    unset($product['Skus'][$i]);
-                    continue;
+            foreach($models as $j=>$model) {
+                foreach ($productSkus as $i=>$item) {
+                    $oldSku = $item['SellerSku']; 
+                    // break if not selected for copying
+                    if(!in_array($oldSku, $selectedVariations)){
+                        continue;
+                    }
+
+                    $typeSG = $item['saleProp']['compatibility_by_model'];
+                    unset($item['saleProp']); // remove all other saleProp
+                    $item['saleProp']['type_screen_guard'] = $typeSG;
+                    $item['saleProp']['compatibility_by_model'] = $model;
+
+                    //var_dump($item['saleProp']);
+                    
+                    // sku = "AAA__BBBBBBB__CCC.CC"  => postfix = CCC.CC
+                    preg_match('/_([^_]+$)/', $item['SellerSku'], $match);
+                    $postfix = count($match) ? $match[1] : "";
+                    $newSku = trim($newSkuPrefix) . $model . "." . trim($postfix);
+                    $newSku = strtoupper($newSku);
+                    $newSku = make_short_sku($newSku);
+                    $item['SellerSku'] = $newSku;
+                    $item['Status'] = "active";
+
+                    $product['Skus'][] = $item; // add new SKU dict
                 }
-
-                // sku = "AAA__BBBBBBB__CCC.CC"  => postfix = CCC.CC
-                preg_match('/_([^_]+$)/', $item['SellerSku'], $match);
-                $postfix = count($match) ? $match[1] : "";
-                $newSku = trim($newSkuPrefix) . trim($postfix);
-                $newSku = strtoupper($newSku);
-                $newSku = make_short_sku($newSku);
-
-                $product['Skus'][$i]['SellerSku'] = $newSku;
-                $product['Skus'][$i]['Status'] = "active";
             }
+            
             createProduct($accessToken, $product);
         } else {
             $associatedProduct = getProduct($accessToken, $associatedSku);
@@ -127,8 +141,10 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     NEW NAME: <input style="background: lightgreen" type="text" name="new_name" size="70" value="<?php echo $productName ?>"/><br/>
     NEW Associated Sku: <input style="background: lightgreen" type="text" name="associated_sku" size="70" value="<?php echo val($associatedSku, "") ?>"/><br/>
 <hr>
-    Select variations to copy <br/>
-
+    compatibility_by_model <br/>
+    <textarea class="nowrap" name="models" rows="6" cols="36"><?php echo implode("\n", $models);?></textarea>
+<hr>
+    select type_screen_guard <br/>
     <?php foreach($srcSkuList as $key=>$value):?>
         <input type="checkbox" name="variations[]" value="<?php echo $value;?>"/>
         <?php echo $variationList[$key]?>
