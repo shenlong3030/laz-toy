@@ -12,18 +12,11 @@ require_once('_main_functions.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MASS UPDATE</title>
-    <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
-    <script src="//code.jquery.com/jquery-1.11.1.js"></script>
-    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-    <!-- bxSlider Javascript file -->
-    <script src="./js/controls.js"></script>
-    <script src="./js/jquery.tablesorter.min.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <?php include('src/head.php');?>
 </head>
 
 <body>
-    <form action="massupdate.php" method="POST" target="responseIframe">
 <table>
     <tr>
      <th>SKUs</th>
@@ -36,7 +29,7 @@ require_once('_main_functions.php');
     </tr>
     <tbody>
         <tr>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"></textarea></td>
+            <td><textarea class="nowrap" id="txt_skus" rows="20" cols="30"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="50"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
@@ -46,16 +39,112 @@ require_once('_main_functions.php');
         </tr>
     </tbody>
 </table>
-<br><br>
-
-<input type="checkbox" name="preview" checked="1" value="1">Preview<br>
-<input type="submit">
+<br>
+<button id="btn_qty500">Qty =500</button><br>
+<br>
 <hr>
 
 <iframe id="responseIframe" name="responseIframe" width="1000" height="1000"></iframe>
 
 </div>
 </body>
+
+<script type="text/javascript">
+    //######### AJAX QUEUE ######################################################################################
+      var ajaxManager = (function() {
+        var requests = [];
+
+         return {
+            addReq:  function(opt) {
+                requests.push(opt);
+            },
+            removeReq:  function(opt) {
+            if( $.inArray(opt, requests) > -1 )
+                requests.splice($.inArray(opt, requests), 1);
+            },
+            run: function() {
+                var self = this,
+                    oriSuc;
+
+                if( requests.length ) {
+                    oriSuc = requests[0].complete;
+
+                    requests[0].complete = function() {
+                         if( typeof(oriSuc) === 'function' ) oriSuc();
+                         requests.shift();
+                         self.run.apply(self, []);
+                    };   
+
+                    $.ajax(requests[0]);
+                } else {
+                  self.tid = setTimeout(function() {
+                     self.run.apply(self, []);
+                  }, 1000);
+                }
+            },
+            stop:  function() {
+                requests = [];
+                clearTimeout(this.tid);
+            }
+         };
+      }());
+      ajaxManager.run(); 
+
+      function randomNumber(min, max) {
+        return parseInt(Math.random() * (max - min) + min);
+        }
+
+      function productUpdateWithAjaxQueue(params) {
+          // send response to this iframe
+          var myFrame = $("#responseIframe").contents().find('body'); 
+
+          ajaxManager.addReq({
+               type: 'POST',
+               url: 'update-api.php',
+               data: params,
+               success: function(data){
+                  var res = JSON.parse(data); // data is string, convert to obj
+                  var d = new Date();
+                  var n = d.toLocaleTimeString();
+
+                  const htmlColor = "#" + randomNumber(100,255).toString(16) + randomNumber(100,255).toString(16) + randomNumber(100,255).toString(16);
+
+                  // if(parseInt(res.code)) {
+                  //   myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + params['sku'] + '&nbsp;' + data + '</p>'); 
+                  // } else {
+                  //   myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + params['sku'] + '&nbsp;'  + 'SUCCESS</p>');
+                  // }
+
+                  if(parseInt(res.code)) {
+                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + JSON.stringify(res) + '&nbsp;' + JSON.stringify(params) + '</p>'); 
+                  } else {
+                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + res["message"] + '&nbsp;'+ JSON.stringify(params) + '</p>'); 
+                  }
+               },
+               error: function(error){
+                  myFrame.prepend(n + ' FAILED<br>'); 
+               }
+          });
+      }
+    //##########################################################################################################
+    $("#btn_qty500").click(function() {
+        var myFrame = $("#responseIframe").contents().find('body'); 
+        myFrame.prepend('######################################################<hr>');
+
+        var lines = $('#txt_skus').val().split('\n');
+        lines = lines.filter(function(e){return e}); //remove empty
+
+        do {
+            var set10 = lines.slice(0, 10);
+            var skus = set10.join(','); // create string sku,sku,sku
+            productUpdateWithAjaxQueue({ skus: skus, action: "massQty", qty: 500});
+
+            lines = lines.slice(10);
+        } while(lines.length);
+    });
+
+</script>
+
 </html>
 
 

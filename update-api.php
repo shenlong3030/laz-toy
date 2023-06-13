@@ -8,38 +8,49 @@ $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 $qty = isset($_REQUEST['qty']) ? $_REQUEST['qty'] : 0;
 $sprice = isset($_REQUEST['sprice']) ? $_REQUEST['sprice'] : 0;
 
-if($accessToken && $sku) {
+$skus = isset($_REQUEST['skus']) ? $_REQUEST['skus'] : 0;
+$skus = explode(",", $skus);
+
+if($accessToken) {
     $response = 0;
 
     switch ($action) {
         case 'status':
-            $product = getProduct($accessToken, $sku);
-            if($product) {
-                $product = prepareProductForUpdating($product);
-
-                if ($skustatus) {
-                    // force active product
-                    $product['Skus'][0]['Status'] = $skustatus;
-                    $response = saveProduct($accessToken, $product);
-                }
-            } else {
-                $response = array(
-                        "code" => "1",
-                        "message" => "Invalid sku"
-                    );
-            }
+            $product = getTemplateProduct($sku, $skustatus);
+            $response = saveProduct($accessToken, $product);
             break;
 
         case 'qty':
             $response = updateQuantityWithAPI($accessToken, $sku, $qty);
             
             // force active product
-            if($qty == 500) {
-                $product = getProduct($accessToken, $sku);
-                if($product) {
-                    $product = prepareProductForUpdating($product);
-                    $product['Skus'][0]['Status'] = 'active';
-                    $response['reactive'] = saveProduct($accessToken, $product);
+            if($qty > 0) {
+                $product = getTemplateProduct($sku, "active");
+                $r = saveProduct($accessToken, $product);
+                if($r["code"]=="0") {
+                    // do nothing
+                } else {
+                    $response["code"] = $r["code"]; // save error code
+                    $response['message'] = "RE-ACTIVE FAILED";
+                    $response['reactive_failed_skus'][] = $sku;
+                }
+            }
+            break;
+
+        case 'massQty':
+            $response = massUpdateQuantityWithAPI($accessToken, $skus, $qty);
+            //force active product
+            if($qty > 0) {
+                foreach($skus as $i => $sku) {
+                    $product = getTemplateProduct($sku, "active");
+                    $r = saveProduct($accessToken, $product);
+                    if($r["code"]=="0") {
+                        // do nothing
+                    } else {
+                        $response["code"] = $r["code"]; // save error code
+                        $response['message'] = "RE-ACTIVE FAILED";
+                        $response['reactive_failed_skus'][] = $sku;
+                    }
                 }
             }
             break;
@@ -49,10 +60,9 @@ if($accessToken && $sku) {
             break;
         
         default:
-            # code...
+            echo "NO ACTION";
             break;
     }
-    sleep(1);
 
     if($response["code"]=="0") {
         $response["message"]="SUCCESS";

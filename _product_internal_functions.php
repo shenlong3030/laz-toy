@@ -300,6 +300,17 @@ function setProductActive($product, $value) {
 //GET region
 //######################################
 
+function getTemplateProduct($sku, $status) {
+    $product = [];
+    $product['Attributes'] = [];
+    $product['Skus'] = [];
+    $product['Skus'][0]['SellerSku'] = $sku;
+    $product['Skus'][0]['Status'] = $status;
+    $product['PrimaryCategory'] = [];
+    return $product;
+}
+
+
 function getProductName($product) {
     return $product['Attributes'] ? $product['Attributes']["name"] : $product['attributes']["name"];
 }

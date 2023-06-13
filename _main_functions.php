@@ -934,6 +934,24 @@ function updateQuantityWithAPI($accessToken, $sku, $qty) {
     return $response;
 }
 
+function massUpdateQuantityWithAPI($accessToken, $skus, $qty) {
+    $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Product><Skus>';
+    foreach($skus as $i => $sku) {
+        $payload .= '<Sku><SellerSku>'.$sku.'</SellerSku><Quantity>'.$qty.'</Quantity></Sku>';
+    }
+    $payload .= '</Skus></Product></Request>';
+    //echo htmlentities( $payload);
+
+    $c = getClient();
+    $request = getRequest('/product/price_quantity/update');
+    
+    $request->addApiParam('payload', $payload);
+    $response = $c->execute($request, $accessToken);
+    //var_dump($response);
+    $response = json_decode($response, true);
+    return $response;
+}
+
 function updatePricesWithAPI($accessToken, $sku, $price, $sale_price, $fromdate = "2020-01-01", $todate = "2028-01-01") {
     $pricePayload = '';
     $salePayload = '';
