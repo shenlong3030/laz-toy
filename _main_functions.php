@@ -491,7 +491,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $qtyForm = '<div>
             <input name="sku" type="hidden" value="'.$sellersku.'"/>
             <input name="qty" type="text" size="4" value="'.$qty.'"/>
-            <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="+500">+500</button>
+            <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="=500">=500</button>
             <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="=0">=0</button></div>';
             
             $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe">
@@ -523,8 +523,8 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             /* cột 4 */echo '<td class="editmode name on padding info">'.$nameLink.$lazEditHtml.'</td>';
             /* cột 5 */echo '<td class="editmode name form">'.$nameForm.'</td>';
             
-            /* cột 6 */echo '<td class="info">'.$model.'</td>';
-            /* cột 7 */echo '<td class="info">'.$color.'</td>';
+            /* cột 6 */echo '<td class="model info">'.$model.'</td>';
+            /* cột 7 */echo '<td class="color info">'.$color.'</td>';
             /* cột 8 */echo '<td class="info">'.$otherAttributes.'</td>';
             
             // visible
@@ -538,7 +538,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             /* cột 10 */
             // edit button + del button
             echo '<td>
-                <a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>
+                <a target="" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>
                 <a target="_blank" href="'.$delLink.'" class="fa fa-trash" style="color:green;display:none" tabindex="-1"></a>
                 </td>';
 

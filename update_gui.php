@@ -81,8 +81,8 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=$s
 $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
 $moveToLink = "https://$_SERVER[HTTP_HOST]/lazop/movechild.php?sku=$sku";
-$copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__X1&associated_sku=$sku";
-$copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?sku=CL.ALL__MAU.XX__X1&associated_sku=$sku";
+$copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__KT&associated_sku=$sku";
+$copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?sku=CL.ALL__MAU.XX__KT&associated_sku=$sku";
 
 ?>
 
@@ -117,6 +117,8 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <button id="btn_copy_url">Copy LAZADA urls</button>
     <button id="btn_del">DEL</button>
     <button id="btn_edit_price">Edit price</button>
+    <button id="btn_copy_models">Copy models</button>
+    <button id="btn_copy_colors">Copy colors</button>
     <?php echo printProducts(array($sibling), false, $sku);?>
     </div>
 <?php } ?>
@@ -204,7 +206,9 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <h3>Product Images</h3> <textarea id="imagelinks" class="nowrap" name="product_images" rows="6" cols="80"><?php echo implode("\n", $productImages);?></textarea>
     <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
     <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
+    
     <input type="submit" name="update-image" value="Update images"/>
+    <a href="https://github.com/shenlong3030/temp/issues/new" target="_blank" rel="noopener">Git</a>
 
     <br>
     <input type="button" id="btn_update_children" value="Update all children"/>
@@ -365,7 +369,7 @@ date_default_timezone_set("UTC");
       }
     //##########################################################################################################
     
-    $("button[name='qtyaction'][value='+500']").click(function() {
+    $("button[name='qtyaction'][value='=500']").click(function() {
         $(this).parent().find('input[name=qty]').val('500'); 
         var sku = $(this).parent().find('input[name=sku]').val(); 
         productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: 500});
@@ -429,6 +433,24 @@ date_default_timezone_set("UTC");
     $('#btn_copy_sku').click(function (e) {
       var text = "";
       $("#tableProducts").find("td.sku").each(function(){
+          text = text + $(this).text() + "\n";
+      });
+      console.log("copy text : " + text );
+      copyToClipBoard(text);
+    });
+
+    $('#btn_copy_models').click(function (e) {
+      var text = "";
+      $("#tableProducts").find("td.model").each(function(){
+          text = text + $(this).text() + "\n";
+      });
+      console.log("copy text : " + text );
+      copyToClipBoard(text);
+    });
+
+    $('#btn_copy_colors').click(function (e) {
+      var text = "";
+      $("#tableProducts").find("td.color").each(function(){
           text = text + $(this).text() + "\n";
       });
       console.log("copy text : " + text );
