@@ -155,7 +155,15 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <input type="hidden" name="action" value="create"/>
     <input type="submit" value="COPY"/>
     </form>
-
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 <?php
 
 // Pay no attention to this statement.
