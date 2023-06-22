@@ -1,9 +1,7 @@
 <?php
+include_once "src/show_errors.php";
 include_once "check_token.php";
 require_once('_main_functions.php');
-
-//include_once "src/show_errors.php";
-
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +31,7 @@ require_once('_main_functions.php');
             <td><textarea class="nowrap" name="col[]" rows="20" cols="50"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
+            <td><textarea class="nowrap" name="txt_prices" rows="20" cols="10"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="50"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="5"></textarea></td>
         </tr>
@@ -41,6 +39,7 @@ require_once('_main_functions.php');
 </table>
 <br>
 <button id="btn_qty500">Qty =500</button><br>
+<button id="btn_updatePrice">Sale price = </button><input id="sprice" type="text" name="sprice"><br>
 <br>
 <hr>
 
@@ -129,17 +128,34 @@ require_once('_main_functions.php');
     //##########################################################################################################
     $("#btn_qty500").click(function() {
         var myFrame = $("#responseIframe").contents().find('body'); 
-        myFrame.prepend('######################################################<hr>');
+        myFrame.prepend('### QTY=500 ###################################################<hr>');
 
         var lines = $('#txt_skus').val().split('\n');
         lines = lines.filter(function(e){return e}); //remove empty
 
         do {
-            var set10 = lines.slice(0, 10);
-            var skus = set10.join(','); // create string sku,sku,sku
-            productUpdateWithAjaxQueue({ skus: skus, action: "massQty", qty: 500});
+            var set10 = lines.slice(0, 10); // get 10 left
+            lines = lines.slice(10);        // renove 10 left 
+            var skus = set10.join(',');     // create string sku,sku,sku
 
-            lines = lines.slice(10);
+            productUpdateWithAjaxQueue({ skus: skus, action: "massQty", qty: 500});
+        } while(lines.length);
+    });
+
+    $("#btn_updatePrice").click(function() {
+        var myFrame = $("#responseIframe").contents().find('body'); 
+        myFrame.prepend('### UDPATE PRICES ###################################################<hr>');
+
+        var lines = $('#txt_skus').val().split('\n');
+        lines = lines.filter(function(e){return e}); //remove empty
+        var sprice = $('#sprice').val();
+
+        do {
+            var set10 = lines.slice(0, 10); // get 10 left
+            lines = lines.slice(10);        // renove 10 left 
+            var skus = set10.join(',');     // create string sku,sku,sku
+
+            productUpdateWithAjaxQueue({ skus: skus, action: "massPrice", sprice: sprice});
         } while(lines.length);
     });
 

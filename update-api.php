@@ -55,6 +55,10 @@ if($accessToken) {
             }
             break;
 
+        case 'massPrice':
+            $response = massUpdatePriceWithAPI($accessToken, $skus, $sprice);
+            break;
+
         case 'price':
             $response = updatePricesWithAPI($accessToken, $sku, null, $sprice);
             break;

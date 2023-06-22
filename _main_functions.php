@@ -952,7 +952,29 @@ function massUpdateQuantityWithAPI($accessToken, $skus, $qty) {
     return $response;
 }
 
-function updatePricesWithAPI($accessToken, $sku, $price, $sale_price, $fromdate = "2020-01-01", $todate = "2028-01-01") {
+function massUpdatePriceWithAPI($accessToken, $skus, $sale_price, $fromdate = "2021-01-01", $todate = "2030-01-01") {
+    $price = intval($sale_price * 1.2);
+
+    $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Product><Skus>';
+    foreach($skus as $i => $sku) {
+        $payload .= '<Sku><SellerSku>'.$sku.'</SellerSku>';
+        $payload .= '<Price>'.$price.'</Price>'.'<SalePrice>'.$sale_price.'</SalePrice>'.'<SaleStartDate>'.$fromdate.'</SaleStartDate><SaleEndDate>'.$todate.'</SaleEndDate>';
+        $payload .= '</Sku>';
+    }
+    $payload .= '</Skus></Product></Request>';
+    //echo htmlentities( $payload);
+
+    $c = getClient();
+    $request = getRequest('/product/price_quantity/update');
+    
+    $request->addApiParam('payload', $payload);
+    $response = $c->execute($request, $accessToken);
+    //var_dump($response);
+    $response = json_decode($response, true);
+    return $response;
+}
+
+function updatePricesWithAPI($accessToken, $sku, $price, $sale_price, $fromdate = "2021-01-01", $todate = "2030-01-01") {
     $pricePayload = '';
     $salePayload = '';
     
