@@ -551,7 +551,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $thumbNailElements = array();
             $urlElements = array();
 
-            $imgs = array_merge($productImages, array("https://a.b"), $imgs);
+            $imgs = array_merge($productImages, array("https://google.com/images"), $imgs);
             if(is_array($imgs)) {
 
                 // product_image column

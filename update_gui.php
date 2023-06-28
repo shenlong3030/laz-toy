@@ -150,30 +150,29 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
 <input id="<?php echo $sku;?>" type="checkbox" data-toggle="toggle" <?php echo $status;?>>
 
 <hr>
-    <form action="update.php" method="POST" name="nameForm" target="responseIframe">
+    <div>
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
     Name <input type="text" name="name" size="80" value="<?php echo $name;?>" />
-    <input type="submit" value="Update name"/>
-    </form>
+    <button id="btn_updatename">Update name</button>
+    </div>
 <hr>
-    <form action="update.php" method="POST" name="pricesForm" target="responseIframe">
+    <div>
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     Price <input type="text" name="price" value="<?php echo $price;?>" /> >> 
     <input type="text" name="sale_price" value="<?php echo $sprice;?>" />
     From <input type="text" name="fromdate" value="<?php echo $fromdate;?>" />
     To <input type="text" name="todate" value="<?php echo $todate;?>" /><br>
-    <input type="submit" value="Update prices"/>
-    </form>
+    <button id="btn_updateprice">Update Price</button>
+    </div>
 <hr>
-    <form action="update.php" method="POST" name="variationForm" target="responseIframe">
+    <div>
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
-    <input type="hidden" id="change-attr" name="change-attr" value="1">
     Variation <input type="text" name="variation" value="<?php echo $variation;?>" />
     type_screen_guard <input type="text" name="type_screen_guard" value="<?php echo $type_screen_guard;?>" />
     compatibility_by_model <input type="text" name="compatibility_by_model" value="<?php echo $model;?>" />
     color_family <input type="text" name="color_family" value="<?php echo $color;?>" />
-    <input type="submit" value="Update"/>
-    </form>
+    <button id="btn_updateattr">Update</button>
+    </div>
 <hr>
     <form action="update_color_thumbnail_gui.php" method="GET" name="colorThumbnailForm" target="_blank">
     <input type="hidden" id="item_id" name="item_id" value="<?php echo $itemId;?>">
@@ -201,36 +200,28 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
         <li>10100418 : miếng dán đồng hồ</li>
     </ul>
 <hr>
-    <form action="update.php" method="POST" name="mainImageForm" target="responseIframe">
+    <div>
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     <h3>Product Images</h3> <textarea id="imagelinks" class="nowrap" name="product_images" rows="6" cols="80"><?php echo implode("\n", $productImages);?></textarea>
     <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
-    <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
-    
-    <input type="submit" name="update-image" value="Update images"/>
     <a href="https://github.com/shenlong3030/temp/issues/new" target="_blank" rel="noopener">Git</a>
-
-    <br>
-    <input type="button" id="btn_update_children" value="Update all children"/>
-    <input type="button" id="btn_copy_single_line" value="Copy images single line"/>
-    </form>
+    <button id="btn_updateProductImages">Update product images</button>
+    </div>
 <?php
     foreach($productImages as $image) {
         echo htmlLinkImage($image);
     }
 ?>
 <hr>
-    <form action="update.php" method="POST" name="imageForm" target="responseIframe">
+    <div>
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     <h3>SKU Images</h3> <textarea id="imagelinks" class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
     <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
-    <a title="Editor" href="https://github.com/shenlong3030/temp/issues/4" target="_blank" rel="noopener">Upload images</a>
-    <input type="submit" name="update-image" value="Update images"/>
-
-    <br>
+    <a href="https://github.com/shenlong3030/temp/issues/new" target="_blank" rel="noopener">Git</a>
+    <button id="btn_updateimages">Update images</button>
     <input type="button" id="btn_update_children" value="Update all children"/>
     <input type="button" id="btn_copy_single_line" value="Copy images single line"/>
-    </form>
+    </div>
 <?php
     foreach($images as $image) {
         echo htmlLinkImage($image);
@@ -241,16 +232,6 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
     Video <input type="text" name="video" size="70" value="<?php echo $video;?>" />
     <input type="submit" value="Update video link"/>
-    </form>
-<hr>
-    <form action="update.php" method="POST" name="qtyForm" target="responseIframe">
-    <input type="hidden" name="sku" value="<?php echo $sku;?>" />
-    Quantity <input type="text" name="qty" value="<?php echo $qty;?>" />
-
-    <! –– API need qtyaction ––>
-    <input type="hidden" name="qtyaction" value="update"/>
-
-    <input type="submit" value="Update quantity"/>
     </form>
 
 <hr>
@@ -274,16 +255,16 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     </form>
     
 <hr> 
+    <div>
     <h3>Description:</h3>
-    <form action="update.php" method="POST" name="descForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     <textarea class="nowrap" name="desc" rows="2" cols="80"><?php echo $desc;?></textarea>
     <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
-    <input type="submit" value="Update description + short desc"/>
-    </form>
+    <button id="btn_updatedesc">Update description + short desc</button>
+    </div>
     
+    <div>
     <?php echo $desc;?>
-    
     </div>
 
 <hr>
@@ -389,6 +370,84 @@ date_default_timezone_set("UTC");
       }
       event.stopPropagation();
     });
+
+    //### UPDATE NAME AJAX ###
+    $('input[name="name"]').keypress(function(event){
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){ // press ENTER
+          var s = $(this).parent().find('input[name=sku]').val(); 
+          var n = $(this).parent().find('input[name="name"]').val(); 
+          productUpdateWithAjaxQueue({ sku: s, action: "name", name: n});
+        }
+        event.stopPropagation();
+    });
+    $('#btn_updatename').click(function() {
+        var s = $(this).parent().find('input[name=sku]').val(); 
+        var n = $(this).parent().find('input[name="name"]').val(); 
+        productUpdateWithAjaxQueue({ sku: s, action: "name", name: n});
+    });
+    //###########################
+
+
+    //### UPDATE PRICE AJAX ###
+    $('input[name="sale_price"]').keypress(function(event){
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){ // press ENTER
+          var s = $(this).parent().find('input[name=sku]').val(); 
+          var sprice = $(this).parent().find('input[name="sale_price"]').val(); 
+          productUpdateWithAjaxQueue({ sku: s, action: "price", sprice: sprice});
+        }
+        event.stopPropagation();
+    });
+    $('#btn_updatename').click(function() {
+        var s = $(this).parent().find('input[name=sku]').val(); 
+        var sprice = $(this).parent().find('input[name="sale_price"]').val(); 
+        productUpdateWithAjaxQueue({ sku: s, action: "price", sprice: sprice});
+    });
+    //###########################
+
+
+    //### UPDATE ATTRIBUTES ###
+    $('#btn_updateattr').click(function() {
+        var s = $(this).parent().find('input[name=sku]').val(); 
+        var variation = $(this).parent().find('input[name="variation"]').val(); 
+        var type_screen_guard = $(this).parent().find('input[name="type_screen_guard"]').val(); 
+        var compatibility_by_model = $(this).parent().find('input[name="compatibility_by_model"]').val(); 
+        var color_family = $(this).parent().find('input[name="color_family"]').val(); 
+        productUpdateWithAjaxQueue({ sku: s, action: "attr", 
+            variation: variation, 
+            type_screen_guard:type_screen_guard,
+            compatibility_by_model:compatibility_by_model,
+            color_family:color_family
+        });
+    });
+    //###########################
+
+
+    //### UPDATE DESCRIPTION ###
+    $('#btn_updatedesc').click(function() {
+        var s = $(this).parent().find('input[name=sku]').val(); 
+        var desc = $(this).parent().find('textarea[name="desc"]').val(); 
+        productUpdateWithAjaxQueue({ sku: s, action: "description", desc: desc});
+    });
+    //###########################
+
+
+    //### UPDATE IMAGES ###
+    $('#btn_updateimages').click(function() {
+        var s = $(this).parent().find('input[name=sku]').val(); 
+        var images = $(this).parent().find('textarea[name="images"]').val(); 
+        productUpdateWithAjaxQueue({ sku: s, action: "images", images: images});
+    });
+
+    $('#btn_updateProductImages').click(function() {
+        var s = $(this).parent().find('input[name=sku]').val(); 
+        var pimages = $(this).parent().find('textarea[name="product_images"]').val(); 
+        productUpdateWithAjaxQueue({ sku: s, action: "pimages", pimages: pimages});
+    });
+    //###########################
+
+
     $('input[type=checkbox][data-toggle=toggle]').change(function() {
         var status;
         if(this.checked) {
