@@ -138,7 +138,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <input type="submit" value="Change SKU"/>
     </form>
 
-    <a style="color:red" href="<?php echo $addChildLink?>" target="_blank">Add Child</a>
+    <a id="linkAddChild" style="color:red" href="">Add Child</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyLink?>" target="_blank">Copy</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyToLink?>" target="_blank">Copy info to</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Copy all SKU</a>
@@ -151,8 +151,8 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
 
 <hr>
     <div>
-    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
-    Name <input type="text" name="name" size="80" value="<?php echo $name;?>" />
+    <input type="hidden" name="sku" value="<?php echo $sku;?>">
+    Name <input id="name" type="text" name="name" size="80" value="<?php echo $name;?>" />
     <button id="btn_updatename">Update name</button>
     </div>
 <hr>
@@ -166,7 +166,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     </div>
 <hr>
     <div>
-    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    <input type="hidden" name="sku" value="<?php echo $sku;?>">
     Variation <input type="text" name="variation" value="<?php echo $variation;?>" />
     type_screen_guard <input type="text" name="type_screen_guard" value="<?php echo $type_screen_guard;?>" />
     compatibility_by_model <input type="text" name="compatibility_by_model" value="<?php echo $model;?>" />
@@ -182,13 +182,13 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     </form>
 <hr>
     <form action="update.php" method="POST" name="brandForm" target="responseIframe">
-    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    <input type="hidden" name="sku" value="<?php echo $sku;?>">
     Brand <input type="text" name="brand" value="<?php echo $brand;?>" />
     <input type="submit" value="Update brand"/>
     </form>
 <hr>
     <form action="update.php" method="POST" name="categoryForm" target="responseIframe">
-    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    <input type="hidden" name="sku" value="<?php echo $sku;?>">
     Primary category <input type="text" name="category" value="<?php echo $category;?>" />
     <input type="submit" value="Update category"/>
     </form>
@@ -229,7 +229,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
 ?>
 <hr>
     <form action="update.php" method="POST" name="videoForm" target="responseIframe">
-    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
+    <input type="hidden" name="sku" value="<?php echo $sku;?>">
     Video <input type="text" name="video" size="70" value="<?php echo $video;?>" />
     <input type="submit" value="Update video link"/>
     </form>
@@ -379,7 +379,7 @@ date_default_timezone_set("UTC");
           var n = $(this).parent().find('input[name="name"]').val(); 
           productUpdateWithAjaxQueue({ sku: s, action: "name", name: n});
         }
-        event.stopPropagation();
+        //event.stopPropagation();
     });
     $('#btn_updatename').click(function() {
         var s = $(this).parent().find('input[name=sku]').val(); 
@@ -397,7 +397,6 @@ date_default_timezone_set("UTC");
           var sprice = $(this).parent().find('input[name="sale_price"]').val(); 
           productUpdateWithAjaxQueue({ sku: s, action: "price", sprice: sprice});
         }
-        event.stopPropagation();
     });
     $('#btn_updatename').click(function() {
         var s = $(this).parent().find('input[name=sku]').val(); 
@@ -446,6 +445,13 @@ date_default_timezone_set("UTC");
         productUpdateWithAjaxQueue({ sku: s, action: "pimages", pimages: pimages});
     });
     //###########################
+
+    $("#linkAddChild").click(function() {
+        var s = $('#sku').val(); 
+        var n = $('#name').val(); 
+        var url = "addchild_gui.php?sku=" + s + "&name=" + n;
+        window.open(url, '_blank');
+    }); 
 
 
     $('input[type=checkbox][data-toggle=toggle]').change(function() {
