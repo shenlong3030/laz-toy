@@ -115,9 +115,9 @@ require_once('_main_functions.php');
                   // }
 
                   if(parseInt(res.code)) {
-                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + JSON.stringify(res) + '&nbsp;' + JSON.stringify(params) + '</p>'); 
+                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + JSON.stringify(res) + '<br>@@@<br>' + JSON.stringify(params) + '</p>'); 
                   } else {
-                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + res["message"] + '&nbsp;'+ JSON.stringify(params) + '</p>'); 
+                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + res["message"] + '<br>@@@<br>' + JSON.stringify(params) + '</p>'); 
                   }
                },
                error: function(error){
@@ -130,7 +130,7 @@ require_once('_main_functions.php');
         var myFrame = $("#responseIframe").contents().find('body'); 
         myFrame.prepend('### QTY=500 ###################################################<hr>');
 
-        var lines = $('#txt_skus').val().split('\n');
+        var lines = $('#txt_skus').val().replaceAll("#N/A","").split('\n');
         lines = lines.filter(function(e){return e}); //remove empty
 
         do {
@@ -146,7 +146,7 @@ require_once('_main_functions.php');
         var myFrame = $("#responseIframe").contents().find('body'); 
         myFrame.prepend('### UDPATE PRICES ###################################################<hr>');
 
-        var lines = $('#txt_skus').val().split('\n');
+        var lines = $('#txt_skus').val().replaceAll("#N/A","").split('\n');
         lines = lines.filter(function(e){return e}); //remove empty
         var sprice = $('#sprice').val();
 
