@@ -87,7 +87,10 @@ function getOrdersByOffset($accessToken, $status = 'pending', $offset = 0, $limi
 
             foreach ($list as $index => $order) {
                 $orderId = $order['order_id'];
-                $list[$index]['orderItems'] = $ordersItems[$orderId];
+                $list[$index]['order_items'] = $ordersItems[$orderId];
+
+                $extraInfo = getOrderItemsInfo($ordersItems[$orderId]);
+                $list[$index] = array_merge($list[$index], $extraInfo);
             }
         }
     } else {
@@ -99,45 +102,51 @@ function getOrdersByOffset($accessToken, $status = 'pending', $offset = 0, $limi
 
 function getOrderItemsInfo($data) {
     $info = array();
-    $info["name"] = "";
-    $info["tracking_code"] = "";
-    $info["shipping_provider_type"] = "";
-    $info["img"] = "";
-    $info["buyer_id"] = "";
-    $info["package_id"] = "";
- 
+    $info["order_items_name"] = "";
+    $info["order_items_img"] = "";
+    
+    $info["order_items_tracking_code"] = "";
+    $info["order_items_shipping_provider_type"] = "";
+    $info["order_items_buyer_id"] = "";
+    $info["order_items_package_id"] = "";
+
     foreach($data as $index=>$item) {
+        $price = " Giá:" . $item['paid_price'];
+
+        //ex: https://www.lazada.vn/products/i211252287-s9391975164.html?urlFlag=true&mp=1
+        $product_detail_url = $item['product_detail_url']; 
+        preg_match('/i(\d+)[^\d]/', $product_detail_url, $matches);
+        $item_id = count($matches) ? $matches[1] : "";
+
         // extract color or model from 'Variation'
         $variation = make_short_order_variation($item['variation']);
         preg_match('/KV(\d+)/', $item['sku'], $m);
         $kiotid = count($m)==2 ? $m[1] : "";
 
         $sellersku = $item['sku'];
-        $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sellersku";
+        $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?item_id=".$item_id."&sku=$sellersku";
         $editHtml = '<a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>';
-
         if(!empty($kiotid)) {
             $kiotid = " Kiotviet:" . $kiotid;
         }
-        $price = " Giá:" . $item['paid_price'];
 
-        $info["name"] .= '<p class="'.$item['status'].'">'.$item['name'].' '.$variation.$price.$kiotid.$editHtml.'</p>';
+        $info["order_items_name"] .= '<p item-id="'.$item['order_item_id'].'" class="'.$item['status'].'"><a href="'.$product_detail_url.'">'.$item['name'].' '.$variation.$price.$kiotid.$editHtml.'</a></p>';
         
-        if(empty($info["tracking_code"])) {
-            $info["tracking_code"] = $item['tracking_code'];
+        if(empty($info["order_items_tracking_code"])) {
+            $info["order_items_tracking_code"] = $item['tracking_code'];
         }
-        if(empty($info["shipping_provider_type"])) {
-            $info["shipping_provider_type"] = $item['shipping_provider_type'];
+        if(empty($info["order_items_shipping_provider_type"])) {
+            $info["order_items_shipping_provider_type"] = $item['shipping_provider_type'];
         }
-        if(empty($info["buyer_id"])) {
-            $info["buyer_id"] = $item['buyer_id'];
+        if(empty($info["order_items_buyer_id"])) {
+            $info["order_items_buyer_id"] = $item['buyer_id'];
         }
-        if(empty($info["package_id"])) {
-            $info["package_id"] = $item['package_id'];
+        if(empty($info["order_items_package_id"])) {
+            $info["order_items_package_id"] = $item['package_id'];
         }
 
         // show image of all items, include canceled items
-        $info["img"] .= '<a target="_blank" href="'.$item['product_main_image'].'"><img border="0" src="'.$item['product_main_image'].'" height="50"></a><br>';
+        $info["order_items_img"] .= '<a target="_blank" href="'.$item['product_main_image'].'"><img border="0" src="'.$item['product_main_image'].'" height="50"></a><br>';
     }
     return $info;
 }
@@ -155,10 +164,6 @@ function getOrdersItems($accessToken, $orderIds){
     
     // re-format array, 'order_id' => 'order_items.value'
     $ordersItems = array_column($data, "order_items", "order_id");
-
-    // re-map array, 'order_id' => 'getOrderItemsInfo(order_items.value)'
-    $ordersItems =array_map('getOrderItemsInfo', $ordersItems);
-
     return $ordersItems;
 }
 
@@ -199,31 +204,31 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
 
         echo '<td class="order"><a target="_blank" href="https://sellercenter.lazada.vn/apps/order/detail?tradeOrderId='.$orderId.'">'.$orderNumber.'</a></td>';
 
-        if(isset($order['orderItems'])) {
-            $item = $order['orderItems'];
+        if(isset($order['order_items'])) { 
+            //myvar_dump($order['order_items']);
 
             // kiem tra hoa toc
-            preg_match('/p2p/i', $item['shipping_provider_type'], $m);
+            preg_match('/p2p/i', $order['order_items_shipping_provider_type'], $m);
             $shipType = count($m) ? '<span style="color:red">Hỏa tốc </span>' : '';
 
-            echo '<td class="order_tracking_code">'.$shipType.$item['tracking_code'].'</td>';
+            echo '<td class="order_tracking_code">'.$shipType.$order['order_items_tracking_code'].'</td>';
             echo '<td class"order_tracking_link"></td>'; // tracking code link cell
             
             echo "<td class='order_address'>{$address}</td>"; // $address cell
             
-            $chatLink = 'https://sellercenter.lazada.vn/apps/im/window?isWindowOpen=true&buyerId=' . $item['buyer_id'];
+            $chatLink = 'https://sellercenter.lazada.vn/apps/im/window?isWindowOpen=true&buyerId=' . $order['order_items_buyer_id'];
             $chatHtml = '<a tabIndex="-1" target="_blank" href="'.$chatLink.'" class="message-icon fa fa-comment" style="color:deepskyblue"></a>';
 
             echo '<td class="order_cus_name">'.$cusName.$chatHtml.'</td>';
             echo '<td class="order_cus_phone"><b>'.$cusPhone.'</b></td>';
-            echo '<td class="order_item_names">'.$item['name'].'</td>';
+            echo '<td class="order_item_names">'.$order['order_items_name'].'</td>';
 
             $repackHtml = "";
-            if(!empty($item['package_id'])) {
-                $repackLink = "https://$_SERVER[HTTP_HOST]/lazop/order-api.php?action=repack&package_id={$item['package_id']}";
+            if(!empty($order['order_items_package_id'])) {
+                $repackLink = "https://$_SERVER[HTTP_HOST]/lazop/order-api.php?action=repack&package_id={$order['order_items_package_id']}";
                 $repackHtml = '<a tabIndex="-1" target="_blank" href="'.$repackLink.'" class="fa fa-reply" style="color:gray"></a>';
             }
-            echo '<td class="order_item_images">'.$item["img"].'</td>';
+            echo '<td class="order_item_images">'.$order["order_items_img"].'</td>';
             echo '<td class="order_paymentMethod">'.$paymentMethod.$repackHtml.'</td>';
         }
         
@@ -386,7 +391,7 @@ function getProduct($accessToken, $sku, $item_id=null, $name=null){
             $product = getProductWithSingleSku($product, $sku);
         }
     } else {
-        //myvar_dump($response);
+        myvar_dump($response);
     }
 
     return $product;

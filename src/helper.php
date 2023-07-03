@@ -16,6 +16,12 @@ function debug_log($val) {
     }
 }
 
+function myvar_dump($val) {
+    echo "<br><br>";
+    var_dump($val);
+    echo "<br><br>";
+}
+
 
 function is_url($url) {
     $path = parse_url($url, PHP_URL_PATH);

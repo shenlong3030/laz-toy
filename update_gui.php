@@ -30,15 +30,19 @@ $color_thumbnail = "";
 $type_screen_guard = "";
 
 if($sku || $itemId) {
-    $product = getProduct($accessToken, $sku, $itemId, $qname);
+    $product = $sibling = null;
+    if(empty($itemId)) {
+        $product = getProduct($accessToken, $sku, null, $qname);
+        $itemId = getProductItemId($product);
+        $sibling = getProduct($accessToken, null, $itemId, null);
+    } else {
+        $product = getProduct($accessToken, null, $itemId, $qname);
+        $sibling = $product;
+    }
+    
     debug_log($product);
 
     if($product) {
-        if(empty($itemId)) {
-            $itemId = getProductItemId($product);
-        }
-        $sibling = getProduct($accessToken, null, $itemId, null);;
-
         $i = getProductSkuIndex($product, $sku);
         $images = array_filter($product['skus'][$i]['Images']);
 
