@@ -1,5 +1,5 @@
 <?php
-include_once "src/show_errors.php";
+//include_once "src/show_errors.php";
 include_once "check_token.php";
 require_once('_main_functions.php');
 ?>
@@ -128,7 +128,9 @@ require_once('_main_functions.php');
     //##########################################################################################################
     $("#btn_qty500").click(function() {
         var myFrame = $("#responseIframe").contents().find('body'); 
-        myFrame.prepend('### QTY=500 ###################################################<hr>');
+        var d = new Date();
+        var n = d.toLocaleTimeString();
+        myFrame.prepend('### ' + n + ' QTY=500 ###################################################<hr>');
 
         var lines = $('#txt_skus').val().replaceAll("#N/A","").split('\n');
         lines = lines.filter(function(e){return e}); //remove empty
@@ -144,7 +146,9 @@ require_once('_main_functions.php');
 
     $("#btn_updatePrice").click(function() {
         var myFrame = $("#responseIframe").contents().find('body'); 
-        myFrame.prepend('### UDPATE PRICES ###################################################<hr>');
+        var d = new Date();
+        var n = d.toLocaleTimeString();
+        myFrame.prepend('### ' + n + ' UDPATE PRICES ###################################################<hr>');
 
         var lines = $('#txt_skus').val().replaceAll("#N/A","").split('\n');
         lines = lines.filter(function(e){return e}); //remove empty

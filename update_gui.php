@@ -402,7 +402,7 @@ date_default_timezone_set("UTC");
           productUpdateWithAjaxQueue({ sku: s, action: "price", sprice: sprice});
         }
     });
-    $('#btn_updatename').click(function() {
+    $('#btn_updateprice').click(function() {
         var s = $(this).parent().find('input[name=sku]').val(); 
         var sprice = $(this).parent().find('input[name="sale_price"]').val(); 
         productUpdateWithAjaxQueue({ sku: s, action: "price", sprice: sprice});
