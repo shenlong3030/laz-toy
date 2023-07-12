@@ -1,5 +1,6 @@
 <?php
 include_once "check_token.php";
+//include_once "src/show_errors.php";
 require_once('_main_functions.php');
 
 $sku = isset($_REQUEST['sku']) ? $_REQUEST['sku'] : 0;
@@ -18,6 +19,8 @@ $type_screen_guard = isset($_REQUEST['type_screen_guard']) ? $_REQUEST['type_scr
 $compatibility_by_model = isset($_REQUEST['compatibility_by_model']) ? $_REQUEST['compatibility_by_model'] : "";
 $color_family = isset($_REQUEST['color_family']) ? $_REQUEST['color_family'] : "";
 
+$category = val($_REQUEST['category']);
+
 $input = val($_REQUEST['images']);
 $images = array_filter(explode("\n", str_replace("\r", "", $input))); // split by newline
 $temp = array();
@@ -34,6 +37,11 @@ foreach($pimages as $image) {
 }
 $pimages = array_filter($temp);
 
+$weight = val($_REQUEST['weight']);
+$size_w = val($_REQUEST['size_w']);
+$size_h = val($_REQUEST['size_h']);
+$size_l = val($_REQUEST['size_l']);
+$content = val($_REQUEST['content']);
 
 if($accessToken) {
     $response = 0;
@@ -41,6 +49,15 @@ if($accessToken) {
     switch ($action) {
         case 'status':
             $product = getTemplateProduct($sku, $skustatus);
+            $response = saveProduct($accessToken, $product);
+            break;
+
+        case 'category':
+            $product = getTemplateProduct($sku);
+            $product = setProductCategory($product, $category);
+            // if((string)$category != "4528") {
+            //     $product = setProductColor($product, "ccc");
+            // }
             $response = saveProduct($accessToken, $product);
             break;
 
@@ -120,6 +137,14 @@ if($accessToken) {
             $product = getTemplateProduct($sku);
             $pimages = migrateImages($accessToken, $pimages, $cache);
             $product = setProductImages($product, $pimages, TRUE);  
+            $response = saveProduct($accessToken, $product);
+            break;
+
+        case 'weight':
+            $product = getTemplateProduct($sku);
+            $product = setProductPackageWeight($product, $weight);
+            $product = setProductPackageSize($product, $size_h, $size_w, $size_l);
+            $product = setProductPackageContent($product, $content);
             $response = saveProduct($accessToken, $product);
             break;
         

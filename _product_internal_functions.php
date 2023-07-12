@@ -80,12 +80,15 @@ function prepareProductForCreating($product, $keepAllSkus = FALSE) {
     $product = prepareProduct($product);
     
     // keep skus[0], remove all others
-    if(!keepAllSkus) {
+    if(!$keepAllSkus) {
         $product['Skus'] = array_splice($product['Skus'], 0, 1);
 
         // force active product
         $product['Skus'][0]['Status'] = "active";
         $product['Skus'][0]['SellerSku'] = "";
+
+        unset($product['Skus'][0]['ShopSku']);
+        unset($product['Skus'][0]['SkuId']);
     }
 
     // remove name_en
@@ -99,8 +102,8 @@ function prepareProductForCreating($product, $keepAllSkus = FALSE) {
 function setProductCategory($product, $category) {
     $product['PrimaryCategory'] = $category;
 
-    $product = setProductColor($product, "...");
-    $product = setProductModel($product, "...");
+    //$product = setProductColor($product, "...");
+    //$product = setProductModel($product, "...");
 
     return $product;
 }
@@ -179,18 +182,18 @@ function setProductBrand($product, $val) {
 }
 
 // input price and sale price
-function setProductPrice($product, $price, $sale_price = 0) {
+function setProductPrice($product, $price, $sale_price) {
     // set price
-    if(is_numeric($price) && is_numeric($sale_price)) {
-        if($sale_price) {
+    if(is_numeric($sale_price)) {
+        if($price) {
             $product['Skus'][0]['price'] = $price;
             $product['Skus'][0]['special_price'] = $sale_price;
         } else {
-            $product['Skus'][0]['price'] = round($price * 1.3 / 100) * 100;
-            $product['Skus'][0]['special_price'] = $price;
+            $product['Skus'][0]['price'] = round($sale_price * 1.3 / 100) * 100;
+            $product['Skus'][0]['special_price'] = $sale_price;
         }
         
-        $product['Skus'][0]['special_from_date'] = "2018-01-01";
+        $product['Skus'][0]['special_from_date'] = "2023-01-01";
         $product['Skus'][0]['special_to_date'] = "2030-12-12";
     }
     return $product;

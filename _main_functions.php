@@ -530,7 +530,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             
             /* cột 6 */echo '<td class="model info">'.$model.'</td>';
             /* cột 7 */echo '<td class="color info">'.$color.'</td>';
-            /* cột 8 */echo '<td class="info">'.$otherAttributes.'</td>';
+            /* cột 8 */echo '<td class="variation info">'.$otherAttributes.'</td>';
             
             // visible
             /* cột 9, price*/
@@ -552,29 +552,40 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $status = ($sku['Status'] == "active") ? "checked" : "";
             echo '<td><input id="'. $sellersku .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
 
-            // print image thumbnail
+            // generate thumbnail images
             $thumbNailElements = array();
             $urlElements = array();
+            
+            // Generate product images thumbnail
+            $control = '<td>
+                <a target="_blank" href="#" onclick="return false;" class="fa fa-copy copy-product-images" style="color:purple;" tabindex="-1"></a>
+                </td>';
+            array_push($thumbNailElements, $control);
 
-            $imgs = array_merge($productImages, array("https://google.com/images"), $imgs);
-            if(is_array($imgs)) {
+            // max = 8 images
+            for($i=0; $i<8; $i++){
+                $thumbLink = trim($productImages[$i]);
+                $fullLink = trim(preg_replace('/(-catalog)/i', '', $thumbLink));
+        
+                $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img alt="thumb" src="'.$thumbLink.'" height="50"></a>';
+                $thumb = empty($thumbLink) ? "" : $thumb;
+                array_push($thumbNailElements, '<td class="product-image thumb on">'.$thumb.'</td>');
+            }
 
-                // product_image column
-                $thumb = '<a tabindex="-1" target="_blank" href="'.$color_thumbnail.'"><img alt="thumb" src="'.$color_thumbnail.'" height="50"></a>';
-                $thumb = empty($color_thumbnail) ? "" : $thumb;
-                array_push($thumbNailElements, '<td class="image thumb on">'.$thumb.'</td>');
-                array_push($urlElements, '<td class="ex link info">'.$color_thumbnail.'</td>');
+            // Generate sku images thumbnail
+            $control = '<td>
+                <a target="_blank" href="#" onclick="return false;" class="fa fa-copy copy-sku-images" style="color:purple;" tabindex="-1"></a>
+                </td>';
+            array_push($thumbNailElements, $control);
 
-                for($i=0; $i<8; $i++){
-                    $thumbLink = trim($imgs[$i]);
-                    $fullLink = trim(preg_replace('/(-catalog)/i', '', $thumbLink));
-                    
-                    $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img alt="thumb" src="'.$thumbLink.'" height="50"></a>';
-                    $thumb = empty($thumbLink) ? "" : $thumb;
-
-                    array_push($thumbNailElements, '<td class="image thumb on">'.$thumb.'</td>');
-                    array_push($urlElements, '<td class="ex link info">'.$fullLink.'</td>');
-                }
+            // max = 8 images
+            for($i=0; $i<8; $i++){
+                $thumbLink = trim($imgs[$i]);
+                $fullLink = trim(preg_replace('/(-catalog)/i', '', $thumbLink));
+        
+                $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img alt="thumb" src="'.$thumbLink.'" height="50"></a>';
+                $thumb = empty($thumbLink) ? "" : $thumb;
+                array_push($thumbNailElements, '<td class="sku-image thumb on">'.$thumb.'</td>');
             }
 
             // print extra column
@@ -583,15 +594,11 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             echo '<td class="ex shopsku">'.$shopsku.'</td>';
             echo '<td class="ex primary_category">'.$primary_category.'</td>';
             echo '<td class="ex url info">'.$url.'</td>';
-            foreach ($urlElements as $e) {
-                echo $e;
-            }
-
+            
             // print thumbnails
             foreach ($thumbNailElements as $e) {
                 echo $e;
             }
-
 
             echo '</tr>';
             if($nochild) {
