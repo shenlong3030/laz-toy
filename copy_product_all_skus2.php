@@ -153,9 +153,12 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 <hr>
     select compatibility_by_model <br/>
     <?php foreach($srcSkuList as $key=>$value):?>
+        <div>
         <input type="checkbox" name="variations[]" value="<?php echo $value;?>"/>
         <?php echo $variationList[$key]?>
+        <a target="_blank" href="#" onclick="return false;" class="fa fa-copy copy-sku-images" style="color:purple;" tabindex="-1"></a>
         <?php echo htmlLinkImages($variationImageList[$key]) ?>
+        </div>
         <br>
     <?php endforeach; ?>
 
@@ -181,4 +184,17 @@ date_default_timezone_set("UTC");
 
 </div>
 </body>
+<script type="text/javascript">
+    $('a.copy-sku-images').click(function (e) {
+        var imgs = [];
+        $(this).parent().find('a').each(function(){
+            imgs.push($(this).attr("href"));
+        });
+
+        text = imgs.join(" ");
+      console.log("copy text : " + text );
+      copyToClipBoard(text);
+    });
+
+</script>
 </html>
