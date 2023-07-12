@@ -43,6 +43,9 @@ $size_h = val($_REQUEST['size_h']);
 $size_l = val($_REQUEST['size_l']);
 $content = val($_REQUEST['content']);
 
+$info = val($_REQUEST['info']);
+$info = json_decode($info, true);
+
 if($accessToken) {
     $response = 0;
 
@@ -145,6 +148,31 @@ if($accessToken) {
             $product = setProductPackageWeight($product, $weight);
             $product = setProductPackageSize($product, $size_h, $size_w, $size_l);
             $product = setProductPackageContent($product, $content);
+            $response = saveProduct($accessToken, $product);
+            break;
+
+        case 'info': // update multi fields
+            $product = getTemplateProduct($sku);
+            //myvar_dump($info);
+            foreach($info as $key => $val) {
+                if($key == "images") {
+                    $images = $info['images'];
+                    $images = migrateImages($accessToken, $val, $cache);
+                    $product = setProductSKUImages($product, $images, TRUE);  
+                }
+                if($key == "price") {
+                    $product = setProductPrice($product, 0, $info['sale_price']);  
+                }
+                if($key == "description") {
+                    $product = setProductShortDescription($product, $info['desc']);
+                    $product = setProductDescription($product, $info['desc']);
+                }
+                if($key == "weight") {
+                    $product = setProductPackageWeight($product, $info['weight']);
+                    $product = setProductPackageSize($product, $info['size_h'], $info['size_w'], $info['size_l']);
+                    $product = setProductPackageContent($product, $info['content']);
+                }
+            }
             $response = saveProduct($accessToken, $product);
             break;
         
