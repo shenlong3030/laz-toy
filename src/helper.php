@@ -57,7 +57,7 @@ function getValue($list, $index) {
 }
 
 function val($input, $defaultvalue = 0) {
-    return isset($input) ? $input : $defaultvalue;
+    return $input ?? $defaultvalue; // same input?input:default
 }
 
 function vn_to_str ($str){

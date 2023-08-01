@@ -274,73 +274,12 @@ date_default_timezone_set("UTC");
 <script type="text/javascript">
 
     //######### AJAX QUEUE ######################################################################################
-      var ajaxManager = (function() {
-         var requests = [];
-
-         return {
-            addReq:  function(opt) {
-                requests.push(opt);
-            },
-            removeReq:  function(opt) {
-                if( $.inArray(opt, requests) > -1 )
-                    requests.splice($.inArray(opt, requests), 1);
-            },
-            run: function() {
-                var self = this,
-                    oriSuc;
-
-                if( requests.length ) {
-                    oriSuc = requests[0].complete;
-
-                    requests[0].complete = function() {
-                         if( typeof(oriSuc) === 'function' ) oriSuc();
-                         requests.shift();
-                         self.run.apply(self, []);
-                    };   
-
-                    $.ajax(requests[0]);
-                } else {
-                  self.tid = setTimeout(function() {
-                     self.run.apply(self, []);
-                  }, 1000);
-                }
-            },
-            stop:  function() {
-                requests = [];
-                clearTimeout(this.tid);
-            }
-         };
-      }());
-      ajaxManager.run(); 
-
-      function productUpdateWithAjaxQueue(params) {
-          // send response to this iframe
-          var myFrame = $("#responseIframe").contents().find('body'); 
-
-          ajaxManager.addReq({
-               type: 'POST',
-               url: 'update-api.php',
-               data: params,
-               success: function(data){
-                  var res = JSON.parse(data); // data is string, convert to obj
-                  var d = new Date();
-                  var n = d.toLocaleTimeString();
-                  const randomColor = Math.floor(Math.random()*16777215).toString(16);
-                  const htmlColor = "#" + randomColor;
-
-                  if(parseInt(res.code)) {
-                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + " " + data + " " + params['sku'] + '</p>');
-                  } else {
-                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + ' SUCCESS ' + params['sku'] + '</p>');
-                  }
-               },
-               error: function(error){
-                  myFrame.prepend(n + ' FAILED<br>'); 
-               }
-          });
-      }
+    ajaxManager = getAjaxManager();
+    ajaxManager.run(); 
+    
     //##########################################################################################################
     
+    //### Handle JS action in SKUs list
     $("button[name='qtyaction'][value='=500']").click(function() {
         $(this).parent().find('input[name=qty]').val('500'); 
         var sku = $(this).parent().find('input[name=sku]').val(); 
@@ -352,15 +291,26 @@ date_default_timezone_set("UTC");
         var q = $(this).closest('td').find('.reservedStock').text(); 
         productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: q?q:0});
     });
+    $('input[name="sku_sprice"]').keypress(function(event){
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){ // press ENTER
+          var sku = $(this).parent().find('input[name=sku]').val(); 
+          var sprice = $(this).parent().find('input[name="sku_sprice"]').val(); 
+          productUpdateWithAjaxQueue({ sku: sku, action: "price", sprice: sprice});
+        }
+    });
     $('input[name=qty]').keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
       if(keycode == '13'){ // press ENTER
           var sku = $(this).parent().find('input[name=sku]').val(); 
           var q = $(this).parent().find('input[name=qty]').val(); 
-          productUpdateWithAjaxQueue({ sku: s, action: "qty", qty: q});
+          productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: q});
       }
-      event.stopPropagation();
+      //event.stopPropagation();
     });
+    //###########################
+
+    
 
     //### UPDATE CATEGORY AJAX ###
     $('#btn_updatecategory').click(function() {
@@ -498,10 +448,10 @@ date_default_timezone_set("UTC");
     $('#btn_update_children').click(function (e) {
         var skus = "";
         $("#tableProducts").find("td.sku").each(function(){
-            skus = skus + $(this).text() + "%0A";
+            skus = skus + $(this).text() + ",";
         });
 
-        var sourcesku = $(this).parent().find('input[name=sku]').val(); 
+        var sourcesku = $('#sku').val(); 
         var url = "copyinfo.php?sourcesku=" + sourcesku + "&skus=" + skus;
         window.open(url, '_blank');
     });

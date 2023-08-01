@@ -8,8 +8,18 @@
 require_once('src/helper.php');
 
 function isLazadaImage($url) {
-    return false;
-    //return preg_match("/slatic.net/i", $url);
+    //return false;
+
+    $noMigrateRegex = [
+        "/live.slatic.net/i",   // https://vn.live.slatic.net/p/0257967934799d8e77828d8f8fdcb109.jpg
+        "/test.+slatic.net/i",  // https://sg-test-11.slatic.net/p/0257967934799d8e77828d8f8fdcb109.jpg
+    ];
+
+    $flag= false;
+    foreach($noMigrateRegex as $regex) {
+        $flag = $flag || preg_match($regex, $url);
+    }
+    return $flag;
 }
 
 // return migrated image url or ERROR MESSAGE
@@ -28,7 +38,7 @@ function migrateImage($accessToken, $imageUrl, $retry = 3) {
     $request->addApiParam('payload',$payload);
     $response = $c->execute($request, $accessToken);
     $response = json_decode($response, true);
-    
+
     if($response['code'] == '0') {
         $output = $response['data']['image']['url'];
         //myecho("", __FUNCTION__);
@@ -49,7 +59,7 @@ function migrateImage($accessToken, $imageUrl, $retry = 3) {
 function migrateImages($accessToken, $images, &$cache = null) {
     $output = array();
 
-    // convert string to array
+    // convert string "image image image" to array [image, image, image]
     if(is_string($images)) {
         $images = preg_split("/\s+/", $images);
     }

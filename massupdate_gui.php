@@ -28,7 +28,7 @@ require_once('_main_functions.php');
     <tbody>
         <tr>
             <td><textarea class="nowrap" id="txt_skus" rows="20" cols="30"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="50"></textarea></td>
+            <td><textarea class="nowrap" id="txt_names" rows="20" cols="50"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
             <td><textarea class="nowrap" name="txt_prices" rows="20" cols="10"></textarea></td>
@@ -39,7 +39,8 @@ require_once('_main_functions.php');
 </table>
 <br>
 <button id="btn_qty500">Qty =500</button><br>
-<button id="btn_updatePrice">Sale price = </button><input id="sprice" type="text" name="sprice"><br>
+<button id="btn_updatePrices">Sale prices = </button><input id="sprice" type="text" name="sprice"><br>
+<button id="btn_updateNames">Update names</button><br>
 <br>
 <hr>
 
@@ -50,81 +51,9 @@ require_once('_main_functions.php');
 
 <script type="text/javascript">
     //######### AJAX QUEUE ######################################################################################
-      var ajaxManager = (function() {
-        var requests = [];
-
-         return {
-            addReq:  function(opt) {
-                requests.push(opt);
-            },
-            removeReq:  function(opt) {
-            if( $.inArray(opt, requests) > -1 )
-                requests.splice($.inArray(opt, requests), 1);
-            },
-            run: function() {
-                var self = this,
-                    oriSuc;
-
-                if( requests.length ) {
-                    oriSuc = requests[0].complete;
-
-                    requests[0].complete = function() {
-                         if( typeof(oriSuc) === 'function' ) oriSuc();
-                         requests.shift();
-                         self.run.apply(self, []);
-                    };   
-
-                    $.ajax(requests[0]);
-                } else {
-                  self.tid = setTimeout(function() {
-                     self.run.apply(self, []);
-                  }, 1000);
-                }
-            },
-            stop:  function() {
-                requests = [];
-                clearTimeout(this.tid);
-            }
-         };
-      }());
-      ajaxManager.run(); 
-
-      function randomNumber(min, max) {
-        return parseInt(Math.random() * (max - min) + min);
-        }
-
-      function productUpdateWithAjaxQueue(params) {
-          // send response to this iframe
-          var myFrame = $("#responseIframe").contents().find('body'); 
-
-          ajaxManager.addReq({
-               type: 'POST',
-               url: 'update-api.php',
-               data: params,
-               success: function(data){
-                  var res = JSON.parse(data); // data is string, convert to obj
-                  var d = new Date();
-                  var n = d.toLocaleTimeString();
-
-                  const htmlColor = "#" + randomNumber(100,255).toString(16) + randomNumber(100,255).toString(16) + randomNumber(100,255).toString(16);
-
-                  // if(parseInt(res.code)) {
-                  //   myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + params['sku'] + '&nbsp;' + data + '</p>'); 
-                  // } else {
-                  //   myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + params['sku'] + '&nbsp;'  + 'SUCCESS</p>');
-                  // }
-
-                  if(parseInt(res.code)) {
-                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + JSON.stringify(res) + '<br>@@@<br>' + JSON.stringify(params) + '</p>'); 
-                  } else {
-                    myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + '&nbsp;' + res["message"] + '<br>@@@<br>' + JSON.stringify(params) + '</p>'); 
-                  }
-               },
-               error: function(error){
-                  myFrame.prepend(n + ' FAILED<br>'); 
-               }
-          });
-      }
+    ajaxManager = getAjaxManager();
+    ajaxManager.run(); 
+    
     //##########################################################################################################
     $("#btn_qty500").click(function() {
         var myFrame = $("#responseIframe").contents().find('body'); 
@@ -144,7 +73,7 @@ require_once('_main_functions.php');
         } while(lines.length);
     });
 
-    $("#btn_updatePrice").click(function() {
+    $("#btn_updatePrices").click(function() {
         var myFrame = $("#responseIframe").contents().find('body'); 
         var d = new Date();
         var n = d.toLocaleTimeString();
@@ -160,6 +89,28 @@ require_once('_main_functions.php');
             var skus = set10.join(',');     // create string sku,sku,sku
 
             productUpdateWithAjaxQueue({ skus: skus, action: "massPrice", sprice: sprice});
+        } while(lines.length);
+    });
+    
+    $("#btn_updateNames").click(function() {
+        var myFrame = $("#responseIframe").contents().find('body'); 
+        var d = new Date();
+        var n = d.toLocaleTimeString();
+        myFrame.prepend('### ' + n + ' UDPATE NAMES ###################################################<hr>');
+
+        var lines = $('#txt_skus').val().split('\n');       
+        var names = $('#txt_names').val().split('\n');
+
+        do {
+            var set10 = lines.slice(0, 10); // get 10 left
+            lines = lines.slice(10);        // renove 10 left 
+            var skus = set10.join(',');     // create string sku,sku,sku
+
+            set10 = names.slice(0, 10); // get 10 left
+            names = names.slice(10);        // renove 10 left 
+            var paramNames = set10.join('$');     // create string sku,sku,sku
+
+            productUpdateWithAjaxQueue({ skus: skus, action: "massName", names: paramNames});
         } while(lines.length);
     });
 

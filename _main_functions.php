@@ -270,7 +270,7 @@ function setRepack($accessToken, $packageId){
 //####################################################################
 
 //status: all, live, inactive, deleted, image-missing, pending, rejected, sold-out
-function getProducts($accessToken, $q = '', $options){
+function getProducts($accessToken, $q, $options){
     $allProducts = array();
     
     // add limit and offset to options
@@ -499,12 +499,11 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="=500">=500</button>
             <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="=0">=0</button></div>';
             
-            $priceForm = '<form action="update.php" method="POST" name="priceForm" target="responseIframe">
+            $priceForm = '<div>
                 <input name="sku" type="hidden" value="'.$sellersku.'"/>
-                <input name="price" type="hidden" size="6" value="'.$price1.'"/>
-                <input name="sale_price" type="text" size="6" value="'.$price2.'"/>
-                <input type="submit" tabindex="-1" value="↵" hidden/>
-                </form>';
+                <input name="sku_price" type="hidden" size="6" value="'.$price1.'"/>
+                <input name="sku_sprice" type="text" size="6" value="'.$price2.'"/>
+                </div>';
             
             $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="50" value="'.$name.'"/><input type="submit" tabindex="-1" value="↵" hidden/></form>';
             
@@ -680,15 +679,13 @@ function createProduct($accessToken, $product) {
     $res = json_decode($c->execute($request, $accessToken), true);
     
     debug_log($product);
-
     if($res["code"] == "0") {
         myecho("success : " . getProductSkusText($product));
-        return 1;
     } else {
         myecho("CREATE FAILED: " . $sku);
         var_dump($res);
-        return 0;
     }
+    return $res;
 }
 
 function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboimages, $prices, $preview = 1) {

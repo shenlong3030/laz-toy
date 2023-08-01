@@ -12,6 +12,9 @@ $sprice = isset($_REQUEST['sprice']) ? $_REQUEST['sprice'] : 0;
 $skus = isset($_REQUEST['skus']) ? $_REQUEST['skus'] : 0;
 $skus = explode(",", $skus);
 
+$names = isset($_REQUEST['names']) ? $_REQUEST['names'] : 0;
+$names = explode("$", $names);
+
 $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 $desc = isset($_REQUEST['desc']) ? $_REQUEST['desc'] : "";
 $variation = isset($_REQUEST['variation']) ? $_REQUEST['variation'] : "";
@@ -24,8 +27,8 @@ $category = val($_REQUEST['category']);
 $input = val($_REQUEST['images']);
 $images = array_filter(explode("\n", str_replace("\r", "", $input))); // split by newline
 $temp = array();
-foreach($images as $image) {
-    $temp = array_merge($temp, preg_split("/\s+/", $image)); // split by space
+foreach($images as $i) {
+    $temp = array_merge($temp, preg_split("/\s+/", $i)); // split by space
 }
 $images = array_filter($temp);
 
@@ -46,10 +49,108 @@ $content = val($_REQUEST['content']);
 $info = val($_REQUEST['info']);
 $info = json_decode($info, true);
 
+
+function noError($response) {
+    return $response["code"] == "0" && empty($response["detail"]);
+}
+
+function successMessage($action, $sku) {
+    return "SUCCESS; " . $action . "; " . $sku; 
+}
+
+function failureMessage($action, $sku) {
+    return "FAIL; " . $action . "; " . $sku; 
+}
+
+function messageFromResponse($response, $action, $sku) {
+    if(noError($response)) { 
+        return successMessage($action, $sku);
+    } else {
+        $fmsg = failureMessage($action, $sku);
+        if(isset($response["detail"])) {
+            $fmsg .= "; " . json_encode($response["detail"]);
+        }
+        return $fmsg;
+    }
+}
+
 if($accessToken) {
-    $response = 0;
+    $response = [];
 
     switch ($action) {
+        case 'massQty':
+            $response = massUpdateQuantityWithAPI($accessToken, $skus, $qty);
+            //force active product
+            $response['message'][] = messageFromResponse($response, $action, $sku);
+
+            if($qty > 0) {
+                foreach($skus as $i => $s) {
+                    $product = getTemplateProduct($s, "active");
+                    $r = saveProduct($accessToken, $product);
+                    $response['message'][] = messageFromResponse($r, "re-active", $s);
+                }
+            }
+            break;
+
+        case 'massPrice':
+            $response = massUpdatePriceWithAPI($accessToken, $skus, $sprice);
+            break;
+
+        case 'massName':
+            foreach($skus as $i=>$s) {
+                if(empty($s)) {
+                    continue;
+                }
+                $product = getTemplateProduct($s);
+                $product = setProductName($product, $names[$i]); 
+                $r = saveProduct($accessToken, $product);
+
+                $response['message'][] = messageFromResponse($r, $action, $s);
+
+                // if error , check error message
+                // var_dump($r["detail"]["message"]);
+            }
+            break;
+
+        case 'massFixOL':
+            // Fix ốp lưng: variation1=color, variation2=model
+            foreach($skus as $s) {
+                $product = getTemplateProduct($s);
+            
+                // đổi sang categorey cáp sạc để bỏ hết variation, chỉ giữ lại variation1=color
+                $product = setProductCategory($product, "11029"); 
+                $response = saveProduct($accessToken, $product);
+
+                if($response["code"]=="0") {
+                    // đổi lại category ốp lưng
+                    $product = setProductCategory($product, "4523"); 
+                    $product = setProductModel($product, "..."); 
+                    $product = setProductColor($product, "..."); 
+                    $response = saveProduct($accessToken, $product);
+                } else {
+                    // keep and return error response
+                }
+
+                $response['message'][] = messageFromResponse($r, $action, $s);
+            }
+            break;
+
+        case 'qty':
+            $response = updateQuantityWithAPI($accessToken, $sku, $qty);
+            
+            if(noError($response)) {
+                // force active product
+                if($qty > 0) {
+                    $product = getTemplateProduct($sku, "active");
+                    $r = saveProduct($accessToken, $product);
+                    if(!noError($r)) {
+                        $response["code"] = $r["code"]; // save error code
+                        $response['message'] = failureMessage("re-active", $sku);
+                    }
+                } 
+            }
+            break;
+
         case 'status':
             $product = getTemplateProduct($sku, $skustatus);
             $response = saveProduct($accessToken, $product);
@@ -62,45 +163,6 @@ if($accessToken) {
             //     $product = setProductColor($product, "ccc");
             // }
             $response = saveProduct($accessToken, $product);
-            break;
-
-        case 'qty':
-            $response = updateQuantityWithAPI($accessToken, $sku, $qty);
-            
-            // force active product
-            if($qty > 0) {
-                $product = getTemplateProduct($sku, "active");
-                $r = saveProduct($accessToken, $product);
-                if($r["code"]=="0") {
-                    // do nothing
-                } else {
-                    $response["code"] = $r["code"]; // save error code
-                    $response['message'] = "RE-ACTIVE FAILED";
-                    $response['reactive_failed_skus'][] = $sku;
-                }
-            }
-            break;
-
-        case 'massQty':
-            $response = massUpdateQuantityWithAPI($accessToken, $skus, $qty);
-            //force active product
-            if($qty > 0) {
-                foreach($skus as $i => $sku) {
-                    $product = getTemplateProduct($sku, "active");
-                    $r = saveProduct($accessToken, $product);
-                    if($r["code"]=="0") {
-                        // do nothing
-                    } else {
-                        $response["code"] = $r["code"]; // save error code
-                        $response['message'] = "RE-ACTIVE FAILED";
-                        $response['reactive_failed_skus'][] = $sku;
-                    }
-                }
-            }
-            break;
-
-        case 'massPrice':
-            $response = massUpdatePriceWithAPI($accessToken, $skus, $sprice);
             break;
 
         case 'price':
@@ -175,14 +237,15 @@ if($accessToken) {
             }
             $response = saveProduct($accessToken, $product);
             break;
-        
+
         default:
-            echo "NO ACTION";
+            $response["code"]="XXX";
+            $response["message"]="NO ACTION";
             break;
     }
 
-    if($response["code"]=="0") {
-        $response["message"]="SUCCESS";
+    if(!isset($response['message'])) {
+        $response['message'] = messageFromResponse($response, $action, $sku);
     }
 
     echo json_encode($response);

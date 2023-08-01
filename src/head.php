@@ -7,6 +7,7 @@
 <script src="./js/controls.js?v1.9"></script>
 <script src="./js/helper.js"></script>
 <script src="./js/auth.js"></script>
+<script src="./js/ajax_queue_api_client.js"></script>
 <script src="./js/jquery.tablesorter.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

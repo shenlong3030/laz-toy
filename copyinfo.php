@@ -7,6 +7,9 @@ require_once('_main_functions.php');
 
 // get code param
 $sku = $sourcesku = isset($_REQUEST['sourcesku']) ? $_REQUEST['sourcesku'] : '';
+$skus = val($_REQUEST['skus']);
+$skus = explode(",", $skus);
+
 $itemId = isset($_REQUEST["item_id"]) ? $_REQUEST["item_id"] : "";
 //$qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
 
@@ -88,22 +91,10 @@ if($sku || $itemId) {
 <!DOCTYPE html>
 <html leng="en-AU">
 <head><meta http-equiv="Content-Type" content="text/html; charset=shift_jis">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>COPY INFO</title>
-    <link rel="shortcut icon" type="image/x-icon" href="./ico/tool.ico" />
-    <link href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" rel="stylesheet">
-    <script src="//code.jquery.com/jquery-1.11.1.js"></script>
-    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-    <!-- bxSlider Javascript file -->
-    <script src="./js/controls.js"></script>
-    <script src="./js/jquery.tablesorter.min.js"></script>
-
-    <style type="text/css">
-        a.menu { padding-left: 4em; }
-        td.order { padding-left: 1em; padding-right: 1em;}
-        span.count {color: red;}
-    </style>
+    
+    <?php include('src/head.php');?>
 </head>
 <body>
     <div name="info">
@@ -140,73 +131,9 @@ if($sku || $itemId) {
 
 <script type="text/javascript">
     //######### AJAX QUEUE ######################################################################################
-    var ajaxManager = (function() {
-     var requests = [];
-
-     return {
-        addReq:  function(opt) {
-            requests.push(opt);
-        },
-        removeReq:  function(opt) {
-            if( $.inArray(opt, requests) > -1 )
-                requests.splice($.inArray(opt, requests), 1);
-        },
-        run: function() {
-            var self = this,
-                oriSuc;
-
-            if( requests.length ) {
-                oriSuc = requests[0].complete;
-
-                requests[0].complete = function() {
-                     if( typeof(oriSuc) === 'function' ) oriSuc();
-                     requests.shift();
-                     self.run.apply(self, []);
-                };   
-
-                $.ajax(requests[0]);
-            } else {
-              self.tid = setTimeout(function() {
-                 self.run.apply(self, []);
-              }, 1000);
-            }
-        },
-        stop:  function() {
-            requests = [];
-            clearTimeout(this.tid);
-        }
-     };
-    }());
+    ajaxManager = getAjaxManager();
     ajaxManager.run(); 
-
-    function productUpdateWithAjaxQueue(params) {
-      // send response to this iframe
-      var myFrame = $("#responseIframe").contents().find('body'); 
-
-      var d = new Date();
-      var n = d.toLocaleTimeString();
-      ajaxManager.addReq({
-           type: 'POST',
-           url: 'update-api.php',
-           data: params,
-           success: function(data){
-              //console.log(data);
-              var res = JSON.parse(data); // data is string, convert to obj
-              
-              const randomColor = Math.floor(Math.random()*16777215).toString(16);
-              const htmlColor = "#" + randomColor;
-
-              if(parseInt(res.code)) {
-                myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + " " + data + " " + params['sku'] + '</p>');
-              } else {
-                myFrame.prepend('<p style="background-color:' + htmlColor + '">' + n + ' SUCCESS ' + params['sku'] + '</p>');
-              }
-           },
-           error: function(error){
-              myFrame.prepend(n + ' FAILED<br>'); 
-           }
-      });
-    }
+    
     //##########################################################################################################
 
     $('#btn_copy').click(function (e) {
