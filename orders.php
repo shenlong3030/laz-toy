@@ -123,11 +123,12 @@ switch ($status) {
         if(empty($limit)) {
             $limit = 500;
         }
-        $pendingOrders = getOrders($accessToken, "pending", $limit, $sortBy, $needFullOrderInfo, "ASC");
+        $list1 = getOrders($accessToken, "pending", $limit, $sortBy, $needFullOrderInfo, "ASC");
+        $list2 = getOrders($accessToken, "repacked", 30, $sortBy, $needFullOrderInfo, "ASC");
         //$readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy, $needFullOrderInfo);
-        $readyOrders = getOrders($accessToken, "toship", $limit, $sortBy, $needFullOrderInfo, "ASC");
+        $list3 = getOrders($accessToken, "toship", $limit, $sortBy, $needFullOrderInfo, "ASC");
         
-        $list = array_merge($pendingOrders, $readyOrders);
+        $list = array_merge($list1, $list2, $list3);
         break;
     case "pending":
     case "toship":

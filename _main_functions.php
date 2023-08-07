@@ -192,7 +192,7 @@ function printOrders($token, $orders, $offset = 0, $status = "") {
         $price = $order['price'];
         
         echo '<tr class="'.$orderStatus.'">';
-        echo '<td class="order_status have_background">'.substr($orderStatus,0,2).'</td>';
+        echo '<td class="order_status have_background">'.substr($orderStatus,0,3).'</td>';
         echo '<td class="order_index">'.($offset+$index+1).'</td>';
 
         // if($status == 'delivered') {
