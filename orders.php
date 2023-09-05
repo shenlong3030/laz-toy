@@ -1,8 +1,9 @@
 <?php
+//include_once "src/show_errors.php";
 include_once "check_token.php";
 require_once('_main_functions.php');
 
-//include_once "src/show_errors.php";
+
 
 $count = 0;
 
@@ -185,7 +186,52 @@ setTimeout(function(){
     $("#" + st).parent().css("background","lightgreen");
 }, 1000);
 
-$('table').tablesorter();
+$('table').tablesorter({ sortList: [[0,0]]});
+
+function copyToClipBoard(text) {
+    var $temp = $("<textarea>");
+    $("body").append($temp);
+    $temp.val(text).select();
+    document.execCommand("copy");
+    $temp.remove();
+}
+
+function findDuplicates(arr) {
+    var duplicates_list = [];
+    var unique_list = [];
+    $.each(arr, function(key, value) {
+        if ($.inArray(value, unique_list) == -1) {
+            unique_list.push(value);
+        } else {
+            if ($.inArray(value, duplicates_list) == -1) {
+                duplicates_list.push(value);
+            }
+        }
+    });
+    return duplicates_list;
+}
+
+var body = $("body");
+var container = $('<div id="dialog"></div>');
+container.prependTo(body);
+container.dialog({
+  position: { my: "right", at: "right"}
+});
+
+var $btn1 = $('<input id="btn_check_dup" type="button" value="Check duplicate order"/>');
+$btn1.appendTo(container);
+$('#btn_check_dup').click(function(e) {
+    var text = "";
+    var arr = $(".ordersList td.order_cus_name").map(function() {
+        var name = $(this).text();
+        var phone = $(this).next().text();
+        return name + phone;
+    }).get();
+    var duplicateElements = findDuplicates(arr);
+    var msg = '<div id="msg"><br>Result:<br>' + duplicateElements.join("<br>") + '</div>';
+    msg = $(msg);
+    msg.appendTo(container);
+});
 
 //========================================================================
 </script>
