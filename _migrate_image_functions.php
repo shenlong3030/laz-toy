@@ -11,8 +11,8 @@ function isLazadaImage($url) {
     //return false;
 
     $noMigrateRegex = [
-        "/live.slatic.net/i",   // https://vn.live.slatic.net/p/0257967934799d8e77828d8f8fdcb109.jpg
-        "/test.+slatic.net/i",  // https://sg-test-11.slatic.net/p/0257967934799d8e77828d8f8fdcb109.jpg
+        //"/live.slatic.net/i",   // https://vn.live.slatic.net/p/0257967934799d8e77828d8f8fdcb109.jpg
+        //"/test.+slatic.net/i",  // https://sg-test-11.slatic.net/p/0257967934799d8e77828d8f8fdcb109.jpg
     ];
 
     $flag= false;
@@ -22,12 +22,11 @@ function isLazadaImage($url) {
     return $flag;
 }
 
-// return migrated image url or ERROR MESSAGE
-function migrateImage($accessToken, $imageUrl, $retry = 3) {
-    $output = '';
-    
+// return json
+// migrated image pass to &$imageUrl param
+function migrateImage($accessToken, &$imageUrl, $retry = 3) {
     if(!is_url($imageUrl)) {
-        return "Invalid URL: " + $imageUrl;
+        return "Invalid URL: " . $imageUrl;
     }
     
     $c = getClient();
@@ -39,25 +38,26 @@ function migrateImage($accessToken, $imageUrl, $retry = 3) {
     $response = $c->execute($request, $accessToken);
     $response = json_decode($response, true);
 
-    if($response['code'] == '0') {
-        $output = $response['data']['image']['url'];
+    if($response['code'] == '0') {                      // change value of ref &$imageUrl
+        $imageUrl = $response['data']['image']['url'];  
         //myecho("", __FUNCTION__);
-    } else {
+    } else {                                            // no change value of ref &$imageUrl
         if($retry) {
-            sleep(3);
-            $output = migrateImage($accessToken, $imageUrl, $retry-1);
+            sleep(3 - $retry);
+            $response = migrateImage($accessToken, $imageUrl, $retry-1);
         } else {
-            $output = $response['message'];
-            myecho("Migrate failed, URL: " . $imageUrl, __FUNCTION__);
+            //myecho("Migrate failed, URL: " . $imageUrl, __FUNCTION__);
         }
     }
-
-    return $output;
+    sleep(1);
+    return $response;
 }
 
-// return migrated images
-function migrateImages($accessToken, $images, &$cache = null) {
+// return json
+// migrated images list pass to &$images param
+function migrateImages($accessToken, &$images, &$cache = null) {
     $output = array();
+    $finalResponse = [];
 
     // convert string "image image image" to array [image, image, image]
     if(is_string($images)) {
@@ -69,8 +69,17 @@ function migrateImages($accessToken, $images, &$cache = null) {
             $output[] = $url;
         } else {
             if(!isset($cache[sha1($url)])) {
-                $cache[sha1($url)] = migrateImage($accessToken, $url);  
-                sleep(1);
+                
+                // $url is reference param
+                // after successful migrate, $url has new value , otherwise $url no change
+                $response = migrateImage($accessToken, $url);
+
+                $dict = [];
+                $dict['url'] = $url;
+                $dict['response'] = $response;
+
+                $finalResponse[] = $dict;
+                $cache[sha1($url)] = $url;
             }
             
             // only output valid URL
@@ -80,7 +89,8 @@ function migrateImages($accessToken, $images, &$cache = null) {
         }
     }
     
-    return $output;
+    $images = $output; // pass output to reference param
+    return $finalResponse;
 }
 
 ?>

@@ -28,33 +28,21 @@ $input = $_POST['col'][0];
 $parentskus = explode("\n", str_replace("\r", "", $input));
 
 $input = $_POST['col'][1];
-$sourceskus = explode("\n", str_replace("\r", "", $input));
-
-$input = $_POST['col'][2];
-$skuprefixs = explode("\n", str_replace("\r", "", $input));
-
-$input = $_POST['col'][3];
-$kiotids = explode("\n", str_replace("\r", "", $input));
-
-$input = $_POST['col'][4];
 $names = explode("\n", str_replace("\r", "", $input));
 
-$input = $_POST['col'][5];
-$groups = explode("\n", str_replace("\r", "", $input));
-
-$input = $_POST['col'][6];
+$input = $_POST['col'][2];
 $models = explode("\n", str_replace("\r", "", $input));
 
-$input = $_POST['col'][7];
+$input = $_POST['col'][3];
 $colors = explode("\n", str_replace("\r", "", $input));
 
-$input = $_POST['col'][8];
+$input = $_POST['col'][4];
 $qtys = explode("\n", str_replace("\r", "", $input));
 
-$input = $_POST['col'][9];
+$input = $_POST['col'][5];
 $prices = explode("\n", str_replace("\r", "", $input));
 
-$input = $_POST['col'][10];
+$input = $_POST['col'][6];
 $images = explode("\n", str_replace("\r", "", $input));
 
 $resetimages = val($_POST['resetimages']);

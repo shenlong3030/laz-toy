@@ -2,6 +2,13 @@
 //include_once "src/show_errors.php";
 include_once "check_token.php";
 require_once('_main_functions.php');
+
+
+
+$skus = val($_REQUEST['skus']);
+$models = val($_REQUEST['models']);
+$colors = val($_REQUEST['colors']);
+
 ?>
 
 <!DOCTYPE html>
@@ -27,10 +34,10 @@ require_once('_main_functions.php');
     </tr>
     <tbody>
         <tr>
-            <td><textarea class="nowrap" id="txt_skus" rows="20" cols="30"></textarea></td>
+            <td><textarea class="nowrap" id="txt_skus" rows="20" cols="30"><?php echo $skus;?></textarea></td>
             <td><textarea class="nowrap" id="txt_names" rows="20" cols="50"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
+            <td><textarea class="nowrap" id="txt_models" rows="20" cols="10"><?php echo $models;?></textarea></td>
+            <td><textarea class="nowrap" id="txt_colors" rows="20" cols="10"><?php echo $colors;?></textarea></td>
             <td><textarea class="nowrap" name="txt_prices" rows="20" cols="10"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="50"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="5"></textarea></td>
@@ -40,7 +47,7 @@ require_once('_main_functions.php');
 <br>
 <button id="btn_qty500">Qty =500</button><br>
 <button id="btn_updatePrices">Sale prices = </button><input id="sprice" type="text" name="sprice"><br>
-<button id="btn_updateNames">Update names</button><br>
+<button id="btn_update">Update names,models</button><br>
 <br>
 <hr>
 
@@ -92,14 +99,16 @@ require_once('_main_functions.php');
         } while(lines.length);
     });
     
-    $("#btn_updateNames").click(function() {
+    $("#btn_update").click(function() {
         var myFrame = $("#responseIframe").contents().find('body'); 
         var d = new Date();
         var n = d.toLocaleTimeString();
-        myFrame.prepend('### ' + n + ' UDPATE NAMES ###################################################<hr>');
+        myFrame.prepend('### ' + n + ' UDPATE Name, models, colors ###################################################<hr>');
 
         var lines = $('#txt_skus').val().split('\n');       
         var names = $('#txt_names').val().split('\n');
+        var models = $('#txt_models').val().split('\n');
+        var colors = $('#txt_colors').val().split('\n');
 
         do {
             var set10 = lines.slice(0, 10); // get 10 left
@@ -110,9 +119,23 @@ require_once('_main_functions.php');
             names = names.slice(10);        // renove 10 left 
             var paramNames = set10.join('$');     // create string sku,sku,sku
 
-            productUpdateWithAjaxQueue({ skus: skus, action: "massName", names: paramNames});
+            set10 = models.slice(0, 10); // get 10 left
+            models = models.slice(10);        // renove 10 left 
+            var paramModels = set10.join('$');     // create string
+
+            set10 = colors.slice(0, 10); // get 10 left
+            colors = colors.slice(10);        // renove 10 left 
+            var paramColors = set10.join('$');     // create string 
+
+            productUpdateWithAjaxQueue({ skus: skus, 
+                action: "massUpdate", 
+                names: paramNames, 
+                models: paramModels, 
+                colors: paramColors
+            });
         } while(lines.length);
     });
+
 
 </script>
 

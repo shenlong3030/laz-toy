@@ -1,8 +1,7 @@
 <?php
+//include_once "src/show_errors.php";
 include_once "check_token.php";
 require_once('_main_functions.php');
-
-//include_once "src/show_errors.php";
 
 ?>
 
@@ -32,10 +31,13 @@ $appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
 $newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 $attrNames = getProductAttributeNames(FALSE);
 
+$json = val($_REQUEST['json_product']);
+//$json = json_decode($json, true);
+
 ?>
 
 <body>
-     <form action="addchild.php" method="POST" target="responseIframe">
+<form action="addchild.php" method="POST" target="responseIframe">
 
 Parent SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><br>
 Child SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"><br> 
@@ -73,12 +75,15 @@ Possible Attributes : <?php echo implode(",", $attrNames)?><br><br>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="15"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="80"></textarea></td>
+
+            <textarea style="display:none;" id="txt_json" name="json_product" rows="90" cols="90"><?php echo $json;?></textarea>
         </tr>
     </tbody>
 </table>
 <input type="checkbox" name="preview" checked="1" value="1">Preview<br>
 <input type="submit"><hr>
 
+</form>
 <iframe id="responseIframe" name="responseIframe" width="1000" height="1000"></iframe>
 
 <script type="text/javascript">

@@ -666,6 +666,19 @@ function printProduct($product) {
 // Create products region
 //####################################################################
 
+function createProductFromApi($accessToken, $product) {
+    // create XML payload
+    $request = array("Product" => $product);
+    $xml = new ArrayToXML();
+    $payload = $xml->buildXML($request, 'Request');
+    
+    $c = getClient();
+    $request = new LazopRequest('/product/create');
+    $request->addApiParam('payload', $payload);
+
+    return json_decode($c->execute($request, $accessToken), true);
+}
+
 function createProduct($accessToken, $product) {
     // create XML payload
     $request = array("Product" => $product);
@@ -685,7 +698,6 @@ function createProduct($accessToken, $product) {
         myecho("CREATE FAILED: " . $sku);
         var_dump($res);
     }
-    return $res;
 }
 
 function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboimages, $prices, $preview = 1) {
@@ -774,7 +786,8 @@ function createProducts($accessToken, $sku, $skuprefix, $data, $combos, $comboim
                 } else {
                     if(isset($data["images"][$index])) {
                         // migrate images
-                        $images = migrateImages($accessToken, $data["images"][$index], $cache);
+                        $images = $data["images"][$index];
+                        migrateImages($accessToken, $images, $cache);
                         $product = setProductSKUImages($product, $images, $resetimages);       
                     } else {
                         $product = setProductSKUImages($product, $backupimages, TRUE);   
@@ -817,7 +830,7 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
         $color = isset($data["colors"][$index]) ? trim($data["colors"][$index]) : 0;
         $price = isset($data["prices"][$index]) ? $data["prices"][$index] : 0;
         $qty = isset($data["qtys"][$index]) ? $data["qtys"][$index] : 0;
-        $image = isset($data["images"][$index]) ? $data["images"][$index] : 0;
+        $images = isset($data["images"][$index]) ? $data["images"][$index] : 0;
         $kiotid = isset($data["kiotids"][$index]) ? trim($data["kiotids"][$index]) : 0;
 
         if($sourceSku) {
@@ -898,9 +911,9 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
             
             // set images
             $resetimages = $data["resetimages"];
-            if(strlen($image) > 20) {
+            if(strlen($images) > 20) {
                 // migrate images
-                $images = migrateImages($accessToken, $image, $cache);
+                migrateImages($accessToken, $images, $cache);
                 $product = setProductSKUImages($product, $images, $resetimages);       
             } else {
                 $product = setProductSKUImages($product, $backupimages, TRUE);   
@@ -1014,12 +1027,12 @@ function updateImages($accessToken, $sku, $images, &$savedimages = null) {
     $product = getProduct($accessToken, $sku);
     if($product) {
         // split images
-        $images = preg_split("/\s+/", $image);
+        $images = preg_split("/\s+/", $images);
         $product = prepareProductForUpdating($product);
         
         $product['Skus'][0]['Images'] = array();
-        $migratedimgs = migrateImages($accessToken, $images, $savedimages);
-        foreach($migratedimgs as $index => $url) {
+        migrateImages($accessToken, $images, $savedimages);
+        foreach($images as $index => $url) {
             $product['Skus'][0]['Images'][] = $url;
         }
         
@@ -1164,7 +1177,9 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
             
             if(isset($data["names"][$index])) {
                 $val = $data["names"][$index];
-                $product = setProductName($product, $val);
+                if(!empty($val)) {
+                    $product = setProductName($product, $val);
+                }   
             }
             
             if(isset($data["prices"][$index])) {
@@ -1193,7 +1208,8 @@ function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
                 $imageindex = isset($data["imageindex"]) ? $data["imageindex"] - 1 : 0;
                 $imageindex = ($imageindex > 0 && $imageindex < 9) ? $imageindex : 0;
                 
-                $images = migrateImages($accessToken, $data["images"][$index], $cache);
+                $images = $data["images"][$index];
+                migrateImages($accessToken, $images, $cache);
                 $product = setProductSKUImages($product, $images, FALSE, $imageindex);
             }
             
@@ -1255,7 +1271,12 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
     $skuprefix = $inputdata['skuprefix'];
     $newName = $inputdata['newname'];
     
-    $product = getProduct($accessToken, $sku);
+    $product = val($inputdata['jsonProduct']);
+    if($product) {
+        $product = json_decode($product, true);
+    } else {
+        $product = getProduct($accessToken, $sku);
+    }
 
     if($product) {     
         $product = prepareProductForCreating($product);
@@ -1316,7 +1337,8 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
                 // set images
                 if(isset($inputdata["images"][$index])) {
                     // migrate images
-                    $images = migrateImages($accessToken, $inputdata["images"][$index], $cache);
+                    $images = $inputdata["images"][$index];
+                    migrateImages($accessToken, $images, $cache);
                     foreach($images as $index => $url) {
                         if (is_url($url)) {
                             $skuDict['Images'][$index] = $url;
@@ -1741,6 +1763,18 @@ function delProducts($accessToken, $skus, $deloption=false) {
         var_dump($response);
         usleep(500000);
     }
+}
+
+function delProduct($accessToken, $sku) {
+    $chunk = array();
+    $chunk[] = $sku;
+
+    $request = getRequest('/product/remove');
+    $request->addApiParam('seller_sku_list', json_encode($chunk));
+    $c = getClient();
+    $response = $c->execute($request, $accessToken);
+    
+    return json_decode($response, true);;
 }
 
 //####################################################################

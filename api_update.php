@@ -14,6 +14,10 @@ $skus = explode(",", $skus);
 
 $names = isset($_REQUEST['names']) ? $_REQUEST['names'] : 0;
 $names = explode("$", $names);
+$models = isset($_REQUEST['models']) ? $_REQUEST['models'] : 0;
+$models = explode("$", $models);
+$colors = isset($_REQUEST['colors']) ? $_REQUEST['colors'] : 0;
+$colors = explode("$", $colors);
 
 $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 $desc = isset($_REQUEST['desc']) ? $_REQUEST['desc'] : "";
@@ -49,7 +53,6 @@ $content = val($_REQUEST['content']);
 $info = val($_REQUEST['info']);
 $info = json_decode($info, true);
 
-
 function noError($response) {
     return $response["code"] == "0" && empty($response["detail"]);
 }
@@ -74,20 +77,32 @@ function messageFromResponse($response, $action, $sku) {
     }
 }
 
+function messagesFromMigrateImageResponses($responses) {
+    $messages = [];
+    foreach ($responses as $dict) {
+        $msg = messageFromResponse($dict['response'], "migrate-image", $dict['url']);
+        if(substr($msg,0,4) == 'FAIL') {    // only get FAIL message;
+            $messages[] = $msg;
+        }
+    }
+}
+
+
 if($accessToken) {
     $response = [];
-
     switch ($action) {
         case 'massQty':
             $response = massUpdateQuantityWithAPI($accessToken, $skus, $qty);
+            //myvar_dump($response);
             //force active product
-            $response['message'][] = messageFromResponse($response, $action, $sku);
+            $response['mymessage'] = [];
+            $response['mymessage'][] = messageFromResponse($response, $action, null);
 
             if($qty > 0) {
                 foreach($skus as $i => $s) {
                     $product = getTemplateProduct($s, "active");
                     $r = saveProduct($accessToken, $product);
-                    $response['message'][] = messageFromResponse($r, "re-active", $s);
+                    $response['mymessage'][] = messageFromResponse($r, "re-active", $s);
                 }
             }
             break;
@@ -96,16 +111,26 @@ if($accessToken) {
             $response = massUpdatePriceWithAPI($accessToken, $skus, $sprice);
             break;
 
-        case 'massName':
+        case 'massUpdate':
+            $response['mymessage'] = [];
             foreach($skus as $i=>$s) {
                 if(empty($s)) {
                     continue;
                 }
                 $product = getTemplateProduct($s);
-                $product = setProductName($product, $names[$i]); 
+                if(isset($names[$i])) {
+                    $product = setProductName($product, $names[$i]); 
+                }
+                if(isset($models[$i])) {
+                    $product = setProductModel($product, $models[$i]); 
+                }
+                if(isset($colors[$i])) {
+                    $product = setProductColor($product, $colors[$i]); 
+                }
+
                 $r = saveProduct($accessToken, $product);
 
-                $response['message'][] = messageFromResponse($r, $action, $s);
+                $response['mymessage'][] = messageFromResponse($r, $action, $s);
 
                 // if error , check error message
                 // var_dump($r["detail"]["message"]);
@@ -114,24 +139,25 @@ if($accessToken) {
 
         case 'massFixOL':
             // Fix ốp lưng: variation1=color, variation2=model
+            $response['mymessage'] = [];
             foreach($skus as $s) {
                 $product = getTemplateProduct($s);
             
                 // đổi sang categorey cáp sạc để bỏ hết variation, chỉ giữ lại variation1=color
                 $product = setProductCategory($product, "11029"); 
-                $response = saveProduct($accessToken, $product);
+                $r = saveProduct($accessToken, $product);
 
-                if($response["code"]=="0") {
+                if($r["code"]=="0") {
                     // đổi lại category ốp lưng
                     $product = setProductCategory($product, "4523"); 
                     $product = setProductModel($product, "..."); 
                     $product = setProductColor($product, "..."); 
-                    $response = saveProduct($accessToken, $product);
+                    $r = saveProduct($accessToken, $product);
                 } else {
                     // keep and return error response
                 }
 
-                $response['message'][] = messageFromResponse($r, $action, $s);
+                $response['mymessage'][] = messageFromResponse($r, $action, $s);
             }
             break;
 
@@ -193,16 +219,34 @@ if($accessToken) {
 
         case 'images':
             $product = getTemplateProduct($sku);
-            $images = migrateImages($accessToken, $images, $cache);
-            $product = setProductSKUImages($product, $images, TRUE);  
-            $response = saveProduct($accessToken, $product);
+            $responses = migrateImages($accessToken, $images, $cache);
+            $messages = messagesFromMigrateImageResponses($responses);
+            
+            if(!empty($messages)) { // migrate FAIL
+                $response['code'] = 111;
+                $response['mymessage'] = $messages;
+                break;
+            } else {                // migrate SUCCESS
+                $product = setProductSKUImages($product, $images, TRUE);  
+                $response = saveProduct($accessToken, $product);
+            }
+            
             break;
 
         case 'pimages':
             $product = getTemplateProduct($sku);
-            $pimages = migrateImages($accessToken, $pimages, $cache);
-            $product = setProductImages($product, $pimages, TRUE);  
-            $response = saveProduct($accessToken, $product);
+            $responses = migrateImages($accessToken, $pimages, $cache);
+            $messages = messagesFromMigrateImageResponses($responses);
+            
+            if(!empty($messages)) { // migrate FAIL
+                $response['code'] = 111;
+                $response['mymessage'] = $messages;
+                break;
+            } else {                // migrate SUCCESS
+                $product = setProductImages($product, $pimages, TRUE);  
+                $response = saveProduct($accessToken, $product);
+            }
+
             break;
 
         case 'weight':
@@ -216,36 +260,36 @@ if($accessToken) {
         case 'info': // update multi fields
             $product = getTemplateProduct($sku);
             //myvar_dump($info);
-            foreach($info as $key => $val) {
-                if($key == "images") {
-                    $images = $info['images'];
-                    $images = migrateImages($accessToken, $val, $cache);
-                    $product = setProductSKUImages($product, $images, TRUE);  
-                }
-                if($key == "price") {
-                    $product = setProductPrice($product, 0, $info['sale_price']);  
-                }
-                if($key == "description") {
-                    $product = setProductShortDescription($product, $info['desc']);
-                    $product = setProductDescription($product, $info['desc']);
-                }
-                if($key == "weight") {
-                    $product = setProductPackageWeight($product, $info['weight']);
-                    $product = setProductPackageSize($product, $info['size_h'], $info['size_w'], $info['size_l']);
-                    $product = setProductPackageContent($product, $info['content']);
-                }
+            if(isset($info["images"])) {
+                $images = $info['images'];
+                migrateImages($accessToken, $images, $cache);   // not handle response
+                $product = setProductSKUImages($product, $images, TRUE);  
             }
+            if(isset($info["sale_price"])) {
+                $product = setProductPrice($product, 0, $info['sale_price']);  
+            }
+            if(isset($info["desc"])) {
+                $product = setProductShortDescription($product, $info['shortdesc']);
+                $product = setProductDescription($product, $info['desc']);
+            }
+            if(isset($info["weight"])) {
+                $product = setProductPackageWeight($product, $info['weight']);
+                $product = setProductPackageSize($product, $info['size_h'], $info['size_w'], $info['size_l']);
+                $product = setProductPackageContent($product, $info['content']);
+            }
+
             $response = saveProduct($accessToken, $product);
             break;
 
         default:
+            //myvar_dump("default");
             $response["code"]="XXX";
-            $response["message"]="NO ACTION";
+            $response["mymessage"]="NO ACTION";
             break;
     }
 
-    if(!isset($response['message'])) {
-        $response['message'] = messageFromResponse($response, $action, $sku);
+    if(!isset($response['mymessage'])) {
+        $response['mymessage'] = messageFromResponse($response, $action, $sku);
     }
 
     echo json_encode($response);

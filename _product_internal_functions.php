@@ -331,6 +331,12 @@ function getProductSkuIndex($product, $inputSku) {
     return $pos;
 }
 
+function htmlProductUpdateLink($sku) {
+    $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sku";
+    $htmlTag = '<a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>';
+    return $htmlTag;
+}
+
 function getProductSkusText($product) {
     $text = "";
     foreach($product['Skus'] as $skuIndex=>$sku) {

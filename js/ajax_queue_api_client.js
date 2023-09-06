@@ -50,40 +50,15 @@ function getRandomColor() {
 
 function productCreateWithAjaxQueue(params) {
     // send response to this iframe
+    console.log(params);
     var myFrame = $("#responseIframe").contents().find('body');
     var d = new Date();
     var ntime = d.toLocaleTimeString();
-    ajaxManager.addReq({
-        type: 'POST',
-        url: 'api_create.php',
-        data: params,
-        success: function(data) {
-            sconsole.log(data);
-            var res = JSON.parse(data); // data is string, convert to obj
-            const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-            if (parseInt(res.code)) {
-                myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + " " + data + ">>>" + JSON.stringify(params) + '</pre>');
-            } else {
-                var outputLog = params["action"].includes("mass") ? // 
-                    JSON.stringify(res["data"], null, 3) :          // if mass update: display response 
-                    JSON.stringify(params);                         // else: display params
-                myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + ' SUCCESS ' + outputLog + '</pre>');
-            }
-        },
-        error: function(error) {
-            myFrame.prepend(ntime + ' FAILED ' + JSON.stringify(params) + '<br>');
-        }
-    });
-}
 
-function productUpdateWithAjaxQueue(params) {
-    // send response to this iframe
-    var myFrame = $("#responseIframe").contents().find('body');
-    var d = new Date();
-    var ntime = d.toLocaleTimeString();
+    params.REQUEST_METHOD = 'PUT';  // simulate REQUEST PUT
     ajaxManager.addReq({
         type: 'POST',
-        url: 'update-api.php',
+        url: 'api_create_delete.php',
         data: params,
         success: function(data) {
             console.log(data);
@@ -91,10 +66,61 @@ function productUpdateWithAjaxQueue(params) {
 
             const randomColor = Math.floor(Math.random() * 16777215).toString(16);
             const htmlColor = "#" + randomColor;
-            myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + "; " + JSON.stringify(res["message"], null, 3) + '</pre>');
+            myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + "; " + JSON.stringify(res["mymessage"], null, 3).replaceAll('"', '') + '</pre>');
         },
         error: function(error) {
-            myFrame.prepend(ntime + ' FAILED ' + JSON.stringify(params) + '<br>');
+            myFrame.prepend(ntime + ' ERROR ' + JSON.stringify(params) + '<br>');
+        }
+    });
+}
+
+function productUpdateWithAjaxQueue(params) {
+    // send response to this iframe
+    console.log(params);
+    var myFrame = $("#responseIframe").contents().find('body');
+    var d = new Date();
+    var ntime = d.toLocaleTimeString();
+
+    ajaxManager.addReq({
+        type: 'POST',
+        url: 'api_update.php',
+        data: params,
+        success: function(data) {
+            console.log(data);
+            var res = JSON.parse(data); // data is string, convert to obj
+
+            const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+            const htmlColor = "#" + randomColor;
+            myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + "; " + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+        },
+        error: function(error) {
+            myFrame.prepend(ntime + JSON.stringify(error, 0, 2) + '<br>');
+        }
+    });
+}
+
+function productDeleteWithAjaxQueue(params) {
+    // send response to this iframe
+    console.log(params);
+    var myFrame = $("#responseIframe").contents().find('body');
+    var d = new Date();
+    var ntime = d.toLocaleTimeString();
+
+    params.REQUEST_METHOD = 'DELETE';  // simulate REQUEST DELETE
+    ajaxManager.addReq({
+        type: 'POST',
+        url: 'api_create_delete.php',
+        data: params,
+        success: function(data) {
+            console.log(data);
+            var res = JSON.parse(data); // data is string, convert to obj
+
+            const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+            const htmlColor = "#" + randomColor;
+            myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + "; " + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+        },
+        error: function(error) {
+            myFrame.prepend(ntime + JSON.stringify(error, 0, 2) + '<br>');
         }
     });
 }

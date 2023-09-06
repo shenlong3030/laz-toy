@@ -60,10 +60,8 @@ $newParentSkus = array_filter(explode("\n", str_replace("\r", "", $input)));
     <input type="submit" value="MOVE">
     </form><br><br>
 
-<form id="delform" target="_blank" action="https://toy1.phukiensh.com/lazop/del.php" method="POST">
-    <textarea style="display:none;" id="delskus" name="skus" rows="20" cols="80">></textarea>
-    <input id="delbutton" type="button" value="DEL SOURCE SKUs">
-</form>
+<button id="delbutton">DELETE SOURCE SKUs</button><br>
+<iframe id="responseIframe" name="responseIframe" width="1000" height="100"></iframe>
 
 <hr>
 
@@ -81,11 +79,23 @@ if(empty($skus) || empty($newParentSkus)) {
 ?>
 
 <script type="text/javascript">
+    //######### AJAX QUEUE ######################################################################################
+    ajaxManager = getAjaxManager();
+    ajaxManager.run(); 
+
+    //##########################################################################################################
+
+
     $("#delbutton").click(function(){
-        var txt = $("#sourceskus").val();
-        $("#delskus").val(txt);
-        document.getElementById("delform").submit();
-        console.log("submit");
+        var myFrame = $("#responseIframe").contents().find('body'); 
+        var d = new Date();
+        var n = d.toLocaleTimeString();
+        myFrame.prepend('### ' + n + ' DELETING ###################################################<hr>');
+
+        var lines = $("#sourceskus").val().split('\n');
+        for(let i=0; i<lines.length; i++){
+            productDeleteWithAjaxQueue({delete_sku: lines[i]});
+        }
     });
 </script>
 </body>

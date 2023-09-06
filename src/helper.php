@@ -56,8 +56,10 @@ function getValue($list, $index) {
     }
 }
 
-function val($input, $defaultvalue = 0) {
-    return $input ?? $defaultvalue; // same input?input:default
+function val($input, $defaultvalue = null) {
+    //return $input ?? $defaultvalue; // same input?input:default
+
+    return isset($input) ? $input : $defaultvalue;
 }
 
 function vn_to_str ($str){
@@ -129,6 +131,7 @@ function pre_process_skus($list) {
 }
 
 function make_short_sku($sku) {
+    $sku = trim($sku);
     $sku = vn_urlencode($sku);
 
     $dict = array(

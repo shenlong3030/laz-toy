@@ -1,6 +1,6 @@
 <?php
-include_once "check_token.php";
 //require_once('src/show_errors.php');
+include_once "check_token.php";
 require_once('_main_functions.php');
 
 
@@ -145,6 +145,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     </form>
 
     <a id="linkAddChild" style="color:red" href="">Add Child</a>
+    <a id="linkMassUpdate" style="color:red;padding-left: 20px" href="">Mass Update</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyLink?>" target="_blank">Copy</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyToLink?>" target="_blank">Copy info to</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Copy all SKU</a>
@@ -259,6 +260,9 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     </div>
 
 <hr>
+    <textarea id="txt_json" rows="90" cols="90"><?php echo json_encode($product);?></textarea>
+<hr>
+
     <form action="del.php" method="POST" name="delForm" target="responseIframe">
     <input type="hidden" name="skus" value="<?php echo $sku;?>" />
     <input type="submit" value="Xoá SP này"/>
@@ -414,11 +418,41 @@ date_default_timezone_set("UTC");
     });
     //###########################
 
-    $("#linkAddChild").click(function() {
+    $("#linkAddChild").click(function(e) {
+        e.preventDefault();
         var s = $('#sku').val();
         var n = $('#name').val(); 
         var url = "addchild_gui.php?sku=" + s + "&name=" + n;
-        window.open(url, '_blank');
+        //window.open(url, '_blank');
+
+        var json = $('#txt_json').val();
+        dopost(url, {json_product: json});        
+    }); 
+
+    $("#linkMassUpdate").click(function(e) {
+        e.preventDefault();
+
+        var skus = "";
+          $("#tableProducts").find("td.sku").each(function(){
+              skus = skus + $(this).text() + "\n";
+          });
+
+        var models = "";
+          $("#tableProducts").find("td.model").each(function(){
+              models = models + $(this).text() + "\n";
+          });
+
+          var colors = "";
+          $("#tableProducts").find("td.color").each(function(){
+             colors = colors + $(this).text() + "\n";
+          });
+
+        var url = "massupdate_gui.php";
+        dopost(url, {
+            skus: skus,
+            models: models,
+            colors: colors,
+        });        
     }); 
 
 

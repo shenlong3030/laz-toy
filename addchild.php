@@ -1,8 +1,7 @@
 <?php
+//include_once "src/show_errors.php";
 include_once "check_token.php";
 require_once('_main_functions.php');
-
-//include_once "src/show_errors.php";
 
 ?>
 
@@ -20,16 +19,17 @@ require_once('_main_functions.php');
 // It's only needed if timezone in php.ini is not set correctly.
 date_default_timezone_set("UTC");
 
-$sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
-$preview = isset($_POST['preview']) ? $_POST['preview'] : 0;
+$sku = val($_REQUEST["sku"]);
+$preview = val($_POST['preview']);
 
 preg_match('/(.+__.+__)/', $sku, $match);
 $initskuprefix = count($match) ? $match[1] : "";
-$skuprefix = isset($_POST['skuprefix']) ? $_POST['skuprefix'] : $initskuprefix;
-$appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
-$newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
+$skuprefix = val($_POST['skuprefix'], $initskuprefix);
+$newName = val($_REQUEST['name']);
+$jsonProduct = val($_REQUEST['json_product']);
 
 $saleProps = array();
+
 foreach ($_REQUEST['attr'] as $i => $prop) {
     $input = $_POST['col'][$i];
     if(!empty($input)) {
@@ -40,12 +40,11 @@ foreach ($_REQUEST['attr'] as $i => $prop) {
 }
 
 // move Variation to index 0 --> fix SKU format
-$variationPos = array_search('Variation', $attrList);
-if($variationPos) {
-    repositionArrayElement($attrList, $variationPos, 0);
-    repositionArrayElement($attrValues, $variationPos, 0);
-}
-
+// $variationPos = array_search('Variation', $attrList);
+// if($variationPos) {
+//     repositionArrayElement($attrList, $variationPos, 0);
+//     repositionArrayElement($attrValues, $variationPos, 0);
+// }
 
 $input = $_POST['col'][2];
 $qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
@@ -64,8 +63,10 @@ $inputdata = array(
     "skuprefix" => $skuprefix,
     "newname" => $newName,
     "qtys" => $qtys,
-    "prices" => $prices
+    "prices" => $prices,
+    "jsonProduct" => $jsonProduct,
     );
+
 
 if(count($qtys) == 0) {
     echo "<br><br><h1>Please input Quantity</h1>";
