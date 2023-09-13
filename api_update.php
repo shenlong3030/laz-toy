@@ -21,10 +21,17 @@ $colors = explode("$", $colors);
 
 $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 $desc = isset($_REQUEST['desc']) ? $_REQUEST['desc'] : "";
-$variation = isset($_REQUEST['variation']) ? $_REQUEST['variation'] : "";
-$type_screen_guard = isset($_REQUEST['type_screen_guard']) ? $_REQUEST['type_screen_guard'] : "";
-$compatibility_by_model = isset($_REQUEST['compatibility_by_model']) ? $_REQUEST['compatibility_by_model'] : "";
-$color_family = isset($_REQUEST['color_family']) ? $_REQUEST['color_family'] : "";
+
+// $variation = isset($_REQUEST['variation']) ? $_REQUEST['variation'] : "";
+// $type_screen_guard = isset($_REQUEST['type_screen_guard']) ? $_REQUEST['type_screen_guard'] : "";
+// $compatibility_by_model = isset($_REQUEST['compatibility_by_model']) ? $_REQUEST['compatibility_by_model'] : "";
+// $color_family = isset($_REQUEST['color_family']) ? $_REQUEST['color_family'] : "";
+
+$variations = val($_REQUEST['variations'], "");
+$variations = array_filter(explode("\n", str_replace("\r", "", $variations))); // split by newline
+
+$variationValues = val($_REQUEST['variationValues'], "");
+$variationValues = array_filter(explode("\n", str_replace("\r", "", $variationValues))); // split by newline
 
 $category = val($_REQUEST['category']);
 
@@ -71,7 +78,7 @@ function messageFromResponse($response, $action, $sku) {
     } else {
         $fmsg = failureMessage($action, $sku);
         if(isset($response["detail"])) {
-            $fmsg .= "; " . json_encode($response["detail"]);
+            $fmsg .= "; " . json_encode($response["detail"], JSON_UNESCAPED_UNICODE);
         }
         return $fmsg;
     }
@@ -171,7 +178,7 @@ if($accessToken) {
                     $r = saveProduct($accessToken, $product);
                     if(!noError($r)) {
                         $response["code"] = $r["code"]; // save error code
-                        $response['message'] = failureMessage("re-active", $sku);
+                        $response['mymessage'] = failureMessage("re-active", $sku);
                     }
                 } 
             }
@@ -210,11 +217,16 @@ if($accessToken) {
 
         case 'attr':
             $product = getTemplateProduct($sku);
-            $product = setProductVariation($product, $variation);
-            $product = setProductModel($product, $compatibility_by_model);
-            $product = setProductColor($product, $color_family);
-            $product = setProductTypeScreenGuard ($product, $type_screen_guard);
+            //$product = setProductVariation($product, "variation1", "Variation", true, true);
+            //$product = setProductVariation($product, "variation2", "color_family");
+
+            foreach ($variations as $i => $v){
+                $product = setProductSaleProp($product, $v, $variationValues[$i]);
+            }
+            //$product = setProductSaleProp($product, "color_family", "c...");
+
             $response = saveProduct($accessToken, $product);
+
             break;
 
         case 'images':
@@ -292,7 +304,8 @@ if($accessToken) {
         $response['mymessage'] = messageFromResponse($response, $action, $sku);
     }
 
-    echo json_encode($response);
+    $response['raw_product'] = $product;
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
 }
 
 ?>

@@ -28,6 +28,8 @@ $variation = "";
 $brand = "";
 $color_thumbnail = "";
 $type_screen_guard = "";
+$variations = array();
+$variationValues = array();
 
 if($sku || $itemId) {
     $product = $sibling = null;
@@ -62,6 +64,12 @@ if($sku || $itemId) {
         $color = $product['skus'][$i]['saleProp']['color_family'];
         $color_thumbnail = $product['skus'][$i]['color_thumbnail'];
         $model = $product['skus'][$i]['saleProp']['compatibility_by_model'];
+
+        foreach($product['skus'][$i]['saleProp'] as $key => $value)
+        {
+            $variations[] = $key;
+            $variationValues[] = $value;
+        }
         
         $price = $product['skus'][$i]['price'];
         $sprice = $product['skus'][$i]['special_price'];
@@ -171,11 +179,26 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     </div>
 <hr>
     <div>
+    <table>
+    <tbody>
+        <tr>
+            <td>Variations</td>
+            <td>Variation values</td>
+        </tr>
+        <tr>
+            <td><textarea class="nowrap" name="variations" rows="3" cols="20"><?php echo implode("\n", $variations);?></textarea></td>
+            <td><textarea class="nowrap" name="variation_values" rows="3" cols="20"><?php echo implode("\n", $variationValues);?></textarea>
+            </td>
+            <td><button id="btn_updateattr">Update</button></td>
+        </tr>
+    </tbody>
+    </table>
+    Valid Variations: color_family, Variation, compatibility_by_model, type_screen_guard<br>
+
     Variation <input type="text" name="variation" value="<?php echo $variation;?>" />
     type_screen_guard <input type="text" name="type_screen_guard" value="<?php echo $type_screen_guard;?>" />
     compatibility_by_model <input type="text" name="compatibility_by_model" value="<?php echo $model;?>" />
     color_family <input type="text" name="color_family" value="<?php echo $color;?>" />
-    <button id="btn_updateattr">Update</button>
     </div>
 <hr>
     <form action="update.php" method="POST" name="brandForm" target="responseIframe">
@@ -362,15 +385,21 @@ date_default_timezone_set("UTC");
     //### UPDATE ATTRIBUTES ###
     $('#btn_updateattr').click(function() {
         var s = $('#sku').val();
-        var variation = $(this).parent().find('input[name="variation"]').val(); 
-        var type_screen_guard = $(this).parent().find('input[name="type_screen_guard"]').val(); 
-        var compatibility_by_model = $(this).parent().find('input[name="compatibility_by_model"]').val(); 
-        var color_family = $(this).parent().find('input[name="color_family"]').val(); 
+        // var variation = $(this).parent().find('input[name="variation"]').val(); 
+        // var type_screen_guard = $(this).parent().find('input[name="type_screen_guard"]').val(); 
+        // var compatibility_by_model = $(this).parent().find('input[name="compatibility_by_model"]').val(); 
+        // var color_family = $(this).parent().find('input[name="color_family"]').val(); 
+
+        var variations = $(this).closest('div').find('textarea[name="variations"]').val(); 
+        var variationValues = $(this).closest('div').find('textarea[name="variation_values"]').val(); 
+
         productUpdateWithAjaxQueue({ sku: s, action: "attr", 
-            variation: variation, 
-            type_screen_guard:type_screen_guard,
-            compatibility_by_model:compatibility_by_model,
-            color_family:color_family
+            // variation: variation, 
+            // type_screen_guard:type_screen_guard,
+            // compatibility_by_model:compatibility_by_model,
+            // color_family:color_family
+            variations: variations,
+            variationValues: variationValues
         });
     });
     //###########################

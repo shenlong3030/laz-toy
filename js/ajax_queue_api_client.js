@@ -66,10 +66,10 @@ function productCreateWithAjaxQueue(params) {
 
             const randomColor = Math.floor(Math.random() * 16777215).toString(16);
             const htmlColor = "#" + randomColor;
-            myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + "; " + JSON.stringify(res["mymessage"], null, 3).replaceAll('"', '') + '</pre>');
+            myFrame.append('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3).replaceAll('"', '') + '</pre>');
         },
         error: function(error) {
-            myFrame.prepend(ntime + ' ERROR ' + JSON.stringify(params) + '<br>');
+            myFrame.append(ntime + ' ERROR ' + JSON.stringify(params) + '<br>');
         }
     });
 }
@@ -91,7 +91,7 @@ function productUpdateWithAjaxQueue(params) {
 
             const randomColor = Math.floor(Math.random() * 16777215).toString(16);
             const htmlColor = "#" + randomColor;
-            myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + "; " + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+            myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
         },
         error: function(error) {
             myFrame.prepend(ntime + JSON.stringify(error, 0, 2) + '<br>');
@@ -117,10 +117,10 @@ function productDeleteWithAjaxQueue(params) {
 
             const randomColor = Math.floor(Math.random() * 16777215).toString(16);
             const htmlColor = "#" + randomColor;
-            myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + "; " + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+            myFrame.append('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
         },
         error: function(error) {
-            myFrame.prepend(ntime + JSON.stringify(error, 0, 2) + '<br>');
+            myFrame.append(ntime + JSON.stringify(error, 0, 2) + '<br>');
         }
     });
 }

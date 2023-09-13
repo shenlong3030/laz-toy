@@ -391,7 +391,7 @@ function getProduct($accessToken, $sku, $item_id=null, $name=null){
             $product = getProductWithSingleSku($product, $sku);
         }
     } else {
-        myvar_dump($response);
+        //myvar_dump($response);
     }
 
     return $product;

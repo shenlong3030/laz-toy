@@ -131,6 +131,7 @@ function pre_process_skus($list) {
 }
 
 function make_short_sku($sku) {
+    $sku = strtoupper($sku);
     $sku = trim($sku);
     $sku = vn_urlencode($sku);
 
@@ -142,6 +143,7 @@ function make_short_sku($sku) {
     'KINH.TRONG' => 'KT',
     'KINH.FULL' => 'KF',
     
+    'BAO.VE.CAMERA' => 'BVC',
     'OP.DEO' => 'OD',
     'OP.LUNG' => 'OL',
     'CHONG.SOC' => 'CS',

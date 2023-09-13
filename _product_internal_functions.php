@@ -21,6 +21,11 @@ function prepareProduct($product) {
     ////////////////////////////////////////////////////
     // fix bug API khong the update
     unset($product['variation']);
+    // $product['variation']['Variation1']['hasImage'] = true;
+    // $product['variation']['variation1'] = $product['variation']['Variation1'];
+    // $product['variation']['variation2'] = $product['variation']['Variation2'];
+    unset($product['variation']['Variation1']);
+    unset($product['variation']['Variation2']);
 
     // fix bug API khong the copyInfo
     unset($product['Attributes']['warranty_type']);
@@ -78,6 +83,7 @@ function prepareProductForUpdating($product) {
 
 function prepareProductForCreating($product, $keepAllSkus = FALSE) {
     $product = prepareProduct($product);
+    $product['Images'] = $product['images'];
     
     // keep skus[0], remove all others
     if(!$keepAllSkus) {
@@ -111,10 +117,6 @@ function setProductCategory($product, $category) {
 // SKU is reference variable,
 // SKU will be updated after run this function
 function setProductSku($product, &$sku) {
-    // convert SKU to UPPERCASE, set SKU
-    $sku = strtoupper($sku);
-    $sku = make_short_sku($sku);
-
     $product['Skus'][0]['SellerSku'] = $sku;
     return $product;
 }
@@ -204,37 +206,42 @@ function setProductQuantity($product, $val) {
     return $product;
 }
 
+/*
+$key = variation1, variation2
+$hasImage = true / false , only variation1 can $hasImage=true
+*/
+function setProductVariation($product, $key, $name, $hasImage=false, $reset=false) {
+    if($reset) {
+        $product['variation'] = array();
+    }
+    $product['variation'][$key]['name'] = $name;
+    $product['variation'][$key]['hasImage'] = $hasImage;
+    $product['variation'][$key]['customize'] = true;
+    $product['variation'][$key]['options'] = array('...');
+    return $product;
+}
+
+/* sale prop:
+$product['Skus'][0]['saleProp']['compatibility_by_model']
+$product['Skus'][0]['saleProp']['Variation']
+$product['Skus'][0]['saleProp']['type_screen_guard']
+$product['Skus'][0]['saleProp']['color_family']
+*/
+function setProductSaleProp($product, $key, $value, $reset=false) {
+    if($reset) {
+        $product['Skus'][0]['saleProp'] = array();
+    }
+    $product['Skus'][0]['saleProp'][$key] = $value;
+    return $product;
+}
+
 function setProductColor($product, $color) {
     $product['Skus'][0]['saleProp']['color_family'] = $color;
     return $product;
 }
 
-function setProductColorThumbnail($product, $colors, $thumbnails) {
-    unset($product['Attributes']);
-
-    foreach ($colors as $key => $color) {
-        $thumbnail = $thumbnails[$key];
-        foreach($product['Skus'] as $skuIndex=>$sku) {
-            if($product['Skus'][$skuIndex]['color_family'] == $color) {
-                $product['Skus'][$skuIndex]['color_thumbnail'] = $thumbnail;
-            }    
-        }
-    }
-    return $product;
-}
-
 function setProductModel($product, $model) {
     $product['Skus'][0]['saleProp']['compatibility_by_model'] = $model;
-    return $product;
-}
-
-function setProductVariation($product, $value) {
-    $product['Skus'][0]['saleProp']['Variation'] = $value;
-    return $product;
-}
-
-function setProductTypeScreenGuard($product, $value) {
-    $product['Skus'][0]['saleProp']['type_screen_guard'] = $value;
     return $product;
 }
 
@@ -315,6 +322,14 @@ function getTemplateProduct($sku, $status=null) {
     }
 
     return $product;
+}
+
+function getProductSaleProp($product, $key) {
+    return $product['Skus'][0]['saleProp'][$key];
+}
+
+function getProductSaleProps($product) {
+    return $product['Skus'][0]['saleProp'];
 }
 
 function getProductName($product) {
@@ -459,6 +474,10 @@ function fixProductSaleDate($product){
 //######################################
 //OTHERS region
 //######################################
+function generateProductSku($product){
+    return join(".", $product['Skus'][0]['saleProp']);
+}
+
 
 function unsetQuantity($product){
     foreach($product['Skus'] as $skuIndex=>$sku) {
@@ -486,11 +505,16 @@ function productsWithSingleSku($products) {
     return $r;
 }
 
-function htmlProductUpdateLink($sku) {
-    $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sku";
-    $htmlTag = '<a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>';
-    return $htmlTag;
-}
+function testFix($product) {
+    $product['variation']['Variation1']['name'] = 'compatibility_by_model';
+    $product['variation']['Variation1']['label'] = 'Compatibility by Model';
+    $product['variation']['variation1'] = $product['variation']['Variation1'];
 
+    $product['variation']['Variation2']['name'] = 'color_family';
+    $product['variation']['Variation2']['label'] = 'Color Family';
+    $product['variation']['variation2'] = $product['variation']['Variation2'];
+
+    return $product;
+}
 
 ?>
