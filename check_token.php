@@ -16,11 +16,12 @@ function getSellerInfo($accessToken) {
 }
 
 function isValidInfo($info) {
-    if($info["short_code"] == "VN107AK" || $info["short_code"] == "VN10UTH") {
-        return TRUE;
-    } else {
-        return FALSE;
-    }
+    // if($info["short_code"] == "VN107AK" || $info["short_code"] == "VN10UTH") {
+    //     return TRUE;
+    // } else {
+    //     return FALSE;
+    // }
+    return true;
 }
 
 $logout = isset($_GET['logout']) ? $_GET['logout'] : null;
