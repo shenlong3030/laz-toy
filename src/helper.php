@@ -1,8 +1,16 @@
 <?php
 
+set_error_handler(function(int $errno, string $errstr) {
+    if ((strpos($errstr, 'Undefined array key') === false) && (strpos($errstr, 'Undefined variable') === false)) {
+        return false;
+    } else {
+        return true;
+    }
+}, E_WARNING);
+
 // $caller can be: __FUNCTION__ , __FILE__ , __LINE__
 function myecho($val, $caller="") {
-    echo "<br>";
+    echo "<br><br>";
     if(!empty($caller)) {
         echo $caller, "() ";
     }
@@ -56,7 +64,7 @@ function getValue($list, $index) {
     }
 }
 
-function val($input, $defaultvalue = null) {
+function val($input, $defaultvalue = "") {
     //return $input ?? $defaultvalue; // same input?input:default
 
     return isset($input) ? $input : $defaultvalue;
@@ -144,6 +152,7 @@ function make_short_sku($sku) {
     'KINH.FULL' => 'KF',
     
     'BAO.VE.CAMERA' => 'BVC',
+    'BAO.VE.CAM' => 'BVC',
     'OP.DEO' => 'OD',
     'OP.LUNG' => 'OL',
     'CHONG.SOC' => 'CS',

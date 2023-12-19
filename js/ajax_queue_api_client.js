@@ -61,12 +61,16 @@ function productCreateWithAjaxQueue(params) {
         url: 'api_create_delete.php',
         data: params,
         success: function(data) {
-            console.log(data);
-            var res = JSON.parse(data); // data is string, convert to obj
-
-            const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-            const htmlColor = "#" + randomColor;
-            myFrame.append('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3).replaceAll('"', '') + '</pre>');
+            if(data.trim().length) {
+                console.log(data);
+                var res = JSON.parse(data); // data is string, convert to obj
+                const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+                const htmlColor = "#" + randomColor;
+                //myFrame.append('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3).replaceAll('"', '') + '</pre>');
+                myFrame.append('<pre>' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3).replaceAll('"', '') + '</pre>');
+            } else {
+                console.log("return empty json");
+            }
         },
         error: function(error) {
             myFrame.append(ntime + ' ERROR ' + JSON.stringify(params) + '<br>');
@@ -86,12 +90,17 @@ function productUpdateWithAjaxQueue(params) {
         url: 'api_update.php',
         data: params,
         success: function(data) {
-            console.log(data);
-            var res = JSON.parse(data); // data is string, convert to obj
+            if(data.trim().length) {
+                console.log(data);
+                var res = JSON.parse(data); // data is string, convert to obj
 
-            const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-            const htmlColor = "#" + randomColor;
-            myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+                const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+                const htmlColor = "#" + randomColor;
+                //myFrame.prepend('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+                myFrame.prepend('<pre>' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+            } else {
+                console.log("return empty json");
+            }
         },
         error: function(error) {
             myFrame.prepend(ntime + JSON.stringify(error, 0, 2) + '<br>');
@@ -112,12 +121,17 @@ function productDeleteWithAjaxQueue(params) {
         url: 'api_create_delete.php',
         data: params,
         success: function(data) {
-            console.log(data);
-            var res = JSON.parse(data); // data is string, convert to obj
+            if(data.trim().length) {
+                console.log(data);
+                var res = JSON.parse(data); // data is string, convert to obj
 
-            const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-            const htmlColor = "#" + randomColor;
-            myFrame.append('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+                const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+                const htmlColor = "#" + randomColor;
+                //myFrame.append('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+                myFrame.append('<pre>' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3) + '</pre>');
+            } else {
+                console.log("return empty json");
+            }
         },
         error: function(error) {
             myFrame.append(ntime + JSON.stringify(error, 0, 2) + '<br>');
