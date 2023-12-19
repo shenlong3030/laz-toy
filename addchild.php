@@ -20,6 +20,7 @@ require_once('_main_functions.php');
 date_default_timezone_set("UTC");
 
 $sku = val($_REQUEST["sku"]);
+$skuid = val($_REQUEST["skuid"]);
 $preview = val($_POST['preview']);
 
 preg_match('/(.+__.+__)/', $sku, $match);
@@ -73,7 +74,7 @@ if(count($qtys) == 0) {
     exit();
 }
 
-$dict = addChildProduct($accessToken, $sku, $inputdata, $preview);
+$dict = addChildProduct($accessToken, $sku, $skuid, $inputdata, $preview);
 
 ?>
 

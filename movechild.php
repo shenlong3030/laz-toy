@@ -20,17 +20,12 @@ require_once('_main_functions.php');
 // It's only needed if timezone in php.ini is not set correctly.
 date_default_timezone_set("UTC");
 
-$preview = val($_POST['preview']);
-$input = $_POST['col'][0];
-$sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
-$skus = array($sku);
+$preview = val($_REQUEST['preview']);
+$input = val($_REQUEST["skus"]);
+$skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
-if(!empty($input)) {
-    $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
-}
-
-$input = $_POST['col'][1];
-$newParentSkus = array_filter(explode("\n", str_replace("\r", "", $input)));
+$input = val($_REQUEST["des_skus"]);
+$desSkus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 ?>
 
@@ -51,8 +46,8 @@ $newParentSkus = array_filter(explode("\n", str_replace("\r", "", $input)));
                 <td>DES SKU</td>
             </tr>
             <tr>
-                <td><textarea id="sourceskus" class="nowrap" name="col[]" rows="20" cols="50"><?php echo implode("\n", $skus);?></textarea></td>
-                <td><textarea class="nowrap" name="col[]" rows="20" cols="50"><?php echo implode("\n", $newParentSkus);?></textarea></td>
+                <td><textarea id="sourceskus" class="nowrap" name="skus" rows="20" cols="50"><?php echo implode("\n", $skus);?></textarea></td>
+                <td><textarea class="nowrap" name="des_skus" rows="20" cols="50"><?php echo implode("\n", $desSkus);?></textarea></td>
             </tr>
         </tbody>
     </table>
@@ -66,12 +61,12 @@ $newParentSkus = array_filter(explode("\n", str_replace("\r", "", $input)));
 <hr>
 
 <?php
-if(empty($skus) || empty($newParentSkus)) {
+if(empty($skus) || empty($desSkus)) {
     echo "<h1>Please input source SKU and SKU prefix</h1>";
 } else {
     $data = array(
-    "skus" => $skus,
-    "newParentSkus" => $newParentSkus
+        "skus" => $skus,
+        "desSkus" => $desSkus
     );
 
     massMoveChild($accessToken, $data, $preview);

@@ -195,71 +195,7 @@ function search() {
 $(function(){
 
   //######### AJAX QUEUE ######################################################################################
-    var ajaxManager = (function() {
-       var requests = [];
-
-       return {
-          addReq:  function(opt) {
-              requests.push(opt);
-          },
-          removeReq:  function(opt) {
-              if( $.inArray(opt, requests) > -1 )
-                  requests.splice($.inArray(opt, requests), 1);
-          },
-          run: function() {
-              var self = this,
-                  oriSuc;
-
-              if( requests.length ) {
-                  oriSuc = requests[0].complete;
-
-                  requests[0].complete = function() {
-                       if( typeof(oriSuc) === 'function' ) oriSuc();
-                       requests.shift();
-                       self.run.apply(self, []);
-                  };   
-
-                  $.ajax(requests[0]);
-              } else {
-                self.tid = setTimeout(function() {
-                   self.run.apply(self, []);
-                }, 1000);
-              }
-          },
-          stop:  function() {
-              requests = [];
-              clearTimeout(this.tid);
-          }
-       };
-    }());
-    ajaxManager.run(); 
-
-    function productUpdateWithAjaxQueue(params) {
-        // send response to this iframe
-        var myFrame = $("#responseIframe").contents().find('body'); 
-        var actionName = " CHANGE " + params['action'];
-
-        ajaxManager.addReq({
-             type: 'POST',
-             url: 'update-api.php',
-             data: params,
-             success: function(data){
-                var res = JSON.parse(data); // data is string, convert to obj
-                var d = new Date();
-                var n = d.toLocaleTimeString();
-                var sku = " " + params.sku + " ";
-
-                if(parseInt(res.code)) {
-                  myFrame.prepend(n + data + '<br>'); 
-                } else {
-                  myFrame.prepend(n + sku + actionName + ' SUCCESS<br>'); 
-                }
-             },
-             error: function(error){
-                myFrame.prepend(n + sku + actionName + ' FAILED<br>'); 
-             }
-        });
-    }
+  
   //##########################################################################################################
 
   $("button[name='qtyaction'][value='+500']").click(function() {

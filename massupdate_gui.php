@@ -3,11 +3,17 @@
 include_once "check_token.php";
 require_once('_main_functions.php');
 
-
-
+$itemId = val($_REQUEST['item_id']);
 $skus = val($_REQUEST['skus']);
-$models = val($_REQUEST['models']);
-$colors = val($_REQUEST['colors']);
+$skuids = val($_REQUEST['skuids']);
+// $models = val($_REQUEST['models']);
+// $colors = val($_REQUEST['colors']);
+$saleprop1 = val($_REQUEST['saleprop1']);
+$saleprop2 = val($_REQUEST['saleprop2']);
+$variation1 = val($_REQUEST['variation1']);
+$variation2 = val($_REQUEST['variation2']);
+$prices = val($_REQUEST['prices']);
+$skuImages = val($_REQUEST['sku_images']);
 
 ?>
 
@@ -22,25 +28,30 @@ $colors = val($_REQUEST['colors']);
 </head>
 
 <body>
+    <input type="hidden" id="item_id" name="item_id" value="<?php echo $itemId;?>">
 <table>
     <tr>
      <th>SKUs</th>
+     <th>SkuIds</th>
      <th>Names</th>
-     <th>Models</th>
-     <th>Colors</th>
+     <th>Variation1= <span id="variation1"><?php echo $variation1;?></span></th>
+     <th>Variation2= <span id="variation2"><?php echo $variation2;?></span></th>
      <th>Prices</th>
-     <th>Images >> Start index (1-8) <input size="3" type="text" name="imageindex" value="0"></th>
+     <th>Product Images</th>
+     <th>Images</th>
      <th>Actives</th>
     </tr>
     <tbody>
         <tr>
-            <td><textarea class="nowrap" id="txt_skus" rows="20" cols="30"><?php echo $skus;?></textarea></td>
-            <td><textarea class="nowrap" id="txt_names" rows="20" cols="50"></textarea></td>
-            <td><textarea class="nowrap" id="txt_models" rows="20" cols="10"><?php echo $models;?></textarea></td>
-            <td><textarea class="nowrap" id="txt_colors" rows="20" cols="10"><?php echo $colors;?></textarea></td>
-            <td><textarea class="nowrap" name="txt_prices" rows="20" cols="10"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="50"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="5"></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_skus" rows="20" cols="60"><?php echo $skus;?></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_skuids" rows="20" cols="3"><?php echo $skuids;?></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_names" rows="20" cols="50"></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_saleprop1s" rows="20" cols="20"><?php echo $saleprop1;?></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_saleprop2s" rows="20" cols="20"><?php echo $saleprop2;?></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_prices" rows="20" cols="10"><?php echo $prices;?></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_product_images" rows="20" cols="20"><?php echo $productImages;?></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_sku_images" rows="20" cols="20"><?php echo $skuImages;?></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" name="col[]" rows="20" cols="5"></textarea></td>
         </tr>
     </tbody>
 </table>
@@ -48,6 +59,9 @@ $colors = val($_REQUEST['colors']);
 <button id="btn_qty500">Qty =500</button><br>
 <button id="btn_updatePrices">Sale prices = </button><input id="sprice" type="text" name="sprice"><br>
 <button id="btn_update">Update names,models</button><br>
+<br><a target="_blank" 
+        href="api_update.php?action=remove_saleprop&item_id=<?php echo $itemId?>&variation1=compatibility_by_model" 
+        class="fa fa-trash" style="color:green" tabindex="-1">Remove compatibility_by_model</a>
 <br>
 <hr>
 
@@ -57,6 +71,12 @@ $colors = val($_REQUEST['colors']);
 </body>
 
 <script type="text/javascript">
+    $(".nowrap").on('focusout', function() {
+        var lines = $(this).val().split("\n");  
+        $(this).prev().prev().text(lines.length);
+    });
+
+
     //######### AJAX QUEUE ######################################################################################
     ajaxManager = getAjaxManager();
     ajaxManager.run(); 
@@ -68,15 +88,15 @@ $colors = val($_REQUEST['colors']);
         var n = d.toLocaleTimeString();
         myFrame.prepend('### ' + n + ' QTY=500 ###################################################<hr>');
 
-        var lines = $('#txt_skus').val().replaceAll("#N/A","").split('\n');
+        var lines = $('#txt_skuids').val().replaceAll("#N/A","").split('\n');
         lines = lines.filter(function(e){return e}); //remove empty
 
         do {
             var set10 = lines.slice(0, 10); // get 10 left
             lines = lines.slice(10);        // renove 10 left 
-            var skus = set10.join(',');     // create string sku,sku,sku
+            var skuids = set10.join('\n');     // create string sku,sku,sku
 
-            productUpdateWithAjaxQueue({ skus: skus, action: "massQty", qty: 500});
+            productUpdateWithAjaxQueue({ skuids: skuids, action: "massQty", qty: 500});
         } while(lines.length);
     });
 
@@ -86,16 +106,16 @@ $colors = val($_REQUEST['colors']);
         var n = d.toLocaleTimeString();
         myFrame.prepend('### ' + n + ' UDPATE PRICES ###################################################<hr>');
 
-        var lines = $('#txt_skus').val().replaceAll("#N/A","").split('\n');
+        var lines = $('#txt_skuids').val().replaceAll("#N/A","").split('\n');
         lines = lines.filter(function(e){return e}); //remove empty
         var sprice = $('#sprice').val();
 
         do {
             var set10 = lines.slice(0, 10); // get 10 left
             lines = lines.slice(10);        // renove 10 left 
-            var skus = set10.join(',');     // create string sku,sku,sku
+            var skuids = set10.join('\n');     // create string sku,sku,sku
 
-            productUpdateWithAjaxQueue({ skus: skus, action: "massPrice", sprice: sprice});
+            productUpdateWithAjaxQueue({ skuids: skuids, action: "massPrice", sprice: sprice});
         } while(lines.length);
     });
     
@@ -105,35 +125,67 @@ $colors = val($_REQUEST['colors']);
         var n = d.toLocaleTimeString();
         myFrame.prepend('### ' + n + ' UDPATE Name, models, colors ###################################################<hr>');
 
-        var lines = $('#txt_skus').val().split('\n');       
+        var lines = $('#txt_skuids').val().split('\n');       
+        var skus = $('#txt_skus').val().split('\n');       
         var names = $('#txt_names').val().split('\n');
-        var models = $('#txt_models').val().split('\n');
-        var colors = $('#txt_colors').val().split('\n');
+        var saleprop1s = $('#txt_saleprop1s').val().split('\n');
+        var saleprop2s = $('#txt_saleprop2s').val().split('\n');
 
+        var variation1 = $('#variation1').text();
+        var variation2 = $('#variation2').text();
+
+        var prices = $('#txt_prices').val().split('\n');
+        var skuImages = $('#txt_sku_images').val().split('\n');
+        var pImages = $('#txt_product_images').val().split('\n');
+
+        var chunksize = 1;
         do {
-            var set10 = lines.slice(0, 10); // get 10 left
-            lines = lines.slice(10);        // renove 10 left 
-            var skus = set10.join(',');     // create string sku,sku,sku
+            var set10 = lines.slice(0, chunksize); // get 10 left
+            lines = lines.slice(chunksize);        // renove 10 left 
+            var skuids = set10.join('\n');     // create string sku,sku,sku
 
-            set10 = names.slice(0, 10); // get 10 left
-            names = names.slice(10);        // renove 10 left 
-            var paramNames = set10.join('$');     // create string sku,sku,sku
+            set10 = skus.slice(0, chunksize); // get 10 left
+            skus = skus.slice(chunksize);        // renove 10 left 
+            var paramSkus = set10.join('\n');     // create string sku,sku,sku
 
-            set10 = models.slice(0, 10); // get 10 left
-            models = models.slice(10);        // renove 10 left 
-            var paramModels = set10.join('$');     // create string
+            set10 = names.slice(0, chunksize); // get 10 left
+            names = names.slice(chunksize);        // renove 10 left 
+            var paramNames = set10.join('\n');     // create string sku,sku,sku
 
-            set10 = colors.slice(0, 10); // get 10 left
-            colors = colors.slice(10);        // renove 10 left 
-            var paramColors = set10.join('$');     // create string 
+            set10 = saleprop1s.slice(0, chunksize); // get 10 left
+            saleprop1s = saleprop1s.slice(chunksize);        // renove 10 left 
+            var paramSaleprop1s = set10.join('\n');     // create string
 
-            productUpdateWithAjaxQueue({ skus: skus, 
+            set10 = saleprop2s.slice(0, chunksize); // get 10 left
+            saleprop2s = saleprop2s.slice(chunksize);        // renove 10 left 
+            var paramSaleprop2s = set10.join('\n');     // create string 
+
+            set10 = prices.slice(0, chunksize); // get 10 left
+            prices = prices.slice(chunksize);        // renove 10 left 
+            var paramPrices = set10.join('\n');     // create string 
+
+            set10 = skuImages.slice(0, chunksize); // get 10 left
+            skuImages = skuImages.slice(chunksize);        // renove 10 left 
+            var paramSkuImages = set10.join('\n');     // create string 
+
+            set10 = pImages.slice(0, chunksize); // get 10 left
+            pImages = pImages.slice(chunksize);        // renove 10 left 
+            var paramProductImages = set10.join('\n');     // create string 
+
+            productUpdateWithAjaxQueue({
+                skuids: skuids,
+                skus: paramSkus,
                 action: "massUpdate", 
-                names: paramNames, 
-                models: paramModels, 
-                colors: paramColors
+                mass_names: paramNames, 
+                mass_saleprop1s: paramSaleprop1s, 
+                mass_saleprop2s: paramSaleprop2s,
+                variation1: variation1,
+                variation2: variation2,
+                mass_prices: paramPrices,
+                mass_sku_images: paramSkuImages,
+                mass_product_images: paramProductImages
             });
-        } while(lines.length);
+        } while(skus.length);
     });
 
 

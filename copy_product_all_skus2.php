@@ -1,88 +1,86 @@
 <?php
 include_once "check_token.php";
-//require_once('src/show_errors.php');
+require_once('src/show_errors.php');
 require_once('_main_functions.php');
 
-$sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
-$itemId = isset($_REQUEST["item_id"]) ? $_REQUEST["item_id"] : "";
+$skuFull = val($_REQUEST["sku"]);
+$arr = explode("~", $skuFull);
+$sku = $arr[0];
+$skuid = $arr[1];
+$itemId = val($_REQUEST["item_id"], $arr[2]);
+
 $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : "";
 
 $newName = val($_REQUEST["new_name"], "");
-$selectedVariations = val($_REQUEST["variations"], "");
-$newSkuPrefix = val($_REQUEST["new_sku_prefix"], "");
-$newSkuPrefix = trim($newSkuPrefix);
-$associatedSku = val($_REQUEST["associated_sku"], "");
+$selectedModels = val($_REQUEST["models"], []);
+$inputVariations = val($_REQUEST["variations"]);
+$inputVariations = explode("\r\n", $inputVariations);
 
-$types = val($_REQUEST['type_screen_guards'], null);
-$types = array_filter(explode("\n", str_replace("\r", "", $types)));
+$newSkuPrefix = val($_REQUEST["new_sku_prefix"], "");
+
+$parentSkuFull = val($_REQUEST["parent_sku"]);
+$arr = explode("~", $parentSkuFull);
+$parentSku = $arr[0];
+$parentSkuid = $arr[1];
+$parentItemId = $arr[2];
 
 $productName;
 $srcSkuList;
 $variationList;
 $variationImageList;
 
+$input = val($_REQUEST['product_images']);
+$productImages = explode("\r\n", $input);
+
 if($sku) {
-    $product = getProduct($accessToken, $sku, $itemId);
+    $product = getProduct($accessToken, null, $itemId);
     if($product) {
-        if(empty($itemId)) {
-            $itemId = getProductItemId($product);
-        }
-        // get product with all SKUs
-        $product = getProduct($accessToken, null, $itemId);
         $product = prepareProductForCreating($product, TRUE);
+        $product['Images'] = [];
         $productSkus = $product['Skus'];
-        unset($product['Skus']); // remove all old SKU dict
+        $product['Skus'] = [];
 
         if($action) {
-            $product = setProductAssociatedSku($product, $associatedSku);
+            $product = setProductAssociatedSku($product, $parentSkuid);
+            $product = setProductImages($product, $productImages, true);
             $product['Attributes']['name'] = $newName;
 
-            foreach($types as $j=>$type) {
-                foreach ($productSkus as $i=>$item) {
-                    $oldSku = $item['SellerSku']; 
+            foreach ($inputVariations as $inputVariation) {
+                foreach ($productSkus as $i=>$dict) {
+                    $oldSku = $dict['SellerSku']; 
                     // break if not selected for copying
-                    if(!in_array($oldSku, $selectedVariations)){
+                    if(!in_array($oldSku, $selectedModels)){
                         continue;
                     }
 
-                    $item['saleProp']['type_screen_guard'] = $type;
-                    //$item['saleProp']['compatibility_by_model'] = $model;
+                    $dict['saleProp']["Variation"] = $inputVariation;
 
-                    //var_dump($item['saleProp']);
-                    
                     // sku = "AAA__BBBBBBB__CCC.CC"  => postfix = CCC.CC
-                    preg_match('/_([^_]+$)/', $item['SellerSku'], $match);
+                    preg_match('/_([^_]+$)/', $dict['SellerSku'], $match);
                     $postfix = count($match) ? $match[1] : "";
+                    $newSku = trim($newSkuPrefix) . trim($inputVariation) . "." . trim($postfix);
+                    $newSku = strtoupper($newSku);
+                    $newSku = make_short_sku($newSku);
 
-                    if($newSkuPrefix[-1] != "_") {
-                        $newSkuPrefix .= "_";
-                    }
+                    $dict['SellerSku'] = $newSku;
+                    $dict['Status'] = "active";
 
-                    $newSku = $newSkuPrefix . $type . "." . trim($postfix);
-                    $newSku = make_short_sku(strtoupper($newSku));
-                    $item['SellerSku'] = $newSku;
-                    $item['Status'] = "active";
-
-                    $product['Skus'][] = $item; // add new SKU dict
+                    $product['Skus'][] = $dict; // add dict to array
                 }
             }
-            
             createProduct($accessToken, $product);
         } else {
-            $associatedProduct = getProduct($accessToken, $associatedSku);
-            $newName = getProductName($associatedProduct);
+            $parentProduct = getProduct($accessToken, null, $parentItemId);
+            $newName = getProductName($parentProduct);
+            $productImages = getProductImages($parentProduct);
 
-            // get newSkuPrefix from associatedSku
-            // preg_match('/(.+_)/', $associatedSku, $match);
-            // $newSkuPrefix = count($match) ? $match[1] : "";
+            preg_match('/(.+_)/', $parentSku, $match);
+            $newSkuPrefix = count($match) ? $match[1] : "";
         }
 
-        //preg_match('/(.+_)/', $sku, $match);
-        //$skuPrefix = count($match) ? $match[1] : "";
-        //$newSkuPrefix = $newSkuPrefix ? $newSkuPrefix : $skuPrefix;
-
-        $newSkuPrefix = "CL2__";
-
+        preg_match('/(.+_)/', $sku, $match);
+        $skuPrefix = count($match) ? $match[1] : "";
+        $newSkuPrefix = $newSkuPrefix ? $newSkuPrefix : $skuPrefix;
         $productName = $newName ? $newName : $product['Attributes']['name'];
 
         $srcSkuList = array_map(function($productSkus){
@@ -105,9 +103,6 @@ if($sku) {
         echo "INVALID ID";
     }
 }
-
-$addChildLink = "https://$_SERVER[HTTP_HOST]/lazop/addchild_gui.php?sku=$sku&name=$name";
-$cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 
 ?>
 
@@ -142,23 +137,24 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
 <hr>
     <h1>Copy all SKU to new product</h1>
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-    Source SKU: <input type="text" name="sku" size="70" value="<?php echo $sku ?>" style="background:lightgray" readonly/>
+    Source SKU: <input type="text" name="sku" size="70" value="<?php echo $skuFull ?>" style="background:lightgray" readonly/>
 <hr>
-    NEW SKU prefix: <input style="background: lightgreen" type="text" name="new_sku_prefix" size="70" value="<?php echo $newSkuPrefix ?>"/><br/>
-    NEW NAME: <input style="background: lightgreen" type="text" name="new_name" size="70" value="<?php echo $productName ?>"/><br/>
-    NEW Associated Sku: <input style="background: lightgreen" type="text" name="associated_sku" size="70" value="<?php echo val($associatedSku, "") ?>"/><br/>
+    NEW SKU prefix: <input style="background: lightgreen" type="text" name="new_sku_prefix" size="90" value="<?php echo $newSkuPrefix ?>"/><br/>
+    NEW NAME: <input style="background: lightgreen" type="text" name="new_name" size="90" value="<?php echo $productName ?>"/><br/>
+    Parent Sku: <input style="background: lightgreen" type="text" name="parent_sku" size="90" value="<?php echo val($parentSkuFull, "") ?>"/><br/>
+
+    Parent Product Images<br><textarea id="productimages" class="nowrap" name="product_images" rows="6" cols="90"><?php echo implode("\n", $productImages);?></textarea>
+
 <hr>
-    type_screen_guard <br/>
-    <textarea class="nowrap" name="type_screen_guards" rows="6" cols="36"><?php echo implode("\n", $models);?></textarea>
-<hr>
-    select compatibility_by_model <br/>
+    Input Variations:<br>
+    <textarea class="nowrap" name="variations" rows="9" cols="60"><?php echo implode("\n", $inputVariations);?></textarea><br>
+
+    Select compatibility_by_model to copy <br/>
+
     <?php foreach($srcSkuList as $key=>$value):?>
-        <div>
-        <input type="checkbox" name="variations[]" value="<?php echo $value;?>"/>
+        <input type="checkbox" name="models[]" value="<?php echo $value;?>"/>
         <?php echo $variationList[$key]?>
-        <a target="_blank" href="#" onclick="return false;" class="fa fa-copy copy-sku-images" style="color:purple;" tabindex="-1"></a>
         <?php echo htmlLinkImages($variationImageList[$key]) ?>
-        </div>
         <br>
     <?php endforeach; ?>
 
@@ -174,27 +170,7 @@ $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/create.php?sku=$sku";
     <br>
     <br>
     <br>
-<?php
-
-// Pay no attention to this statement.
-// It's only needed if timezone in php.ini is not set correctly.
-date_default_timezone_set("UTC");
-
-?>
 
 </div>
 </body>
-<script type="text/javascript">
-    $('a.copy-sku-images').click(function (e) {
-        var imgs = [];
-        $(this).parent().find('a').each(function(){
-            imgs.push($(this).attr("href"));
-        });
-
-        text = imgs.join(" ");
-      console.log("copy text : " + text );
-      copyToClipBoard(text);
-    });
-
-</script>
 </html>

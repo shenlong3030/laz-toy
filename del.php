@@ -7,7 +7,7 @@ require_once('_main_functions.php');
 date_default_timezone_set("UTC");
 
 $deloption = val($_REQUEST['deloption'], 1);
-$input = isset($_REQUEST['skus']) ? $_REQUEST['skus'] : "";
+$input = val($_REQUEST['skus']);
 $skus = array_filter(explode("\n", str_replace("\r", "", $input)));
 
 ?>
@@ -36,14 +36,14 @@ SKUs (separated by line):<br>
     <input type="radio" name="deloption" value="1" checked="1">Del input SKUs<br>
     <input type="radio" name="deloption" value="2">Del input SKUs and children<br>
     <input type="radio" name="deloption" value="3">Del children only<br>
-    <input type="submit"><br><hr>
+    <input type="submit"><br>
 
 <?php
 
 // Pay no attention to this statement.
 // It's only needed if timezone in php.ini is not set correctly.
 
-if($skus && count($skus)) {
+if(count($skus)) {
     delProducts($accessToken, $skus, $deloption);
 } else {
     echo "<br><br>Please input SKUs, separated by line<br><br>";   

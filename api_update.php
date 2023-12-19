@@ -3,29 +3,48 @@ include_once "check_token.php";
 //include_once "src/show_errors.php";
 require_once('_main_functions.php');
 
-$sku = isset($_REQUEST['sku']) ? $_REQUEST['sku'] : 0;
-$skustatus = isset($_REQUEST['skustatus']) ? $_REQUEST['skustatus'] : 'inactive';
-$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
-$qty = isset($_REQUEST['qty']) ? $_REQUEST['qty'] : 0;
-$sprice = isset($_REQUEST['sprice']) ? $_REQUEST['sprice'] : 0;
+$sku = val($_REQUEST['sku']);
+$skuid = val($_REQUEST['skuid']);
+$skustatus = val($_REQUEST['skustatus'], 'inactive');
+$action = val($_REQUEST['action']);
+$qty = val($_REQUEST['qty'], 0);
+$price = val($_REQUEST['price'], 0);
+$sprice = val($_REQUEST['sprice'], 0);
 
-$skus = isset($_REQUEST['skus']) ? $_REQUEST['skus'] : 0;
-$skus = explode(",", $skus);
 
-$names = isset($_REQUEST['names']) ? $_REQUEST['names'] : 0;
-$names = explode("$", $names);
-$models = isset($_REQUEST['models']) ? $_REQUEST['models'] : 0;
-$models = explode("$", $models);
-$colors = isset($_REQUEST['colors']) ? $_REQUEST['colors'] : 0;
-$colors = explode("$", $colors);
+// MASS UPDATE ###################
+$skus = val($_REQUEST['skus']);
+$skus = explode("\n", $skus);
+$skuids = val($_REQUEST['skuids']);
+$skuids = explode("\n", $skuids);
+// MASS UPDATE ###################
+
+$names = val($_REQUEST['mass_names']);
+$names = explode("\n", $names);
+// $models = val($_REQUEST['models']);
+// $models = explode("\n", $models);
+// $colors = val($_REQUEST['colors']);
+// $colors = explode("\n", $colors);
+$variation1 = val($_REQUEST['variation1']);
+$variation2 = val($_REQUEST['variation2']);
+
+$saleprop1s = val($_REQUEST['mass_saleprop1s']);
+$saleprop1s = explode("\n", $saleprop1s);
+$saleprop1s = array_filter($saleprop1s);
+
+$saleprop2s = val($_REQUEST['mass_saleprop2s']);
+$saleprop2s = explode("\n", $saleprop2s);
+$saleprop2s = array_filter($saleprop2s);
+
+$prices = val($_REQUEST['mass_prices']);
+$prices = explode("\n", $prices);
+$skuImages = val($_REQUEST['mass_sku_images']);
+$skuImages = explode("\n", $skuImages);
+$massProductImages = val($_REQUEST['mass_product_images']);
+$massProductImages = explode("\n", $massProductImages);
 
 $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
 $desc = isset($_REQUEST['desc']) ? $_REQUEST['desc'] : "";
-
-// $variation = isset($_REQUEST['variation']) ? $_REQUEST['variation'] : "";
-// $type_screen_guard = isset($_REQUEST['type_screen_guard']) ? $_REQUEST['type_screen_guard'] : "";
-// $compatibility_by_model = isset($_REQUEST['compatibility_by_model']) ? $_REQUEST['compatibility_by_model'] : "";
-// $color_family = isset($_REQUEST['color_family']) ? $_REQUEST['color_family'] : "";
 
 $variations = val($_REQUEST['variations'], "");
 $variations = array_filter(explode("\n", str_replace("\r", "", $variations))); // split by newline
@@ -34,6 +53,7 @@ $variationValues = val($_REQUEST['variationValues'], "");
 $variationValues = array_filter(explode("\n", str_replace("\r", "", $variationValues))); // split by newline
 
 $category = val($_REQUEST['category']);
+$brand = val($_REQUEST['brand']);
 
 $input = val($_REQUEST['images']);
 $images = array_filter(explode("\n", str_replace("\r", "", $input))); // split by newline
@@ -59,6 +79,8 @@ $content = val($_REQUEST['content']);
 
 $info = val($_REQUEST['info']);
 $info = json_decode($info, true);
+
+$itemId = val($_REQUEST['item_id']);
 
 function noError($response) {
     return $response["code"] == "0" && empty($response["detail"]);
@@ -99,45 +121,81 @@ if($accessToken) {
     $response = [];
     switch ($action) {
         case 'massQty':
-            $response = massUpdateQuantityWithAPI($accessToken, $skus, $qty);
+            $response = massUpdateQuantityWithAPI($accessToken, $skuids, $qty);
             //myvar_dump($response);
             //force active product
             $response['mymessage'] = [];
             $response['mymessage'][] = messageFromResponse($response, $action, null);
 
             if($qty > 0) {
-                foreach($skus as $i => $s) {
-                    $product = getTemplateProduct($s, "active");
-                    $r = saveProduct($accessToken, $product);
-                    $response['mymessage'][] = messageFromResponse($r, "re-active", $s);
+                foreach($skuids as $i => $skuid) {
+                    $product = getTemplateProduct(null, $skuid, "active");
+
+                    $retry=3;
+                    do{
+                        $r = saveProduct($accessToken, $product);
+                    } while($r["code"] != "0" && $retry-- > 1);
+
+                    $response['mymessage'][] = messageFromResponse($r, "re-active", $skus[$i]);
                 }
             }
             break;
 
         case 'massPrice':
-            $response = massUpdatePriceWithAPI($accessToken, $skus, $sprice);
+            $response = massUpdatePriceWithAPI($accessToken, $skuids, $sprice);
             break;
 
         case 'massUpdate':
             $response['mymessage'] = [];
-            foreach($skus as $i=>$s) {
-                if(empty($s)) {
+            foreach($skus as $i=>$sku) {
+                $arr = explode("~", $sku);
+                $sku = $arr[0];
+                $skuid = $arr[1];
+                $itemId = $arr[2];
+
+                if(empty($skuid) || strlen($skuid)<2) {
                     continue;
                 }
-                $product = getTemplateProduct($s);
+                $product = getTemplateProduct(null, $skuid);
                 if(isset($names[$i])) {
                     $product = setProductName($product, $names[$i]); 
                 }
-                if(isset($models[$i])) {
-                    $product = setProductModel($product, $models[$i]); 
+                // if(isset($models[$i])) {
+                //     $product = setProductModel($product, $models[$i]); 
+                // }
+                // if(isset($colors[$i])) {
+                //     $product = setProductColor($product, $colors[$i]); 
+                // }
+                if(isset($saleprop1s[$i])) {
+                    $product = setProductSaleProp($product, $variation1, $saleprop1s[$i]);
                 }
-                if(isset($colors[$i])) {
-                    $product = setProductColor($product, $colors[$i]); 
+                if(isset($saleprop2s[$i])) {
+                    $product = setProductSaleProp($product, $variation2, $saleprop2s[$i]);
                 }
+                if(isset($prices[$i])) {
+                    $tmp = explode("/", $prices[$i]);
+                    $salePrice = $tmp[0];
+                    $price = $tmp[1];
+                    $product = setProductPrice($product, $price, $salePrice); 
+                }
+                if(isset($skuImages[$i])) {
+                    $images = $skuImages[$i];
+                    migrateImages($accessToken, $images, $cache);
+                    $product = setProductSKUImages($product, $images); 
+                }
+                if(isset($massProductImages[$i])) {
+                    $images = $massProductImages[$i];
+                    migrateImages($accessToken, $images, $cache);
+                    $product = setProductImages($product, $images); 
+                }
+                //var_dump($product);
 
-                $r = saveProduct($accessToken, $product);
+                $retry=3;
+                do{
+                    $r = saveProduct($accessToken, $product);
+                } while($r["code"] != "0" && $retry-- > 1);
 
-                $response['mymessage'][] = messageFromResponse($r, $action, $s);
+                $response['mymessage'][] = messageFromResponse($r, $action, $skus[$i]);
 
                 // if error , check error message
                 // var_dump($r["detail"]["message"]);
@@ -147,8 +205,8 @@ if($accessToken) {
         case 'massFixOL':
             // Fix ốp lưng: variation1=color, variation2=model
             $response['mymessage'] = [];
-            foreach($skus as $s) {
-                $product = getTemplateProduct($s);
+            foreach($skuids as $i=>$skuid) {
+                $product = getTemplateProduct(null, $skuid);
             
                 // đổi sang categorey cáp sạc để bỏ hết variation, chỉ giữ lại variation1=color
                 $product = setProductCategory($product, "11029"); 
@@ -164,17 +222,17 @@ if($accessToken) {
                     // keep and return error response
                 }
 
-                $response['mymessage'][] = messageFromResponse($r, $action, $s);
+                $response['mymessage'][] = messageFromResponse($r, $action, $skus[$i]);
             }
             break;
 
         case 'qty':
-            $response = updateQuantityWithAPI($accessToken, $sku, $qty);
+            $response = updateQuantityWithAPI($accessToken, $skuid, $qty);
             
             if(noError($response)) {
                 // force active product
                 if($qty > 0) {
-                    $product = getTemplateProduct($sku, "active");
+                    $product = getTemplateProduct($sku, $skuid, "active");
                     $r = saveProduct($accessToken, $product);
                     if(!noError($r)) {
                         $response["code"] = $r["code"]; // save error code
@@ -185,12 +243,12 @@ if($accessToken) {
             break;
 
         case 'status':
-            $product = getTemplateProduct($sku, $skustatus);
+            $product = getTemplateProduct($sku, $skuid, $skustatus);
             $response = saveProduct($accessToken, $product);
             break;
 
         case 'category':
-            $product = getTemplateProduct($sku);
+            $product = getTemplateProduct($sku, $skuid);
             $product = setProductCategory($product, $category);
             // if((string)$category != "4528") {
             //     $product = setProductColor($product, "ccc");
@@ -198,25 +256,36 @@ if($accessToken) {
             $response = saveProduct($accessToken, $product);
             break;
 
+        case 'brand':
+            $product = getTemplateProduct($sku, $skuid);
+            $product = setProductBrand($product, $brand);
+            $response = saveProduct($accessToken, $product);
+            break;
+
         case 'price':
-            $response = updatePricesWithAPI($accessToken, $sku, null, $sprice);
+            $response = updatePricesWithAPI($accessToken, $skuid, $price, $sprice);
             break;
 
         case 'name':
-            $product = getTemplateProduct($sku);
+            $product = getTemplateProduct($sku, $skuid);
             $product = setProductName($product, $name);
             $response = saveProduct($accessToken, $product);
             break;
 
+        case 'sku':
+            $product = getTemplateProduct($sku, $skuid);
+            $response = saveProduct($accessToken, $product);
+            break;
+
         case 'description':
-            $product = getTemplateProduct($sku);
+            $product = getTemplateProduct($sku, $skuid);
             $product = setProductShortDescription($product, $desc);
             $product = setProductDescription($product, $desc);
             $response = saveProduct($accessToken, $product);
             break;
 
         case 'attr':
-            $product = getTemplateProduct($sku);
+            $product = getTemplateProduct($sku, $skuid);
             //$product = setProductVariation($product, "variation1", "Variation", true, true);
             //$product = setProductVariation($product, "variation2", "color_family");
 
@@ -230,39 +299,46 @@ if($accessToken) {
             break;
 
         case 'images':
-            $product = getTemplateProduct($sku);
-            $responses = migrateImages($accessToken, $images, $cache);
-            $messages = messagesFromMigrateImageResponses($responses);
-            
-            if(!empty($messages)) { // migrate FAIL
-                $response['code'] = 111;
-                $response['mymessage'] = $messages;
-                break;
-            } else {                // migrate SUCCESS
-                $product = setProductSKUImages($product, $images, TRUE);  
-                $response = saveProduct($accessToken, $product);
-            }
-            
+            $product = getTemplateProduct($sku, $skuid);
+
+            $retry=3;
+            do{
+                $responses = migrateImages($accessToken, $images, $cache);
+                $messages = messagesFromMigrateImageResponses($responses);
+                
+                if(!empty($messages)) { // migrate FAIL
+                    $response['code'] = 111;
+                    $response['mymessage'] = $messages;
+                    break;
+                } else {                // migrate SUCCESS
+                    $product = setProductSKUImages($product, $images, TRUE);  
+                    $response = saveProduct($accessToken, $product);
+                }
+            } while($responses["code"] != "0" && $retry-- > 1);
             break;
 
         case 'pimages':
-            $product = getTemplateProduct($sku);
-            $responses = migrateImages($accessToken, $pimages, $cache);
-            $messages = messagesFromMigrateImageResponses($responses);
-            
-            if(!empty($messages)) { // migrate FAIL
-                $response['code'] = 111;
-                $response['mymessage'] = $messages;
-                break;
-            } else {                // migrate SUCCESS
-                $product = setProductImages($product, $pimages, TRUE);  
-                $response = saveProduct($accessToken, $product);
-            }
+            $product = getTemplateProduct($sku, $skuid);
+
+            $retry=3;
+            do{
+                $responses = migrateImages($accessToken, $pimages, $cache);
+                $messages = messagesFromMigrateImageResponses($responses);
+                
+                if(!empty($messages)) { // migrate FAIL
+                    $response['code'] = 111;
+                    $response['mymessage'] = $messages;
+                    break;
+                } else {                // migrate SUCCESS
+                    $product = setProductImages($product, $pimages, TRUE);  
+                    $response = saveProduct($accessToken, $product);
+                }
+            } while($responses["code"] != "0" && $retry-- > 1);
 
             break;
 
         case 'weight':
-            $product = getTemplateProduct($sku);
+            $product = getTemplateProduct($sku, $skuid);
             $product = setProductPackageWeight($product, $weight);
             $product = setProductPackageSize($product, $size_h, $size_w, $size_l);
             $product = setProductPackageContent($product, $content);
@@ -270,7 +346,7 @@ if($accessToken) {
             break;
 
         case 'info': // update multi fields
-            $product = getTemplateProduct($sku);
+            $product = getTemplateProduct($sku, $skuid);
             //myvar_dump($info);
             if(isset($info["images"])) {
                 $images = $info['images'];
@@ -291,6 +367,10 @@ if($accessToken) {
             }
 
             $response = saveProduct($accessToken, $product);
+            break;
+
+        case 'remove_saleprop':
+            $response = removeSaleProp($accessToken, $itemId, $variation1);
             break;
 
         default:

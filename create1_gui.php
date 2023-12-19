@@ -1,5 +1,5 @@
 <?php
-include_once "src/show_errors.php";
+//include_once "src/show_errors.php";
 include_once "check_token.php";
 require_once('_main_functions.php');
 
@@ -64,15 +64,16 @@ require_once('_main_functions.php');
         myFrame.append('### ' + n + ' CREATING ###################################################<hr>');
 
         var variations = $('#create_variation1').val() + ";" + $('#create_variation2').val();
-        var parent_skus = $('#parent_skus').val().split('\n');
+        //var parent_skus = $('#parent_skus').val().split('\n');
         var lines = $('#product_data').val().split('\n');
 
-        //lines = lines.filter(function(e){return e}); //remove empty
+        lines = lines.filter(function(e){return e}); //remove empty
 
         for(let i=0; i<lines.length; i++){
             if(lines[i] && lines[i].trim().length > 0) {
+                //var parts = lines[i].split("#");
                 productCreateWithAjaxQueue({
-                    parent_sku: parent_skus[i], 
+                    //parent_sku: parts[0], 
                     product_data: lines[i],
                     variations: variations
                 });

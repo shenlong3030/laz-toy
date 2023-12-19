@@ -16,22 +16,52 @@ function getRequest($path, $method = 'POST') {
     return new LazopRequest($path, $method);
 }
 
+
 //####################################################################
-// Get seller info
+// Flexicombo region
 //####################################################################
 
-// function getSellerInfo($accessToken) {
-//     $c = getClient();
-//     $request = getRequest('/seller/get','GET');
-//     $response = $c->execute($request, $accessToken);
-//     $response = json_decode($response, true);
 
-//     $info = array();
-//     if($response["code"] == "0") {
-//         $info = $response['data'];
-//     }
-//     return $info;
-// }
+function createFlexiCombo($accessToken) {
+    $c = getClient();
+    $request = getRequest('/promotion/flexicombo/create');
+    $request->addApiParam('apply','SPECIFIC_PRODUCTS');
+    //$request->addApiParam('sample_skus','[{\"productId\":\"442156001\",\"skuId\":\"1174240001\"}]');
+    $request->addApiParam('criteria_type','QUANTITY');
+    //$request->addApiParam('criteria_value','[\"2\"]');
+    $request->addApiParam('criteria_value','[2,3,5]');
+
+    $request->addApiParam('discount_type','discount');
+    $request->addApiParam('discount_value','[5,6,10]');
+
+    $request->addApiParam('order_numbers','999');
+    $request->addApiParam('name','test111');
+    //$request->addApiParam('platform_channel','1');
+    //$request->addApiParam('gift_skus','[{\"productId\":\"442156001\",\"skuId\":\"1174240001\"}]');
+    
+    $now = new DateTime();
+    $request->addApiParam('start_time', $now->modify('+1 minute')->getTimestamp()."000");
+    $request->addApiParam('end_time', $now->modify('+364 day')->getTimestamp()."000");
+
+    $request->addApiParam('stackable','false');
+    //$request->addApiParam('gift_buy_limit_value','[\"1\"]');
+    
+    var_dump($c->execute($request, $accessToken));
+}
+
+function getFlexiCombo($accessToken) {
+    $c = getClient();
+    $request = getRequest('/promotion/flexicombo/list','GET');
+
+    $request->addApiParam('cur_page','1');
+    //$request->addApiParam('name','test');
+    $request->addApiParam('page_size','10');
+    $request->addApiParam('status','ONGOING');
+
+    var_dump($c->execute($request, $accessToken));
+
+}
+
 
 //####################################################################
 // Get orders region
@@ -348,30 +378,23 @@ function getProductsPaging($accessToken, $q, $options, &$total_products=null){
 // $name : search by name, will be ignored if have $item_id
 
 function getProduct($accessToken, $sku, $item_id=null, $name=null){
+    $name = null; //bypass
+
+    $arr = explode("~", $sku);
+    $sku = $arr[0];
+    $skuid = $arr[1];
+    $itemId = val($item_id, $arr[2]);
+
     $c = getClient();
 
     $request = null;
-    if(empty($name)) {
-        $request = new LazopRequest('/product/item/get','GET');
-        if(!empty($item_id)) {
-            $request->addApiParam('item_id', (string)$item_id);
-        }
-        if(!empty($sku)) {
-            $request->addApiParam('seller_sku', (string)$sku);
-        }
-    } else {
-        $request = new LazopRequest('/products/get','GET');
-        $request->addApiParam('filter', 'all');
-
-        if(strlen($name)) {
-            $request->addApiParam('search',$name);
-        }
-
-        // filter by SKU
-        $skulist = [];
-        $skulist[] = $sku;
-        $request->addApiParam('sku_seller_list',json_encode($skulist));
-    }   
+    $request = new LazopRequest('/product/item/get','GET');
+    if(!empty($item_id)) {
+        $request->addApiParam('item_id', (string)$item_id);
+    }
+    if(!empty($sku)) {
+        $request->addApiParam('seller_sku', (string)$sku);
+    }
     
     $response = json_decode($c->execute($request, $accessToken), true);
 
@@ -417,7 +440,14 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
     // NOTE: 
     // nguyên nhân không sort được : do số lượng TH và số lượng cột không khớp với nhau, 
     // cột ẩn thì phải có TH ẩn đi kèm
-
+    if($products[0]['variation']['Variation1']['hasImage']) {
+        $variation1 = $products[0]['variation']['Variation1']['name'];
+        $variation2 = $products[0]['variation']['Variation2']['name'];
+    } else {
+        $variation2 = $products[0]['variation']['Variation1']['name'];
+        $variation1 = $products[0]['variation']['Variation2']['name'];
+    }
+    
     echo '<table id="tableProducts" class="main tablesorter" border="1" style="width:100%">';
     echo '<thead><tr>';
     /* cột 1 */echo '<th class="sku on">&#x25BC SKU (count='.count($products[0]['skus']).')</th>'; //count skus of fist product.
@@ -428,9 +458,9 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
     /* cột 4 */echo '<th class="editmode on">&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
     /* cột 5 */echo '<th class="editmode name form">&#x25BC NAME Form<b>'; // name form
 
-    /* cột 6 */echo '<th class="model">&#x25BC Model</th>'; 
-    /* cột 7 */echo '<th class="color">&#x25BC Color</th>'; 
-    /* cột 8 */echo '<th class="attr"></th>'; 
+    /* cột 6 */echo '<th class="saleprop1">&#x25BC SaleProp1=<br><span class="variation1">'.$variation1.'</span></th>'; 
+    /* cột 7 */echo '<th class="saleprop1">&#x25BC SaleProp2=<br><span class="variation2">'.$variation2.'</span></th>'; 
+    /* cột 8 */echo '<th class="saleprop3"></th>'; 
     
     /* cột 9 */echo '<th class="price">&#x25BCPRICE</th>'; // price form, display:none
 
@@ -462,30 +492,32 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $url = $sku['Url'];
             $sellersku = $sku['SellerSku'];
             $shopsku = $sku['ShopSku'];
+            $skuid = $sku['SkuId'];
+            $skuFull = "{$sellersku}~{$skuid}~{$item_id}";
             $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
             $imgs = $sku['Images'];
-            $color = $sku['saleProp']['color_family'];
-            $model = $sku['saleProp']['compatibility_by_model'] ? $sku['saleProp']['compatibility_by_model'] : "";
             
-            unset($sku['saleProp']['color_family']);
-            unset($sku['saleProp']['compatibility_by_model']);
-            $otherAttributes = implode(",", $sku['saleProp']);
+            // todo remove  
+            // $color = $sku['saleProp']['color_family'];
+            // $model = $sku['saleProp']['compatibility_by_model'] ? $sku['saleProp']['compatibility_by_model'] : "";
+            
+            // unset($sku['saleProp']['color_family']);
+            // unset($sku['saleProp']['compatibility_by_model']);
+            // $otherAttributes = implode(",", $sku['saleProp']);     
+            // $variation = $sku['_compatible_variation_'];
+            // switch ($primary_category) {
+            //     case 4523: // op lung dien thoai
+            //     case 10100418: // CL đồng hồ
+            //     case 4528: // mieng dan DT
+            //         $variation = $color . " " . $model;
+            //         break;
+            //     default:
+            //         // do nothing
+            //         break;
+            // }
 
-            $color_thumbnail = $sku['color_thumbnail'];
-
-            $selection = implode(',', array_filter(array($variation, $type, $color)));
-
-            $variation = $sku['_compatible_variation_'];
-            switch ($primary_category) {
-                case 4523: // op lung dien thoai
-                case 10100418: // CL đồng hồ
-                case 4528: // mieng dan DT
-                    $variation = $color . " " . $model;
-                    break;
-                default:
-                    // do nothing
-                    break;
-            }
+            $saleprop1 = $sku['saleProp'][$variation1];
+            $saleprop2 = $sku['saleProp'][$variation2];
 
             $isGrouped = (count($product['skus']) > 1);
             $cssclass = $isGrouped ? 'grouped' : '';
@@ -494,15 +526,17 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
 
             $reservedTxt = $reservedStock ? '(<span class="reservedStock">'.$reservedStock.'</span>)' : '';
             $qtyForm = '<div>
-            <input name="sku" type="hidden" value="'.$sellersku.'"/>
-            <input name="qty" type="text" size="4" value="'.$qty.'"/>
-            <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="=500">=500</button>
-            <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="qtyaction" value="=0">=0</button></div>';
+            <input name="child_sku" type="hidden" value="'.$sellersku.'"/>
+            <input name="child_skuid" type="hidden" value="'.$skuid.'"/>
+            <input name="child_qty" type="text" size="4" value="'.$qty.'"/>
+            <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="btn_child_qty" value="500">=500</button>
+            <button tabindex="-1" style="padding:0px" class="btn btn-primary" type="button" name="btn_child_qty" value="0">=0</button></div>';
             
             $priceForm = '<div>
-                <input name="sku" type="hidden" value="'.$sellersku.'"/>
-                <input name="sku_price" type="hidden" size="6" value="'.$price1.'"/>
-                <input name="sku_sprice" type="text" size="6" value="'.$price2.'"/>
+                <input name="child_sku" type="hidden" value="'.$sellersku.'"/><br>
+                <input name="child_skuid" type="hidden" value="'.$skuid.'"/><br>
+                <input class="child_price_input" name="child_price" type="text" size="6" value="'.$price1.'"/><br>
+                <input class="child_price_input" name="child_sprice" type="text" size="6" value="'.$price2.'"/>
                 </div>';
             
             $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="50" value="'.$name.'"/><input type="submit" tabindex="-1" value="↵" hidden/></form>';
@@ -510,11 +544,10 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             echo '<tr class="'. $cssclass .'">';
             //echo '<td class="sku on padding">'. ($isGrouped?"<i class='grouped-icon fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
 
-            //$groupLink = "https://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id&qname=$name";
             $groupLink = "https://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";
             $groupHtml = '<a tabIndex="-1" target="_blank" href="'.$groupLink.'" class="grouped-icon fas fa fa-th-list" style="color:red"></a>';
-            $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?item_id=$item_id&sku=$sellersku";
-            $delLink = "https://$_SERVER[HTTP_HOST]/lazop/del.php?skus=$sellersku";
+            $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku={$sellersku}~{$skuid}~{$item_id}";
+            $delLink = "https://$_SERVER[HTTP_HOST]/lazop/del.php?skus={$sellersku}~{$skuid}~{$item_id}";
 
 
             $lazEditLink = "https://sellercenter.lazada.vn/apps/product/publish?productId=$item_id";
@@ -527,15 +560,15 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             /* cột 4 */echo '<td class="editmode name on padding info">'.$nameLink.$lazEditHtml.'</td>';
             /* cột 5 */echo '<td class="editmode name form">'.$nameForm.'</td>';
             
-            /* cột 6 */echo '<td class="model info">'.$model.'</td>';
-            /* cột 7 */echo '<td class="color info">'.$color.'</td>';
-            /* cột 8 */echo '<td class="variation info">'.$otherAttributes.'</td>';
+            /* cột 6 */echo '<td class="saleprop1 info">'.$saleprop1.'</td>';
+            /* cột 7 */echo '<td class="saleprop2 info">'.$saleprop2.'</td>';
+            /* cột 8 */echo '<td class="saleprop3 info"></td>';
             
             // visible
             /* cột 9, price*/
-            echo '<td>';
-            echo '<s>'.$price1.'</s>&nbsp;';
-            echo '<span class="price" >'.$price2.'</span>';
+            echo '<td class="price-cell">';
+            echo '<span class="price text" >'.$price2.'</span>';
+            echo ' <s>'.$price1.'</s>&nbsp;';
             echo '<span class="price form" style="display:none">'.$priceForm.'</span>';
             echo '</td>';
 
@@ -549,7 +582,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             // Active toggle button
             /* cột 13 *///bootstrap code (need bootstrap css and bootstraptoggle css + js)
             $status = ($sku['Status'] == "active") ? "checked" : "";
-            echo '<td><input id="'. $sellersku .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
+            echo '<td><input id="'. $skuid .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
 
             // generate thumbnail images
             $thumbNailElements = array();
@@ -568,7 +601,9 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
         
                 $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img alt="thumb" src="'.$thumbLink.'" height="50"></a>';
                 $thumb = empty($thumbLink) ? "" : $thumb;
-                array_push($thumbNailElements, '<td class="product-image thumb on">'.$thumb.'</td>');
+
+                $firstImageClass = ($i == 0) ? "first" : "";
+                array_push($thumbNailElements, '<td class="product-image thumb on '.$firstImageClass.'">'.$thumb.'</td>');
             }
 
             // Generate sku images thumbnail
@@ -584,13 +619,16 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
         
                 $thumb = '<a tabindex="-1" target="_blank" href="'.$fullLink.'"><img alt="thumb" src="'.$thumbLink.'" height="50"></a>';
                 $thumb = empty($thumbLink) ? "" : $thumb;
-                array_push($thumbNailElements, '<td class="sku-image thumb on">'.$thumb.'</td>');
+
+                $firstImageClass = ($i == 0) ? "first" : "";
+                array_push($thumbNailElements, '<td class="sku-image thumb on '.$firstImageClass.'">'.$thumb.'</td>');
             }
 
             // print extra column
             echo '<td class="ex status info">'.$sku['Status'].'</td>';
             echo '<td class="ex item_id">'.$item_id.'</td>';
-            echo '<td class="ex shopsku">'.$shopsku.'</td>';
+            echo '<td class="ex skuid">'.$skuid.'</td>';
+            echo '<td class="ex sku_full">'.$skuFull.'</td>';
             echo '<td class="ex primary_category">'.$primary_category.'</td>';
             echo '<td class="ex url info">'.$url.'</td>';
             
@@ -679,7 +717,19 @@ function createProductFromApi($accessToken, $product) {
     return json_decode($c->execute($request, $accessToken), true);
 }
 
-function createProduct($accessToken, $product) {
+function getProductUpdateLinkFromResponse($product, $response) {
+    $sku = $product['Skus'][0]['SellerSku'];
+    //$skuId = $response['data']['sku_list'][0]['sku_id'];
+    $skuId = "";
+    $itemId = $response['data']['item_id'];
+
+    $editLink = "update_gui.php?sku={$sku}~{$skuId}~{$itemId}";
+    $editIcon = '<a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>';
+    return $sku . $editIcon . "<br>";
+}
+
+// des: associated sku, format: sku~skuid~itemid
+function createProduct($accessToken, $product, $des=null) {
     // create XML payload
     $request = array("Product" => $product);
     $xml = new ArrayToXML();
@@ -693,7 +743,8 @@ function createProduct($accessToken, $product) {
     
     debug_log($product);
     if($res["code"] == "0") {
-        myecho("success : " . getProductSkusText($product));
+        debug_log($res);
+        myecho("success : " . getProductUpdateLinkFromResponse($product,$res));
     } else {
         myecho("CREATE FAILED: " . $sku);
         var_dump($res);
@@ -942,9 +993,9 @@ function createProductsFromManySource($accessToken, $data, $preview = 1){
 // Update images/prices/quantity
 //###################################################################
 
-function updateQuantityWithAPI($accessToken, $sku, $qty) {
+function updateQuantityWithAPI($accessToken, $skuid, $qty) {
     $qtyPayload = '<Quantity>'.$qty.'</Quantity>';
-    $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Product><Skus><Sku><SellerSku>'.$sku.'</SellerSku>'.$qtyPayload.'</Sku></Skus></Product></Request>';
+    $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Product><Skus><Sku><SkuId>'.$skuid.'</SkuId>'.$qtyPayload.'</Sku></Skus></Product></Request>';
     
     $c = getClient();
     $request = getRequest('/product/price_quantity/update');
@@ -956,10 +1007,10 @@ function updateQuantityWithAPI($accessToken, $sku, $qty) {
     return $response;
 }
 
-function massUpdateQuantityWithAPI($accessToken, $skus, $qty) {
+function massUpdateQuantityWithAPI($accessToken, $skuids, $qty) {
     $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Product><Skus>';
-    foreach($skus as $i => $sku) {
-        $payload .= '<Sku><SellerSku>'.$sku.'</SellerSku><Quantity>'.$qty.'</Quantity></Sku>';
+    foreach($skuids as $i => $skuid) {
+        $payload .= '<Sku><SkuId>'.$skuid.'</SkuId><Quantity>'.$qty.'</Quantity></Sku>';
     }
     $payload .= '</Skus></Product></Request>';
     //echo htmlentities( $payload);
@@ -974,12 +1025,12 @@ function massUpdateQuantityWithAPI($accessToken, $skus, $qty) {
     return $response;
 }
 
-function massUpdatePriceWithAPI($accessToken, $skus, $sale_price, $fromdate = "2021-01-01", $todate = "2030-01-01") {
+function massUpdatePriceWithAPI($accessToken, $skuids, $sale_price, $fromdate = "2021-01-01", $todate = "2030-01-01") {
     $price = intval($sale_price * 1.2);
 
     $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Product><Skus>';
-    foreach($skus as $i => $sku) {
-        $payload .= '<Sku><SellerSku>'.$sku.'</SellerSku>';
+    foreach($skuids as $i => $skuid) {
+        $payload .= '<Sku><SkuId>'.$skuid.'</SkuId>';
         $payload .= '<Price>'.$price.'</Price>'.'<SalePrice>'.$sale_price.'</SalePrice>'.'<SaleStartDate>'.$fromdate.'</SaleStartDate><SaleEndDate>'.$todate.'</SaleEndDate>';
         $payload .= '</Sku>';
     }
@@ -996,7 +1047,7 @@ function massUpdatePriceWithAPI($accessToken, $skus, $sale_price, $fromdate = "2
     return $response;
 }
 
-function updatePricesWithAPI($accessToken, $sku, $price, $sale_price, $fromdate = "2021-01-01", $todate = "2030-01-01") {
+function updatePricesWithAPI($accessToken, $skuid, $price, $sale_price, $fromdate = "2021-01-01", $todate = "2030-01-01") {
     $pricePayload = '';
     $salePayload = '';
     
@@ -1011,7 +1062,7 @@ function updatePricesWithAPI($accessToken, $sku, $price, $sale_price, $fromdate 
     $pricePayload = '<Price>'.$price.'</Price>' . $salePayload;
     
     
-    $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Product><Skus><Sku><SellerSku>'.$sku.'</SellerSku>'.$pricePayload.'</Sku></Skus></Product></Request>';
+    $payload = '<?xml version="1.0" encoding="UTF-8"?><Request><Product><Skus><Sku><SkuId>'.$skuid.'</SkuId>'.$pricePayload.'</Sku></Skus></Product></Request>';
     
     $c = getClient();
     $request = getRequest('/product/price_quantity/update');
@@ -1265,9 +1316,8 @@ function saveProduct($accessToken, $product) {
 // Clone region
 //####################################################################
 
-function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
+function addChildProduct($accessToken, $sku, $skuid, $inputdata, $preview = 1) {
     $sku = pre_process_sku($sku);
-    $cloneby = $inputdata['cloneby'];
     $skuprefix = $inputdata['skuprefix'];
     $newName = $inputdata['newname'];
     
@@ -1275,7 +1325,7 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
     if($product) {
         $product = json_decode($product, true);
     } else {
-        $product = getProduct($accessToken, $sku);
+        $product = getProduct($accessToken, $sku, $skuid);
     }
 
     if($product) {     
@@ -1287,85 +1337,80 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
         unset($product['Skus'][0]);
 
         $created = array();
-        if($cloneby == 'original') {
-            //... do nothing
-        } else {
-            $product = setProductAssociatedSku($product, $sku);
-            $kiotids = $inputdata["kiotids"];
-            $saleProps = $inputdata["saleProps"];
+        $product = setProductAssociatedSku($product, $skuid);
+        $kiotids = $inputdata["kiotids"];
+        $saleProps = $inputdata["saleProps"];
 
-            // set NAME
-            if(!empty($newName)) {
-                $product = setProductName($product, $newName);
+        // set NAME
+        if(!empty($newName)) {
+            $product = setProductName($product, $newName);
+        }
+
+        $cache = array();
+        $time = substr(time(), -4);
+        foreach($inputdata["qtys"] as $index => $value) {
+            // init new sku dict
+            $skuDict = $clonedSku;
+            $kiotid = $kiotids[$index] ? $kiotids[$index] : "";
+
+            // set attributes
+            $values = array();
+            foreach ($saleProps as $prop => $inputList) {
+                if($inputList[$index]) {
+                    $skuDict['saleProp'][$prop] = $inputList[$index];
+                }
+                $values[] = $skuDict['saleProp'][$prop];
+            }
+            
+            // set sku
+            $newSku = generateSku1($skuprefix, "", $values, $kiotid);
+            $skuDict['SellerSku'] = $newSku;
+
+            // set qty
+            if(isset($inputdata["qtys"][$index])) {
+                $qty = $inputdata["qtys"][$index];
+                $skuDict['quantity'] = $qty;
             }
 
-            $cache = array();
-            $time = substr(time(), -4);
-            foreach($inputdata["qtys"] as $index => $value) {
-                // init new sku dict
-                $skuDict = $clonedSku;
-                $kiotid = $kiotids[$index] ? $kiotids[$index] : "";
+            // set price
+            if(isset($inputdata["prices"][$index])) {
+                $price = $inputdata["prices"][$index];
+                $skuDict['price'] = round($price * 1.3 / 100) * 100;
+                $skuDict['special_price'] = $price;
+                $skuDict['special_from_date'] = "2020-01-01";
+                $skuDict['special_to_date'] = "2030-12-12";
+            }
 
-                // set attributes
-                $values = array();
-                foreach ($saleProps as $prop => $inputList) {
-                    if($inputList[$index]) {
-                        $skuDict['saleProp'][$prop] = $inputList[$index];
-                    }
-                    $values[] = $skuDict['saleProp'][$prop];
-                }
-                
-                // set sku
-                $newSku = generateSku1($skuprefix, "", $values, $kiotid);
-                $skuDict['SellerSku'] = $newSku;
-
-                // set qty
-                if(isset($inputdata["qtys"][$index])) {
-                    $qty = $inputdata["qtys"][$index];
-                    $skuDict['quantity'] = $qty;
-                }
-
-                // set price
-                if(isset($inputdata["prices"][$index])) {
-                    $price = $inputdata["prices"][$index];
-                    $skuDict['price'] = round($price * 1.3 / 100) * 100;
-                    $skuDict['special_price'] = $price;
-                    $skuDict['special_from_date'] = "2020-01-01";
-                    $skuDict['special_to_date'] = "2030-12-12";
-                }
-
-                // set images
-                if(isset($inputdata["images"][$index])) {
-                    // migrate images
-                    $images = $inputdata["images"][$index];
-                    migrateImages($accessToken, $images, $cache);
-                    foreach($images as $index => $url) {
-                        if (is_url($url)) {
-                            $skuDict['Images'][$index] = $url;
-                        } else {
-                            if(!empty($url)) {
-                                myecho("INVALID URL : " + $images[$index], __FUNCTION__);
-                            }
+            // set images
+            if(isset($inputdata["images"][$index])) {
+                // migrate images
+                $images = $inputdata["images"][$index];
+                migrateImages($accessToken, $images, $cache);
+                foreach($images as $index => $url) {
+                    if (is_url($url)) {
+                        $skuDict['Images'][$index] = $url;
+                    } else {
+                        if(!empty($url)) {
+                            myecho("INVALID URL : " + $images[$index], __FUNCTION__);
                         }
-                    }      
-                }
-                // force active
-                $skuDict['Status'] = "active";
-
-                $product['Skus'][] = $skuDict;
-
-                // store to print
-                $created["sku"][] = $newSku;
-                $created["associatedsku"][] = $sku;
-                $created["name"][] = $product['Attributes']["name"];
-                $created["img"][] = $skuDict['Images'];
+                    }
+                }      
             }
+            // force active
+            $skuDict['Status'] = "active";
 
-            if(!intval($preview)) {
-                createProduct($accessToken, $product);
-            } else {
-                myecho("PREVIEWING ...");
-            }
+            $product['Skus'][] = $skuDict;
+
+            // store to print
+            $created["sku"][] = $newSku;
+            $created["img"][] = $skuDict['Images'];
+        }
+
+        if(!intval($preview)) {
+            //myvar_dump($product);
+            createProduct($accessToken, $product);
+        } else {
+            myecho("PREVIEWING ...");
         }
         
         // print new SKUs
@@ -1374,7 +1419,7 @@ function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
             echo "<br>",$sku, htmlLinkImages($created["img"][$index]);
         }
     } else {
-        echo "<br><br>Wrong sku<br><br>";
+        echo "<br><br>Wrong sku<br>OR can not decode product json (try to update short_description)<br><br>";
     }
 }
 
@@ -1387,64 +1432,54 @@ function massMoveChild($accessToken, $data, $preview) {
     $parentCache = array();
     $product;
     foreach($data["skus"] as $index => $sku) {
-        $product = getProduct($accessToken, $sku);
+        $arr = explode("~", $sku);
+        $sku = $arr[0];
+        $skuid = $arr[1];
+        $itemId = $arr[2];
 
+        $product = getProduct($accessToken, $sku, $itemId);
         if($product) {
             $product = prepareProductForCreating($product);
 
-            $parentSku = isset($data["newParentSkus"][$index]) ? trim($data["newParentSkus"][$index]) : 0;
-            if($parentSku) {
-                if(isset($parentCache[$parentSku])) {
-                    $parent = $parentCache[$parentSku];
-                } else {
-                    $parent = getProduct($accessToken, $parentSku);
-                }
+            $desSku = val($data["desSkus"][$index]);
+            $arr = explode("~", $desSku);
+            $desSku = $arr[0];
+            $desSkuid = $arr[1];
+            $desItemId = $arr[2];
 
-                if($parent) {
-                    // check category of child and parent
-                    // to do ...
+            if($desSkuid) {
+                $product = setProductAssociatedSku($product, $desSkuid);
 
-                    $product = setProductAssociatedSku($product, $parentSku);
+                $newSku = trim($sku).'.';
+                $product = setProductSku($product, $newSku);
 
-                    // add postfix Mx to newSku
-                    preg_match('/(.+\.M)(\d+)$/i', $sku, $matches);
-                    if(count($matches)) {
-                        $newSku = $matches[1].(trim($matches[2])+1);
-                    } else {
-                        $newSku = trim($sku).'.M1';
-                    }
-                    $product = setProductSku($product, $newSku);
+                if(!$preview) {
+                    if(createProduct($accessToken, $product)) {
+                        // disable parent after moving
+                        // if(isProductActive($parent)) {
+                        //     $parent = setProductActive($parent, 0);
+                        //     $r = saveProduct($accessToken, $parent);
+                        // }
 
-                    if(!$preview) {
-                        if(createProduct($accessToken, $product)) {
-                            // disable parent after moving
-                            if(isProductActive($parent)) {
-                                $parent = setProductActive($parent, 0);
-                                $r = saveProduct($accessToken, $parent);
-                            }
-
-                            // store to print
-                            $created["oldsku"][] = $sku;
-                            $created["sku"][] = $product['Skus'][0]['SellerSku'];
-                            $created["name"][] = $product['Attributes']["name"];
-                            $created["imgs"][] = $product['Skus'][0]['Images'];
-                        }
-                        
-                        usleep(300000);
-                    } else {
                         // store to print
+                        $created["oldsku"][] = $sku;
                         $created["sku"][] = $product['Skus'][0]['SellerSku'];
                         $created["name"][] = $product['Attributes']["name"];
                         $created["imgs"][] = $product['Skus'][0]['Images'];
                     }
-
-                    // cache
-                    $parentCache[$parentSku] = $parent;
+                    
+                    usleep(300000);
                 } else {
-                    myecho("PARENT SKU NOT FOUND: " . $parentSku);
+                    // store to print
+                    $created["sku"][] = $product['Skus'][0]['SellerSku'];
+                    $created["name"][] = $product['Attributes']["name"];
+                    $created["imgs"][] = $product['Skus'][0]['Images'];
                 }
+
+                // cache
+                $parentCache[$parentSku] = $parent;
             } else {
-                myecho("PARENT SKU NOT SET");
+                myecho("NEED DESTINATION SKUID, FORMAT INPUT: SKU~SKUID~ITEMID");
             }
         } else {
             myecho("SKU NOT FOUND: " . $sku);
@@ -1716,40 +1751,49 @@ function copyInfoToSkus($accessToken, $sourcesku, $skus, $inputdata) {
 //####################################################################
 
 function delProducts($accessToken, $skus, $deloption=false) {
-    $deloption = (int)$deloption;
-    $skus = pre_process_skus($skus);
+    echo "<br>DELETE: ";
+    var_dump($skus);
+
+    $skus = array_map(function($input){
+        $arr = explode("~", $input);
+        $sku = $arr[0];
+        $skuid = $arr[1];
+        $itemId = $arr[2];
+        return "SkuId_{$itemId}_{$skuid}"; //sample: SkuId_2498014463_12236555120
+    }, $skus);
+    // $deloption = (int)$deloption;
     
-    // skus + children
-    $allskus = array();
+    // // skus + children
+    // $allskus = array();
 
-    // children skus
-    $childrenskus = array();
+    // // children skus
+    // $childrenskus = array();
 
-    if($deloption > 1) {
-        foreach($skus as $sku) {
-            $product = getProduct($accessToken, $sku);
-            $id = getProductItemId($product);
-            $product = getProduct($accessToken, null, $id);
+    // if($deloption > 1) {
+    //     foreach($skuids as $skuid) {
+    //         $product = getProduct($accessToken, $sku);
+    //         $id = getProductItemId($product);
+    //         $product = getProduct($accessToken, null, $id);
 
-            foreach ($product['skus'] as $key => $value) {
-                $sellerSku = $value['SellerSku'];
-                $allskus[] = $sellerSku;
-            }
-        }
+    //         foreach ($product['skus'] as $key => $value) {
+    //             $sellerSku = $value['SellerSku'];
+    //             $allskus[] = $sellerSku;
+    //         }
+    //     }
 
-        switch ($deloption) {
-            case 2: // del skus + children
-                $skus = $allskus;
-                break;
-            case 3: // del children
-                $childrenskus = array_diff($allskus, $skus);
-                $skus = $childrenskus;
-                break;
-            default:
-                # code...
-                break;
-        }
-    }
+    //     switch ($deloption) {
+    //         case 2: // del skus + children
+    //             $skus = $allskus;
+    //             break;
+    //         case 3: // del children
+    //             $childrenskus = array_diff($allskus, $skus);
+    //             $skus = $childrenskus;
+    //             break;
+    //         default:
+    //             # code...
+    //             break;
+    //     }
+    // }
 
     // chia thành các mảng nhỏ 20item
     $chunks = array_chunk($skus, 20);
@@ -1757,24 +1801,51 @@ function delProducts($accessToken, $skus, $deloption=false) {
     $c = getClient();
     foreach($chunks as $chunk) {
         $request = getRequest('/product/remove');
-        $request->addApiParam('seller_sku_list', json_encode($chunk));
+        //$request->addApiParam('seller_sku_list', json_encode($chunk));
+        $request->addApiParam('sku_id_list', json_encode($chunk));
         $response = $c->execute($request, $accessToken);
-        echo "<hr>";
+        echo "<br>";
         var_dump($response);
         usleep(500000);
     }
 }
 
-function delProduct($accessToken, $sku) {
+function delProduct($accessToken, $skuid) {
     $chunk = array();
-    $chunk[] = $sku;
+    $chunk[] = $skuid;
 
     $request = getRequest('/product/remove');
-    $request->addApiParam('seller_sku_list', json_encode($chunk));
+    //$request->addApiParam('seller_sku_list', json_encode($chunk));
+    $request->addApiParam('sku_id_list', json_encode($chunk));
     $c = getClient();
     $response = $c->execute($request, $accessToken);
     
     return json_decode($response, true);;
+}
+
+function removeSaleProp($accessToken, $item_id, $variation1) {
+    $c = getClient();
+    $request = getRequest('/product/sku/remove');
+
+    // compatibility_by_model
+    // color_family
+    $payload = "<Request>
+                    <Product>
+                        <ItemId>$item_id</ItemId>
+                        <variation>
+                            <variation1>
+                                <name>$variation1</name>
+                            </variation1>
+                        </variation>
+                    </Product>
+                </Request>";
+    $request->addApiParam('payload', $payload);
+    $response = $c->execute($request, $accessToken);
+
+    $response = json_decode($response, true); // convert to object
+    //echo json_encode($response, JSON_PRETTY_PRINT);
+
+    return $response;
 }
 
 //####################################################################
@@ -1783,17 +1854,28 @@ function delProduct($accessToken, $sku) {
 
 function test($accessToken) {
     $c = getClient();
-    $request = getRequest('/products/get', 'GET');
-    $request->addApiParam('filter','live');
-$request->addApiParam('offset','0');
-$request->addApiParam('create_after','2010-07-02T00:00:00+0800');
-$request->addApiParam('limit','100');
-$request->addApiParam('options','1');
+    $request = getRequest('/product/sku/remove');
 
+    // compatibility_by_model
+    // color_family
+    $payload = "<Request>
+                    <Product>
+                        <ItemId>1203537087</ItemId>
+                        <variation>
+                            <variation1>
+                                <name>compatibility_by_model</name>
+                            </variation1>
+                        </variation>
+                    </Product>
+                </Request>";
+
+
+    $request->addApiParam('payload', $payload);
     $response = $c->execute($request, $accessToken);
-    var_dump($response);
-    $response = json_decode($response, true);
-    return $response;
+    
+    $response = json_decode($response, true); // convert to object
+
+    echo json_encode($response, JSON_PRETTY_PRINT);
 }
 
 ?>

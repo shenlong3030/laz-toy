@@ -20,6 +20,7 @@ require_once('_main_functions.php');
 date_default_timezone_set("UTC");
 
 $sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
+$skuid = isset($_REQUEST["sku"]) ? $_REQUEST["skuid"] : "";
 
 // CL.21D__IP.11.6.1  -->  CL.21D__
 $skuprefix = preg_replace('/(?!.+__)(.+)/', '__', $sku);
@@ -40,6 +41,7 @@ $json = val($_REQUEST['json_product']);
 <form action="addchild.php" method="POST" target="responseIframe">
 
 Parent SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><br>
+Parent SKUID: <input type="text" name="skuid" size="80" value="<?php echo $skuid?>"><br>
 Child SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"><br> 
 New child name: <input type="text" name="name" size="80" value="<?php echo $newName?>"><br>
 <br>
@@ -76,7 +78,7 @@ Possible Attributes : <?php echo implode(",", $attrNames)?><br><br>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="15"></textarea></td>
             <td><textarea class="nowrap" name="col[]" rows="20" cols="80"></textarea></td>
 
-            <textarea style="display:none;" id="txt_json" name="json_product" rows="90" cols="90"><?php echo $json;?></textarea>
+            <textarea id="txt_json" name="json_product" rows="1" cols="90"><?php echo $json;?></textarea>
         </tr>
     </tbody>
 </table>

@@ -4,9 +4,11 @@ include_once "check_token.php";
 require_once('_main_functions.php');
 
 
-$sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
-$itemId = isset($_REQUEST["item_id"]) ? $_REQUEST["item_id"] : "";
-//$qname = isset($_REQUEST["qname"]) ? $_REQUEST["qname"] : "";
+$skuFull = val($_REQUEST["sku"]); //{$sku}~{$skuid}~{$itemId}
+$arr = explode("~", $skuFull);
+$sku = $arr[0];
+$skuid = $arr[1];
+$itemId = val($_REQUEST["item_id"], $arr[2]);
 
 $category = "";
 $productImages = array();
@@ -31,16 +33,9 @@ $type_screen_guard = "";
 $variations = array();
 $variationValues = array();
 
-if($sku || $itemId) {
-    $product = $sibling = null;
-    if(empty($itemId)) {
-        $product = getProduct($accessToken, $sku, null, $qname);
-        $itemId = getProductItemId($product);
-        $sibling = getProduct($accessToken, null, $itemId, null);
-    } else {
-        $product = getProduct($accessToken, null, $itemId, $qname);
-        $sibling = $product;
-    }
+if($itemId) {
+    $product = getProduct($accessToken, null, $itemId);
+    $sibling = $product;
     
     debug_log($product);
 
@@ -58,12 +53,11 @@ if($sku || $itemId) {
         $content = $product['skus'][$i]['package_content'];
         $qty = $product['skus'][$i]['quantity'];
         
-        $variation = $product['skus'][$i]['saleProp']['Variation'];
-        $type_screen_guard = $product['skus'][$i]['saleProp']['type_screen_guard'];
-
-        $color = $product['skus'][$i]['saleProp']['color_family'];
-        $color_thumbnail = $product['skus'][$i]['color_thumbnail'];
-        $model = $product['skus'][$i]['saleProp']['compatibility_by_model'];
+        // $variation = $product['skus'][$i]['saleProp']['Variation'];
+        // $type_screen_guard = $product['skus'][$i]['saleProp']['type_screen_guard'];
+        // $color = $product['skus'][$i]['saleProp']['color_family'];
+        // $color_thumbnail = $product['skus'][$i]['color_thumbnail'];
+        // $model = $product['skus'][$i]['saleProp']['compatibility_by_model'];
 
         foreach($product['skus'][$i]['saleProp'] as $key => $value)
         {
@@ -75,6 +69,7 @@ if($sku || $itemId) {
         $sprice = $product['skus'][$i]['special_price'];
         $fromdate = $product['skus'][$i]['special_from_date'];
         $todate = $product['skus'][$i]['special_to_date'];
+        $skuid = $product['skus'][$i]['SkuId'];
         
         $name = $product['attributes']['name'];
         $shortdesc = $product['attributes']['short_description'];
@@ -88,14 +83,11 @@ if($sku || $itemId) {
     }
 }
 
-$addChildLink = "https://$_SERVER[HTTP_HOST]/lazop/addchild_gui.php?sku=$sku&name=$name";
 $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=$sku";
 $copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
 $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
-$moveToLink = "https://$_SERVER[HTTP_HOST]/lazop/movechild.php?sku=$sku";
-$copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__KT&associated_sku=$sku";
-$copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?sku=CL.ALL__MAU.XX__KT&associated_sku=$sku";
-
+$copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__KT~~1980685997&parent_sku={$sku}~{$skuid}~{$itemId}";
+$copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?sku=CL.ALL__MAU.XX__KT~~1980685997&parent_sku={$sku}~{$skuid}~{$itemId}";
 ?>
 
 <!DOCTYPE html>
@@ -129,27 +121,31 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <button id="btn_copy_url">Copy LAZADA urls</button>
     <button id="btn_del">DEL</button>
     <button id="btn_edit_price">Edit price</button>
-    <button id="btn_copy_models">Copy models</button>
-    <button id="btn_copy_colors">Copy colors</button>
-    <button id="btn_copy_othervariations">Copy other variations</button>
+    <button id="btn_copy_variation1">Copy variation1</button>
+    <button id="btn_copy_variation2">Copy variation2</button>
+    
+    <div class="fa-trash" style="display:none">
+    <br>Remove variation1=<?php echo $variations[0]?><a target="_blank" 
+        href="api_update.php?action=remove_saleprop&item_id=<?php echo $itemId?>&variation1=<?php echo $variations[0]?>" 
+        class="fa fa-trash" style="color:green;display:none" tabindex="-1"></a>
+
+    <br>Remove variation2=<?php echo $variations[1]?><a target="_blank" 
+        href="api_update.php?action=remove_saleprop&item_id=<?php echo $itemId?>&variation1=<?php echo $variations[1]?>" 
+        class="fa fa-trash" style="color:green;display:none" tabindex="-1"></a>
+    </div>
+
     <?php echo printProducts(array($sibling), false, $sku);?>
     </div>
 <?php } ?>
 
 <hr>
     <h1>Update product</h1>
-    <input type="hidden" id="sku" name="sku" value="<?php echo $sku;?>">
-    
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-    Source SKU: <input type="text" name="sku" size="70" value="<?php echo $sku?>"/>
+    SKU: <input type="text" id="sku" name="sku" size="70" value="<?php echo "{$skuFull}"?>"/><br>
+    SKU id: <input type="text" id="skuid" name="skuid" value="<?php echo $skuid;?>"><br>
+    Item id <input type="text" id="item_id" name="item_id" value="<?php echo $itemId;?>">
     <input type="submit" value="Reload"/>
     <input id="btn_change_sku" type="button" value="Change"/>
-    </form>
-
-    <form id="form_change_sku" class="ex" action="update.php" method="POST" name="skuForm" target="responseIframe">
-    <input type="hidden" name="sku" value="<?php echo $sku;?>">
-    Change SKU to: <input type="text" name="new_sku" size="70" value="<?php echo $sku?>"/>
-    <input type="submit" value="Change SKU"/>
     </form>
 
     <a id="linkAddChild" style="color:red" href="">Add Child</a>
@@ -157,9 +153,13 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <a style="color:red;padding-left: 20px" href="<?php echo $copyLink?>" target="_blank">Copy</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyToLink?>" target="_blank">Copy info to</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Copy all SKU</a>
-    <a style="color:red;padding-left: 20px" href="<?php echo $moveToLink?>" target="_blank">Move to</a>
+    <a id="linkMoveTo" style="color:red;padding-left: 20px" href="#">Move to</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau?>" target="_blank">Copy from CL mẫu</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau2?>" target="_blank">Copy from CL mẫu 2</a>
+
+    <br><a id="linkMoveProduct" style="color:red;padding-left: 20px" href="#">Move to</a>
+    <input id="des_sku" type="text" name="des_sku" size="60"/>
+    Keep parent name<input type="checkbox" id="keepParentName" name="keepParentName" checked>
 <hr>
 
 <input id="<?php echo $sku;?>" type="checkbox" data-toggle="toggle" <?php echo $status;?>>
@@ -187,24 +187,17 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
         </tr>
         <tr>
             <td><textarea class="nowrap" name="variations" rows="3" cols="20"><?php echo implode("\n", $variations);?></textarea></td>
-            <td><textarea class="nowrap" name="variation_values" rows="3" cols="20"><?php echo implode("\n", $variationValues);?></textarea>
+            <td><textarea class="nowrap" name="variation_values" rows="3" cols="30"><?php echo implode("\n", $variationValues);?></textarea>
             </td>
             <td><button id="btn_updateattr">Update</button></td>
         </tr>
     </tbody>
     </table>
     Valid Variations: color_family, Variation, compatibility_by_model, type_screen_guard<br>
-
-    Variation <input type="text" name="variation" value="<?php echo $variation;?>" />
-    type_screen_guard <input type="text" name="type_screen_guard" value="<?php echo $type_screen_guard;?>" />
-    compatibility_by_model <input type="text" name="compatibility_by_model" value="<?php echo $model;?>" />
-    color_family <input type="text" name="color_family" value="<?php echo $color;?>" />
     </div>
 <hr>
-    <form action="update.php" method="POST" name="brandForm" target="responseIframe">
-    <input type="hidden" name="sku" value="<?php echo $sku;?>">
     Brand <input type="text" name="brand" value="<?php echo $brand;?>" />
-    <input type="submit" value="Update brand"/>
+    <button id="btn_update_brand">Update</button>
     </form>
 <hr>
     <div>
@@ -266,7 +259,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <form action="update.php" method="POST" name="shortdescForm" target="responseIframe">
     <input type="hidden" name="sku" value="<?php echo $sku;?>" />
     <textarea class="nowrap" name="shortdesc" rows="2" cols="80"><?php echo $shortdesc;?></textarea>
-    <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
+    <a title="Editor" href="https://html5-editor.net/" target="_blank" rel="noopener">Editor</a>
     <input type="submit" value="Update short description"/>
     </form>
     
@@ -274,7 +267,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <div>
     <h3>Description:</h3>
     <textarea class="nowrap" name="desc" rows="2" cols="80"><?php echo $desc;?></textarea>
-    <a title="Editor" href="https://html-online.com/editor/" target="_blank" rel="noopener">Editor</a>
+    <a title="Editor" href="https://html5-editor.net/" target="_blank" rel="noopener">Editor</a>
     <button id="btn_updatedesc">Update description + short desc</button>
     </div>
     
@@ -283,7 +276,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     </div>
 
 <hr>
-    <textarea id="txt_json" rows="90" cols="90"><?php echo json_encode($product);?></textarea>
+    <textarea id="txt_json" rows="90" cols="180"><?php echo json_encode($product,JSON_PRETTY_PRINT);?></textarea>
 <hr>
 
     <form action="del.php" method="POST" name="delForm" target="responseIframe">
@@ -307,60 +300,73 @@ date_default_timezone_set("UTC");
     //##########################################################################################################
     
     //### Handle JS action in SKUs list
-    $("button[name='qtyaction'][value='=500']").click(function() {
-        $(this).parent().find('input[name=qty]').val('500'); 
-        var sku = $(this).parent().find('input[name=sku]').val(); 
-        productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: 500});
+    $("button[name='btn_child_qty']").click(function() {
+        var skuid = $(this).parent().find('input[name=child_skuid]').val();
+        var qty =  $(this).attr("value");
+        $(this).parent().find('input[name=child_qty]').val(qty); 
+
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "qty", qty: qty});
     });
-    $("button[name='qtyaction'][value='=0']").click(function() {
-        $(this).parent().find('input[name=qty]').val('0'); 
-        var sku = $(this).parent().find('input[name=sku]').val(); 
-        var q = $(this).closest('td').find('.reservedStock').text(); 
-        productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: q?q:0});
-    });
-    $('input[name="sku_sprice"]').keypress(function(event){
-        var keycode = (event.keyCode ? event.keyCode : event.which);
-        if(keycode == '13'){ // press ENTER
-          var sku = $(this).parent().find('input[name=sku]').val(); 
-          var sprice = $(this).parent().find('input[name="sku_sprice"]').val(); 
-          productUpdateWithAjaxQueue({ sku: sku, action: "price", sprice: sprice});
-        }
-    });
-    $('input[name=qty]').keypress(function(event){
+    $('input[name=child_qty]').keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
       if(keycode == '13'){ // press ENTER
-          var sku = $(this).parent().find('input[name=sku]').val(); 
+          var skuid = $(this).parent().find('input[name=skuid]').val(); 
           var q = $(this).parent().find('input[name=qty]').val(); 
-          productUpdateWithAjaxQueue({ sku: sku, action: "qty", qty: q});
+          productUpdateWithAjaxQueue({ skuid: skuid, action: "qty", qty: q});
       }
       //event.stopPropagation();
     });
+
+    $(".child_price_input").keypress(function(event){
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){ // press ENTER
+          var skuid = $(this).parent().find('input[name=child_skuid]').val(); 
+          var price = $(this).parent().find('input[name="child_price"]').val(); 
+          var sprice = $(this).parent().find('input[name="child_sprice"]').val(); 
+          productUpdateWithAjaxQueue({ skuid: skuid, action: "price", price: price, sprice: sprice});
+        }
+    });
+
     //###########################
 
-    
+    //### UPDATE BRAND AJAX ###
+    $('#btn_update_brand').click(function() {
+        var skuid = $('#skuid').val();
+        var b = $(this).parent().find('input[name="brand"]').val(); 
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "brand", brand: b});
+    });
+    //###########################
 
     //### UPDATE CATEGORY AJAX ###
     $('#btn_updatecategory').click(function() {
-        var s = $('#sku').val();
+        var skuid = $('#skuid').val();
         var c = $(this).parent().find('input[name="category"]').val(); 
-        productUpdateWithAjaxQueue({ sku: s, action: "category", category: c});
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "category", category: c});
     });
     //###########################
+
+    //### UPDATE SKU AJAX ###
+    $('#btn_change_sku').click(function() {
+        var skuid = $('#skuid').val();
+        var sku = $('#sku').val();
+        console.log(sku);
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "sku", sku: sku});
+    });
 
     //### UPDATE NAME AJAX ###
     $('input[name="name"]').keypress(function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if(keycode == '13'){ // press ENTER
-          var s = $('#sku').val();
+          var skuid = $('#skuid').val();
           var n = $(this).parent().find('input[name="name"]').val(); 
-          productUpdateWithAjaxQueue({ sku: s, action: "name", name: n});
+          productUpdateWithAjaxQueue({ skuid: skuid, action: "name", name: n});
         }
         //event.stopPropagation();
     });
     $('#btn_updatename').click(function() {
-        var s = $('#sku').val();
+        var skuid = $('#skuid').val();
         var n = $(this).parent().find('input[name="name"]').val(); 
-        productUpdateWithAjaxQueue({ sku: s, action: "name", name: n});
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "name", name: n});
     });
     //###########################
 
@@ -369,22 +375,22 @@ date_default_timezone_set("UTC");
     $('input[name="sale_price"]').keypress(function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if(keycode == '13'){ // press ENTER
-          var s = $('#sku').val();
+          var skuid = $('#skuid').val();
           var sprice = $(this).parent().find('input[name="sale_price"]').val(); 
-          productUpdateWithAjaxQueue({ sku: s, action: "price", sprice: sprice});
+          productUpdateWithAjaxQueue({ skuid: skuid, action: "price", sprice: sprice});
         }
     });
     $('#btn_updateprice').click(function() {
-        var s = $('#sku').val();
+        var skuid = $('#skuid').val();
         var sprice = $(this).parent().find('input[name="sale_price"]').val(); 
-        productUpdateWithAjaxQueue({ sku: s, action: "price", sprice: sprice});
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "price", sprice: sprice});
     });
     //###########################
 
 
     //### UPDATE ATTRIBUTES ###
     $('#btn_updateattr').click(function() {
-        var s = $('#sku').val();
+        var skuid = $('#skuid').val();
         // var variation = $(this).parent().find('input[name="variation"]').val(); 
         // var type_screen_guard = $(this).parent().find('input[name="type_screen_guard"]').val(); 
         // var compatibility_by_model = $(this).parent().find('input[name="compatibility_by_model"]').val(); 
@@ -393,7 +399,7 @@ date_default_timezone_set("UTC");
         var variations = $(this).closest('div').find('textarea[name="variations"]').val(); 
         var variationValues = $(this).closest('div').find('textarea[name="variation_values"]').val(); 
 
-        productUpdateWithAjaxQueue({ sku: s, action: "attr", 
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "attr", 
             // variation: variation, 
             // type_screen_guard:type_screen_guard,
             // compatibility_by_model:compatibility_by_model,
@@ -407,22 +413,22 @@ date_default_timezone_set("UTC");
 
     //### UPDATE DESCRIPTION ###
     $('#btn_updatedesc').click(function() {
-        var s = $('#sku').val();
+        var skuid = $('#skuid').val();
         var desc = $(this).parent().find('textarea[name="desc"]').val(); 
-        productUpdateWithAjaxQueue({ sku: s, action: "description", desc: desc});
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "description", desc: desc});
     });
     //###########################
 
     //### UPDATE WEIGHT ###
     $('#btn_updateweight').click(function() {
-        var s = $('#sku').val();
+        var skuid = $('#skuid').val();
         var weight = $('input[name=weight]').val(); 
         var size_w = $('input[name=size_w]').val(); 
         var size_h = $('input[name=size_h]').val(); 
         var size_l = $('input[name=size_l]').val(); 
         var content = $('input[name=content]').val(); 
 
-        productUpdateWithAjaxQueue({ sku: s, action: "weight", 
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "weight", 
             weight: weight,
             size_w: size_w,
             size_h: size_h,
@@ -435,23 +441,24 @@ date_default_timezone_set("UTC");
 
     //### UPDATE IMAGES ###
     $('#btn_updateimages').click(function() {
-        var s = $('#sku').val();
+        var skuid = $('#skuid').val();
         var images = $(this).parent().find('textarea[name="images"]').val(); 
-        productUpdateWithAjaxQueue({ sku: s, action: "images", images: images});
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "images", images: images});
     });
 
     $('#btn_updateProductImages').click(function() {
-        var s = $('#sku').val();
+        var skuid = $('#skuid').val();
         var pimages = $(this).parent().find('textarea[name="product_images"]').val(); 
-        productUpdateWithAjaxQueue({ sku: s, action: "pimages", pimages: pimages});
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "pimages", pimages: pimages});
     });
     //###########################
 
     $("#linkAddChild").click(function(e) {
         e.preventDefault();
         var s = $('#sku').val();
+        var skuid = $('#skuid').val();
         var n = $('#name').val(); 
-        var url = "addchild_gui.php?sku=" + s + "&name=" + n;
+        var url = `addchild_gui.php?sku=${s}&skuid=${skuid}&name=${n}`;
         //window.open(url, '_blank');
 
         var json = $('#txt_json').val();
@@ -461,29 +468,80 @@ date_default_timezone_set("UTC");
     $("#linkMassUpdate").click(function(e) {
         e.preventDefault();
 
+        var item_id = $("#item_id").val();
         var skus = "";
-          $("#tableProducts").find("td.sku").each(function(){
+          $("#tableProducts").find("td.sku_full").each(function(){
               skus = skus + $(this).text() + "\n";
           });
-
-        var models = "";
-          $("#tableProducts").find("td.model").each(function(){
-              models = models + $(this).text() + "\n";
+        var skuids = "";
+          $("#tableProducts").find("td.skuid").each(function(){
+              skuids = skuids + $(this).text() + "\n";
           });
 
-          var colors = "";
-          $("#tableProducts").find("td.color").each(function(){
-             colors = colors + $(this).text() + "\n";
+        var variation1 = $("#tableProducts").find(".variation1").first().text();
+        var variation2 = $("#tableProducts").find(".variation2").first().text();
+
+        var saleprop1 = "";
+          $("#tableProducts").find("td.saleprop1").each(function(){
+              saleprop1 = saleprop1 + $(this).text() + "\n";
+          });
+
+          var saleprop2 = "";
+          $("#tableProducts").find("td.saleprop2").each(function(){
+             saleprop2 = saleprop2 + $(this).text() + "\n";
+          });
+
+          var prices = "";
+          $("#tableProducts").find("td.price-cell span.price.text").each(function(){
+             prices = prices + $(this).text() + "\n";
+          });
+
+          var skuImages = "";
+          $("#tableProducts").find("td.sku-image.first a").each(function(){
+             skuImages = skuImages + $(this).attr('href') + "\n";
           });
 
         var url = "massupdate_gui.php";
         dopost(url, {
             skus: skus,
-            models: models,
-            colors: colors,
+            skuids: skuids,
+            item_id: item_id,
+            saleprop1: saleprop1,
+            saleprop2: saleprop2,
+            variation1: variation1,
+            variation2: variation2,
+            prices: prices,
+            sku_images: skuImages
         });        
     }); 
 
+    $("#linkMoveTo").click(function(e) {
+        e.preventDefault();
+        var text = "";
+          $("#tableProducts").find("td.sku_full").each(function(){
+              text = text + $(this).text() + "\n";
+          });
+          console.log("copy text : " + text );
+
+        var url = "movechild.php";
+        dopost(url, {
+            skus: text
+        });   
+    }); 
+
+    $("#linkMoveProduct").click(function(e) {
+        e.preventDefault();
+        var desSku = $('#des_sku').val();
+        var keepParentName = $("#keepParentName").prop('checked')? 1 : 0;
+        var url = `moveproduct.php?des_sku=${desSku}`;
+        var json = $('#txt_json').val();
+        var selectedSkus = "";
+          $("#tableProducts").find("td.sku_full").each(function(){
+              selectedSkus = selectedSkus + $(this).text() + "\n";
+          });
+
+        dopost(url, {json_product: json, des_sku: desSku, keep_name: keepParentName, selected_skus: selectedSkus});    
+    }); 
 
     $('input[type=checkbox][data-toggle=toggle]').change(function() {
         var status;
@@ -493,11 +551,11 @@ date_default_timezone_set("UTC");
             status = 'inactive';
         }
 
-        productUpdateWithAjaxQueue({ sku: this.id, action: "status", skustatus: status});
+        productUpdateWithAjaxQueue({ skuid: this.id, action: "status", skustatus: status});
     });
 
     $('#btn_del').click(function(e){
-        $('a.fa-trash').toggle("hide");
+        $('.fa-trash').toggle("hide");
     });
 
     $('#btn_edit_price').click(function(e){
@@ -529,58 +587,41 @@ date_default_timezone_set("UTC");
 
     $('#btn_copy_sku').click(function (e) {
       var text = "";
-      $("#tableProducts").find("td.sku").each(function(){
+      $("#tableProducts").find("td.sku_full").each(function(){
           text = text + $(this).text() + "\n";
       });
       console.log("copy text : " + text );
       copyToClipBoard(text);
     });
 
-    $('#btn_copy_models').click(function (e) {
+    $('#btn_copy_variation1').click(function (e) {
       var list = [];
         var text = "";
-        $("#tableProducts").find("td.model").each(function(){
+        $("#tableProducts").find("td.variation1").each(function(){
           //text = text + $(this).text() + "\n";
             var t = $(this).text().trim();
             if(list.indexOf(t) < 0) {
                 list.push(t);
             }
         });
-        list.sort();
+        //list.sort();
         text = list.join("\n");
         
       console.log("copy text : " + text );
       copyToClipBoard(text);
     });
 
-    $('#btn_copy_colors').click(function (e) {
+    $('#btn_copy_variation2').click(function (e) {
         var list = [];
         var text = "";
-        $("#tableProducts").find("td.color").each(function(){
+        $("#tableProducts").find("td.variation2").each(function(){
           //text = text + $(this).text() + "\n";
             var t = $(this).text().trim();
             if(list.indexOf(t) < 0) {
                 list.push(t);
             }
         });
-        list.sort();
-        text = list.join("\n");
-        
-      console.log("copy text : " + text );
-      copyToClipBoard(text);
-    });
-
-    $('#btn_copy_othervariations').click(function (e) {
-      var list = [];
-        var text = "";
-        $("#tableProducts").find("td.variation").each(function(){
-          //text = text + $(this).text() + "\n";
-            var t = $(this).text().trim();
-            if(list.indexOf(t) < 0) {
-                list.push(t);
-            }
-        });
-        list.sort();
+        //list.sort();
         text = list.join("\n");
         
       console.log("copy text : " + text );

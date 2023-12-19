@@ -1,4 +1,3 @@
-
 <?php
 // To understand product structure, see this link below
 // https://open.lazada.com/doc/api.htm?spm=a2o9m.11193487.0.0.3ac413fers8uIL#/api?cid=5&path=/product/create
@@ -10,11 +9,14 @@ function prepareProduct($product) {
     $product['Attributes'] = $product['attributes'];
     $product['Skus'] = $product['skus'];
     $product['PrimaryCategory'] = $product['primary_category'];
+    $product['Images'] = $product['images'];
+    //$product['ItemId'] = $product['item_id'];
 
     // remove wrong keyName
     unset($product['attributes']);
     unset($product['skus']);
     unset($product['primary_category']);
+    unset($product['images']);
 
     ////////////////////////////////////////////////////
     // HARDCORE (remove if possible)
@@ -64,9 +66,6 @@ function fixProductSaleProp($product) {
 function prepareProductForUpdating($product) {
     $product = prepareProduct($product);
 
-    // fix key
-    $product['ItemId'] = $product['item_id'];
-
     // remove english name, desc, short_desc
     if(isset($product['Attributes']["name_en"])) {
         $product['Attributes']["name_en"] = $product['Attributes']["name"];
@@ -83,8 +82,7 @@ function prepareProductForUpdating($product) {
 
 function prepareProductForCreating($product, $keepAllSkus = FALSE) {
     $product = prepareProduct($product);
-    $product['Images'] = $product['images'];
-    
+
     // keep skus[0], remove all others
     if(!$keepAllSkus) {
         $product['Skus'] = array_splice($product['Skus'], 0, 1);
@@ -144,6 +142,10 @@ function setProductImages($product, $images, $reset=FALSE, $fromindex = 0) {
         }
     }
     return $product;
+}
+
+function getProductImages($product) {
+    return val($product['images'], $product['Images']);
 }
 
 // migrage images before setting
@@ -310,11 +312,14 @@ function setProductActive($product, $value) {
 //GET region
 //######################################
 
-function getTemplateProduct($sku, $status=null) {
+function getTemplateProduct($sku, $skuid, $status=null) {
     $product = [];
     $product['Attributes'] = [];
     $product['Skus'] = [];
-    $product['Skus'][0]['SellerSku'] = $sku;
+    if(!empty($sku)) {
+        $product['Skus'][0]['SellerSku'] = $sku;
+    }
+    $product['Skus'][0]['SkuId'] = $skuid;
     $product['PrimaryCategory'] = [];
 
     if(!empty($status)) {
@@ -322,6 +327,21 @@ function getTemplateProduct($sku, $status=null) {
     }
 
     return $product;
+}
+
+function getProductSku($product) {
+    $val = val($product['Skus'][0]['SellerSku'], $product['skus'][0]['SellerSku']);
+    return $val;
+}
+
+function getProductSkuid($product) {
+    $val = val($product['Skus'][0]['SkuId'], $product['skus'][0]['SkuId']);
+    return $val;
+}
+
+function getProductName($product) {
+    $val = val($product["Attributes"]["name"], $product["attributes"]["name"]);
+    return $val;
 }
 
 function getProductSaleProp($product, $key) {
@@ -332,12 +352,12 @@ function getProductSaleProps($product) {
     return $product['Skus'][0]['saleProp'];
 }
 
-function getProductName($product) {
-    return $product['Attributes'] ? $product['Attributes']["name"] : $product['attributes']["name"];
+function getProductItemId($product) {
+    return $product['item_id'];
 }
 
 function getProductSkuIndex($product, $inputSku) {
-    $pos = -1;
+    $pos = 0; // default is 0
     foreach($product['skus'] as $skuIndex=>$sku) {
         if ($inputSku == $sku['SellerSku']) {
             $pos = $skuIndex;
@@ -345,25 +365,6 @@ function getProductSkuIndex($product, $inputSku) {
     }
     return $pos;
 }
-
-function htmlProductUpdateLink($sku) {
-    $editLink = "https://$_SERVER[HTTP_HOST]/lazop/update_gui.php?sku=$sku";
-    $htmlTag = '<a target="_blank" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>';
-    return $htmlTag;
-}
-
-function getProductSkusText($product) {
-    $text = "";
-    foreach($product['Skus'] as $skuIndex=>$sku) {
-        $text .= $sku['SellerSku'] . htmlProductUpdateLink($sku['SellerSku']) . "<br>";
-    }
-    return $text;
-}
-
-function getProductItemId($product) {
-    return $product['item_id'];
-}
-
 
 /*
     return product with only 1 selected SKU
