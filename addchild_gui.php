@@ -1,6 +1,6 @@
 <?php
-//include_once "src/show_errors.php";
 include_once "check_token.php";
+//include_once "src/show_errors.php";
 require_once('_main_functions.php');
 
 ?>
@@ -19,14 +19,15 @@ require_once('_main_functions.php');
 // It's only needed if timezone in php.ini is not set correctly.
 date_default_timezone_set("UTC");
 
-$sku = isset($_REQUEST["sku"]) ? $_REQUEST["sku"] : "";
-$skuid = isset($_REQUEST["sku"]) ? $_REQUEST["skuid"] : "";
+$skuFull = val($_REQUEST["sku"]);
+$arr = explode("~", $skuFull);
+$sku = $arr[0];
+$skuId = $arr[1];
+$itemId = $arr[2];
 
 // CL.21D__IP.11.6.1  -->  CL.21D__
-$skuprefix = preg_replace('/(?!.+__)(.+)/', '__', $sku);
-
-// if wrong format --> skuprefix = ""
-$skuprefix = ($skuprefix == '__')?'':$skuprefix;
+preg_match('/(\w+(.\w+)+_+)+/', $sku, $matches);
+$skuprefix = val($matches[0], "");
 
 $appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
 $newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
@@ -40,8 +41,8 @@ $json = val($_REQUEST['json_product']);
 <body>
 <form action="addchild.php" method="POST" target="responseIframe">
 
-Parent SKU: <input type="text" name="sku" size="80" value="<?php echo $sku?>"><br>
-Parent SKUID: <input type="text" name="skuid" size="80" value="<?php echo $skuid?>"><br>
+Parent SKU: <input type="text" name="sku" size="80" value="<?php echo $skuFull?>"><br>
+Parent SKUID: <input type="text" name="skuid" size="80" value="<?php echo $skuId?>"><br>
 Child SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"><br> 
 New child name: <input type="text" name="name" size="80" value="<?php echo $newName?>"><br>
 <br>
@@ -72,16 +73,20 @@ Possible Attributes : <?php echo implode(",", $attrNames)?><br><br>
             <td>Image links</td>
         </tr>
         <tr>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="30"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="10"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="15"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="20" cols="80"></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="9" cols="30"></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="9" cols="30"></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="9" cols="10"></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="9" cols="15"></textarea></td>
+            <td><textarea class="nowrap" name="col[]" rows="9" cols="80"></textarea></td>
 
-            <textarea id="txt_json" name="json_product" rows="1" cols="90"><?php echo $json;?></textarea>
+            <textarea id="txt_json" name="json_product" rows="1" cols="180"><?php echo $json;?></textarea>
         </tr>
     </tbody>
 </table>
+
+Mass input child: Variation1;Variation2;Qty;Price;image_url1 image_url2<br>
+<textarea class="nowrap" name="child_lines" rows="10" cols="80"></textarea><br>
+
 <input type="checkbox" name="preview" checked="1" value="1">Preview<br>
 <input type="submit"><hr>
 

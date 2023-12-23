@@ -1,6 +1,6 @@
 <?php
-//include_once "src/show_errors.php";
 include_once "check_token.php";
+include_once "src/show_errors.php";
 require_once('_main_functions.php');
 
 ?>
@@ -30,7 +30,6 @@ $newName = val($_REQUEST['name']);
 $jsonProduct = val($_REQUEST['json_product']);
 
 $saleProps = array();
-
 foreach ($_REQUEST['attr'] as $i => $prop) {
     $input = $_POST['col'][$i];
     if(!empty($input)) {
@@ -39,6 +38,8 @@ foreach ($_REQUEST['attr'] as $i => $prop) {
         // $saleProps['compatibility_by_model'] = $lines
     }
 }
+
+$selectedSaleProps = val($_REQUEST['attr']);
 
 // move Variation to index 0 --> fix SKU format
 // $variationPos = array_search('Variation', $attrList);
@@ -56,6 +57,9 @@ $prices = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
 $input = $_POST['col'][4];
 $images = array_filter(explode("\n", str_replace("\r", "", $input)));
 
+$childLines = trim(val($_REQUEST['child_lines']));
+$childLines = explode("\r\n", $childLines);
+
 $inputdata = array(
     "kiotids" => $kiotids,
     "saleProps" => $saleProps,
@@ -66,15 +70,21 @@ $inputdata = array(
     "qtys" => $qtys,
     "prices" => $prices,
     "jsonProduct" => $jsonProduct,
+    "childLines" => $childLines,
+    "selectedSaleProps" => $selectedSaleProps,
     );
 
-
-if(count($qtys) == 0) {
-    echo "<br><br><h1>Please input Quantity</h1>";
-    exit();
+if(count($childLines)) {
+    echo "<br>MASS CREATING...<br>";
+    $dict = massAddChildProduct($accessToken, $sku, $inputdata, $preview);
+} else {
+    echo "<br>CREATING...<br>";
+    $dict = addChildProduct($accessToken, $sku, $inputdata, $preview);
 }
 
-$dict = addChildProduct($accessToken, $sku, $skuid, $inputdata, $preview);
+
+
+
 
 ?>
 

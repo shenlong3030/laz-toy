@@ -1316,7 +1316,12 @@ function saveProduct($accessToken, $product) {
 // Clone region
 //####################################################################
 
-function addChildProduct($accessToken, $sku, $skuid, $inputdata, $preview = 1) {
+function addChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
+    $arr = explode("~", $sku);
+    $sku = $arr[0];
+    $skuId = $arr[1];
+    $itemId = $arr[2];
+
     $sku = pre_process_sku($sku);
     $skuprefix = $inputdata['skuprefix'];
     $newName = $inputdata['newname'];
@@ -1325,7 +1330,7 @@ function addChildProduct($accessToken, $sku, $skuid, $inputdata, $preview = 1) {
     if($product) {
         $product = json_decode($product, true);
     } else {
-        $product = getProduct($accessToken, $sku, $skuid);
+        $product = getProduct($accessToken, $sku, $itemId); //TODO: fix
     }
 
     if($product) {     
@@ -1337,7 +1342,7 @@ function addChildProduct($accessToken, $sku, $skuid, $inputdata, $preview = 1) {
         unset($product['Skus'][0]);
 
         $created = array();
-        $product = setProductAssociatedSku($product, $skuid);
+        $product = setProductAssociatedSku($product, $skuId);
         $kiotids = $inputdata["kiotids"];
         $saleProps = $inputdata["saleProps"];
 
@@ -1423,8 +1428,111 @@ function addChildProduct($accessToken, $sku, $skuid, $inputdata, $preview = 1) {
     }
 }
 
-function massAddChildProduct($accessToken, $data, $preview = 1) {
-    
+function massAddChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
+    $arr = explode("~", $sku);
+    $sku = $arr[0];
+    $skuId = $arr[1];
+    $itemId = $arr[2];
+
+    $skuprefix = $inputdata['skuprefix'];
+    $newName = $inputdata['newname'];
+
+    $product = val($inputdata['jsonProduct']);
+    if($product) {
+        $product = json_decode($product, true);
+    } else {
+        $product = getProduct($accessToken, $sku, $itemId);
+    }
+
+    if($product) {     
+        $product = prepareProductForCreating($product);
+
+        // clone original sku dict
+        $clonedSku = $product['Skus'][0];
+        $product['Skus'] = [];
+
+        $created = array();
+        $product = setProductAssociatedSku($product, $skuId);
+        
+        $childLines = $inputdata["childLines"];
+        $selectedSaleProps = $inputdata["selectedSaleProps"];
+        
+        // set NAME
+        if(!empty($newName)) {
+            $product = setProductName($product, $newName);
+        }
+
+        $cache = array();
+        $time = substr(time(), -4);
+        foreach ($childLines as $line) {
+            $skuDict = $clonedSku;
+            
+            $arr = explode(";", $line);
+            $saleprop1 = $arr[0];
+            $saleprop2 = $arr[1];
+            $qty = $arr[2];
+            $price = $arr[3];
+            $images = $arr[4];
+
+            if(!empty($saleprop1)) {
+                $skuDict['saleProp'][$selectedSaleProps[0]] = $saleprop1;
+            }
+            if(!empty($saleprop2)) {
+                $skuDict['saleProp'][$selectedSaleProps[1]] = $saleprop2;
+            }
+            
+            // set sku
+            $parts = array_filter([$saleprop1,$saleprop2]);
+            $newSku = $skuprefix . implode(".", $parts);
+            $newSku = make_short_sku($newSku);
+            $skuDict['SellerSku'] = $newSku;
+
+            //var_dump($skuId);
+
+            // set qty
+            $skuDict['quantity'] = val($qty, 0);
+
+            // set price
+            $skuDict['special_price'] = val($price, 0);
+            $skuDict['price'] = round((int)$price * 1.3 / 100) * 100;
+
+            // set images
+            migrateImages($accessToken, $images, $cache);
+            foreach($images as $index => $url) {
+                if (is_url($url)) {
+                    $skuDict['Images'][$index] = $url;
+                } else {
+                    if(!empty($url)) {
+                        myecho("INVALID URL : " + $images[$index], __FUNCTION__);
+                    }
+                }
+            }      
+            // force active
+            $skuDict['Status'] = "active";
+
+            $product['Skus'][] = $skuDict;
+
+            // store to print
+            $created["sku"][] = $newSku;
+            $created["img"][] = $skuDict['Images'];
+        }
+
+        if(!intval($preview)) {
+            //myvar_dump($product);
+            createProduct($accessToken, $product);
+        } else {
+            myecho("PREVIEWING ...");
+        }
+        
+        // print new SKUs
+        echo '<hr><h3>New SKUs</h3>';
+        foreach($created["sku"] as $index => $sku) {
+            echo "<br>",$sku, htmlLinkImages($created["img"][$index]);
+        }
+    } else {
+        echo "<br><br>Wrong sku<br>OR can not decode product json (try to update short_description)<br><br>";
+    }
+
 }
 
 function massMoveChild($accessToken, $data, $preview) {
