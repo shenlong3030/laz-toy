@@ -188,14 +188,6 @@ setTimeout(function(){
 
 $('table').tablesorter({ sortList: [[0,0]]});
 
-function copyToClipBoard(text) {
-    var $temp = $("<textarea>");
-    $("body").append($temp);
-    $temp.val(text).select();
-    document.execCommand("copy");
-    $temp.remove();
-}
-
 function findDuplicates(arr) {
     var duplicates_list = [];
     var unique_list = [];

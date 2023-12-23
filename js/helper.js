@@ -1,9 +1,11 @@
 function copyToClipBoard(text) {
-    var $temp = $("<textarea>");
-    $("body").append($temp);
-    $temp.val(text).select();
-    document.execCommand("copy");
-    $temp.remove();
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        console.log("Text copied to clipboard!");
+      })
+      .catch(err => {
+        console.error("Failed to copy text:", err);
+      });
 }
 
 function properText(text) {

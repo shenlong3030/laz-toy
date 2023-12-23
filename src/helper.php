@@ -70,7 +70,7 @@ function val($input, $defaultvalue = "") {
     return isset($input) ? $input : $defaultvalue;
 }
 
-function vn_to_str ($str){
+function vn_to_str($str){
     $unicode = array(
      
     'a'=>'á|à|ả|ã|ạ|ă|ắ|ặ|ằ|ẳ|ẵ|â|ấ|ầ|ẩ|ẫ|ậ',
@@ -139,9 +139,9 @@ function pre_process_skus($list) {
 }
 
 function make_short_sku($sku) {
-    $sku = strtoupper($sku);
     $sku = trim($sku);
     $sku = vn_urlencode($sku);
+    $sku = strtoupper($sku);
 
     $dict = array(
     'COMBO' => 'CB',
