@@ -141,7 +141,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
 <hr>
     <h1>Update product</h1>
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-    SKU: <input type="text" id="sku" name="sku" size="70" value="<?php echo "{$skuFull}"?>"/><br>
+    SKU: <input type="text" id="sku" name="sku" size="70" value="<?php echo "{$sku}~{$skuid}~{$itemId}"?>"/><br>
     SKU id: <input type="text" id="skuid" name="skuid" value="<?php echo $skuid;?>"><br>
     Item id <input type="text" id="item_id" name="item_id" value="<?php echo $itemId;?>">
     <input type="submit" value="Reload"/>
@@ -155,7 +155,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Copy all SKU</a>
     <a id="linkMoveTo" style="color:red;padding-left: 20px" href="#">Move to</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau?>" target="_blank">Copy from CL mẫu</a>
-    <a style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau2?>" target="_blank">Copy from CL mẫu 2</a>
+    <a id="link_copy_from_cl_mau2" style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau2?>" target="_blank">Copy from CL mẫu 2</a>
 
     <br><a id="linkMoveProduct" style="color:red;padding-left: 20px" href="#">Move to</a>
     <input id="des_sku" type="text" name="des_sku" size="60"/>
@@ -310,8 +310,8 @@ date_default_timezone_set("UTC");
     $('input[name=child_qty]').keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
       if(keycode == '13'){ // press ENTER
-          var skuid = $(this).parent().find('input[name=skuid]').val(); 
-          var q = $(this).parent().find('input[name=qty]').val(); 
+          var skuid = $(this).parent().find('input[name=child_skuid]').val(); 
+          var q = $(this).parent().find('input[name=child_qty]').val(); 
           productUpdateWithAjaxQueue({ skuid: skuid, action: "qty", qty: q});
       }
       //event.stopPropagation();
@@ -455,10 +455,9 @@ date_default_timezone_set("UTC");
 
     $("#linkAddChild").click(function(e) {
         e.preventDefault();
-        var s = $('#sku').val();
-        var skuid = $('#skuid').val();
+        var sku = $('#sku').val();
         var n = $('#name').val(); 
-        var url = `addchild_gui.php?sku=${s}&skuid=${skuid}&name=${n}`;
+        var url = `addchild_gui.php?sku=${sku}&name=${n}`;
         //window.open(url, '_blank');
 
         var json = $('#txt_json').val();
@@ -529,6 +528,42 @@ date_default_timezone_set("UTC");
         });   
     }); 
 
+    $("#link_copy_from_cl_mau2").click(function(e) {
+        e.preventDefault();
+        url = $(this).attr("href");
+
+        var list = [];
+        var text = "";
+        $("#tableProducts").find("td.saleprop1").each(function(){
+          //text = text + $(this).text() + "\n";
+            var t = $(this).text().trim();
+            if(list.indexOf(t) < 0) {
+                list.push(t);
+            }
+        });
+        //list.sort();
+        text = list.join("\n");
+        listSaleProp1 = text;
+
+        list = [];
+        text = "";
+        $("#tableProducts").find("td.saleprop2").each(function(){
+          //text = text + $(this).text() + "\n";
+            var t = $(this).text().trim();
+            if(list.indexOf(t) < 0) {
+                list.push(t);
+            }
+        });
+        //list.sort();
+        text = list.join("\n");
+        listSaleProp2 = text;
+
+        var variation1 = $("#tableProducts").find(".variation1").first().text();
+        var variation2 = $("#tableProducts").find(".variation2").first().text();
+
+        dopost(url, {parentSaleProp1: listSaleProp1, parentSaleProp2: listSaleProp2, parentSalePropKey1: variation1, parentSalePropKey2: variation2});    
+    }); 
+
     $("#linkMoveProduct").click(function(e) {
         e.preventDefault();
         var desSku = $('#des_sku').val();
@@ -597,7 +632,7 @@ date_default_timezone_set("UTC");
     $('#btn_copy_variation1').click(function (e) {
       var list = [];
         var text = "";
-        $("#tableProducts").find("td.variation1").each(function(){
+        $("#tableProducts").find("td.saleprop1").each(function(){
           //text = text + $(this).text() + "\n";
             var t = $(this).text().trim();
             if(list.indexOf(t) < 0) {
@@ -614,7 +649,7 @@ date_default_timezone_set("UTC");
     $('#btn_copy_variation2').click(function (e) {
         var list = [];
         var text = "";
-        $("#tableProducts").find("td.variation2").each(function(){
+        $("#tableProducts").find("td.saleprop2").each(function(){
           //text = text + $(this).text() + "\n";
             var t = $(this).text().trim();
             if(list.indexOf(t) < 0) {
