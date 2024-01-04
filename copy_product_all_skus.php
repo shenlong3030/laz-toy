@@ -63,11 +63,13 @@ if($sku) {
             createProduct($accessToken, $product);
         } else {
             $parentProduct = getProduct($accessToken, null, $parentItemId);
-            $newName = getProductName($parentProduct);
-            $productImages = getProductImages($parentProduct);
+            if($parentProduct) {
+                $newName = getProductName($parentProduct);
+                $productImages = getProductImages($parentProduct);
 
-            preg_match('/(.+_)/', $parentSku, $match);
-            $newSkuPrefix = count($match) ? $match[1] : "";
+                preg_match('/(.+_)/', $parentSku, $match);
+                $newSkuPrefix = count($match) ? $match[1] : "";
+            }
         }
 
         preg_match('/(.+_)/', $sku, $match);

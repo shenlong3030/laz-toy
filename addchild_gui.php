@@ -29,8 +29,7 @@ $itemId = $arr[2];
 preg_match('/(\w+(.\w+)+_+)+/', $sku, $matches);
 $skuprefix = val($matches[0], "");
 
-$appendtime = isset($_POST['appendtime']) ? $_POST['appendtime'] : 0;
-$newName = isset($_REQUEST['name']) ? $_REQUEST['name'] : "";
+$newName = val($_REQUEST['name']);
 $attrNames = getProductAttributeNames(FALSE);
 
 $json = val($_REQUEST['json_product']);
@@ -38,8 +37,6 @@ $json = val($_REQUEST['json_product']);
 
 $salPropKey1 = val($_REQUEST["salPropKey1"]);
 $salPropKey2 = val($_REQUEST["salPropKey2"]);
-
-var_dump($salPropKey1);
 
 ?>
 
