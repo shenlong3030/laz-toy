@@ -83,8 +83,8 @@ if($itemId) {
     }
 }
 
-$cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=$sku";
-$copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku=$sku";
+$cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku={$sku}~{$skuid}~{$itemId}";
+$copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku={$sku}~{$skuid}~{$itemId}";
 $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
 $copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__KT~~1980685997&parent_sku={$sku}~{$skuid}~{$itemId}";
 $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?sku=CL.ALL__MAU.XX__KT~~1980685997&parent_sku={$sku}~{$skuid}~{$itemId}";
@@ -461,7 +461,11 @@ date_default_timezone_set("UTC");
         //window.open(url, '_blank');
 
         var json = $('#txt_json').val();
-        dopost(url, {json_product: json});        
+
+        var salPropKey1 = $("#tableProducts").find(".variation1").first().text();
+        var salPropKey2 = $("#tableProducts").find(".variation2").first().text();
+
+        dopost(url, {json_product: json, salPropKey1: salPropKey1, salPropKey2: salPropKey2});        
     }); 
 
     $("#linkMassUpdate").click(function(e) {

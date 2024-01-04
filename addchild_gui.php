@@ -36,6 +36,11 @@ $attrNames = getProductAttributeNames(FALSE);
 $json = val($_REQUEST['json_product']);
 //$json = json_decode($json, true);
 
+$salPropKey1 = val($_REQUEST["salPropKey1"]);
+$salPropKey2 = val($_REQUEST["salPropKey2"]);
+
+var_dump($salPropKey1);
+
 ?>
 
 <body>
@@ -47,42 +52,22 @@ Child SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php ech
 New child name: <input type="text" name="name" size="80" value="<?php echo $newName?>"><br>
 <br>
 Possible Attributes : <?php echo implode(",", $attrNames)?><br><br>
-<table>
-    <tbody>
-        <tr>
-            <td>
-                <select name="attr[]">
-                  <option value="color_family">color_family</option>
-                  <option value="compatibility_by_model" selected>compatibility_by_model</option>
-                  <option value="Variation">Variation</option>
-                  <option value="type_screen_guard">type_screen_guard</option>
-                  <option value="smartwear_size">smartwear_size</option>
-                </select>
-            </td>
-            <td>
-                <select name="attr[]">
-                  <option value="color_family" selected>color_family</option>
-                  <option value="compatibility_by_model" >compatibility_by_model</option>
-                  <option value="Variation">Variation</option>
-                  <option value="type_screen_guard">type_screen_guard</option>
-                  <option value="smartwear_size">smartwear_size</option>
-                </select>
-            </td>
-            <td>Quantity</td>
-            <td>Price</td>
-            <td>Image links</td>
-        </tr>
-        <tr>
-            <td><textarea class="nowrap" name="col[]" rows="9" cols="30"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="9" cols="30"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="9" cols="10"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="9" cols="15"></textarea></td>
-            <td><textarea class="nowrap" name="col[]" rows="9" cols="80"></textarea></td>
 
-            <textarea id="txt_json" name="json_product" rows="1" cols="180"><?php echo $json;?></textarea>
-        </tr>
-    </tbody>
-</table>
+Variation1 <select class="saleprop_key" name="attr[]">
+  <option value="color_family">color_family</option>
+  <option value="compatibility_by_model" selected>compatibility_by_model</option>
+  <option value="Variation">Variation</option>
+  <option value="type_screen_guard">type_screen_guard</option>
+  <option value="smartwear_size">smartwear_size</option>
+</select> ; 
+
+Variation2<select class="saleprop_key" name="attr[]">
+  <option value="color_family" selected>color_family</option>
+  <option value="compatibility_by_model" >compatibility_by_model</option>
+  <option value="Variation">Variation</option>
+  <option value="type_screen_guard">type_screen_guard</option>
+  <option value="smartwear_size">smartwear_size</option>
+</select><br><br>
 
 Mass input child: Variation1;Variation2;Qty;Price;image_url1 image_url2<br>
 <textarea class="nowrap" name="child_lines" rows="10" cols="80"></textarea><br>
@@ -94,6 +79,8 @@ Mass input child: Variation1;Variation2;Qty;Price;image_url1 image_url2<br>
 <iframe id="responseIframe" name="responseIframe" width="1000" height="1000"></iframe>
 
 <script type="text/javascript">
+    $(".saleprop_key").first().val("<?php echo $salPropKey1 ?>");
+    $(".saleprop_key").last().val("<?php echo $salPropKey2 ?>");
 </script>
 </div>
 </body>
