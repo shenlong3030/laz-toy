@@ -302,7 +302,13 @@ date_default_timezone_set("UTC");
     //### Handle JS action in SKUs list
     $("button[name='btn_child_qty']").click(function() {
         var skuid = $(this).parent().find('input[name=child_skuid]').val();
-        var qty =  $(this).attr("value");
+        var qty = $(this).attr("value");
+        var reservedStock = $(this).closest('td').find('.reservedStock').text(); 
+
+        if(qty == 0 && reservedStock){
+            qty = reservedStock;
+        }
+
         $(this).parent().find('input[name=child_qty]').val(qty); 
 
         productUpdateWithAjaxQueue({ skuid: skuid, action: "qty", qty: qty});
