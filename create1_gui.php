@@ -21,16 +21,16 @@ require_once('_main_functions.php');
 <table>
     <tbody>
         <tr>
-            <td>Parent SKU</td>
             <td>Product data<br>
             variation1 <input id="create_variation1" type="text" name="variations[]" value="<?php echo $_COOKIE['create_variation1']?>"> <br>
             variation2 <input id="create_variation2" type="text" name="variations[]" value="<?php echo $_COOKIE['create_variation2']?>">
             Valid Variations: color_family, Variation, compatibility_by_model, type_screen_guard<br>
-            <span style="background: lightgreen;"> name;new sku;variation1;variation2;qty;price;image1 image2 ...</span></td>
+            <span style="background: lightgreen;"> Name;new SKU;Color;Variation;Qty;Price;Pimage;SKUImages;Sku mẫu 
+sku~skuid~itemid;Parent 
+sku~skuid~itemid ...</span></td>
         </tr>
         <tr>
-            <td><textarea class="nowrap" id="parent_skus" rows="18" cols="60"></textarea></td>
-            <td><textarea class="nowrap" id="product_data" rows="18" cols="60"></textarea></td>
+            <td><textarea class="nowrap" id="product_data" rows="18" cols="120"></textarea></td>
 
         </tr>
     </tbody>
