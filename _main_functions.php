@@ -1467,7 +1467,7 @@ function massAddChildProduct($accessToken, $sku, $inputdata, $preview = 1) {
         foreach ($childLines as $line) {
             $skuDict = $clonedSku;
             
-            $arr = explode(";", $line);
+            $arr = explode("⇒", $line);
             $saleprop1 = $arr[0];
             $saleprop2 = $arr[1];
             $qty = $arr[2];

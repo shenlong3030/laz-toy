@@ -33,16 +33,26 @@ $newName = val($_REQUEST['name']);
 $attrNames = getProductAttributeNames(FALSE);
 
 $json = val($_REQUEST['json_product']);
-//$json = json_decode($json, true);
+$product = json_decode($json, true);
 
 $salPropKey1 = val($_REQUEST["salPropKey1"]);
 $salPropKey2 = val($_REQUEST["salPropKey2"]);
+
+$variation1 = val($product['skus'][0]['saleProp'][$salPropKey1]);
+$variation2 = val($product['skus'][0]['saleProp'][$salPropKey2]);
+$qty = val($product['skus'][0]['quantity']);
+$sprice = val($product['skus'][0]['special_price']);
+$image1 = val($product['skus'][0]['Images'][0]);
+
+$example = [$variation1, $variation2, $qty, $sprice, $image1];
+$exHeader = ["Variation1","Variation2","Qty","Price","image_url1 image_url2"];
 
 ?>
 
 <body>
 <form action="addchild.php" method="POST" target="responseIframe">
-
+<textarea name="json_product" rows="1" cols="90"><?php echo json_encode($product,JSON_PRETTY_PRINT);?></textarea>
+<br>
 Parent SKU: <input type="text" name="sku" size="80" value="<?php echo $skuFull?>"><br>
 Parent SKUID: <input type="text" name="skuid" size="80" value="<?php echo $skuId?>"><br>
 Child SKU prefix: <input type="text" name="skuprefix" size="50" value="<?php echo $skuprefix?>"><br> 
@@ -66,8 +76,8 @@ Variation2<select class="saleprop_key" name="attr[]">
   <option value="smartwear_size">smartwear_size</option>
 </select><br><br>
 
-Mass input child: Variation1;Variation2;Qty;Price;image_url1 image_url2<br>
-<textarea class="nowrap" name="child_lines" rows="10" cols="80"></textarea><br>
+Mass input child: <?php echo implode('⇒', $exHeader)?><br>
+<textarea class="nowrap" name="child_lines" rows="10" cols="120"><?php echo implode('⇒', $example)?></textarea><br>
 
 <input type="checkbox" name="preview" checked="1" value="1">Preview<br>
 <input type="submit"><hr>

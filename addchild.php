@@ -1,6 +1,6 @@
 <?php
 include_once "check_token.php";
-include_once "src/show_errors.php";
+//include_once "src/show_errors.php";
 require_once('_main_functions.php');
 
 ?>
@@ -74,17 +74,9 @@ $inputdata = array(
     "selectedSaleProps" => $selectedSaleProps,
     );
 
-if(count($childLines)) {
-    echo "<br>MASS CREATING...<br>";
-    $dict = massAddChildProduct($accessToken, $sku, $inputdata, $preview);
-} else {
-    echo "<br>CREATING...<br>";
-    $dict = addChildProduct($accessToken, $sku, $inputdata, $preview);
-}
 
-
-
-
+echo "<br>MASS CREATING...<br>";
+$dict = massAddChildProduct($accessToken, $sku, $inputdata, $preview);
 
 ?>
 
