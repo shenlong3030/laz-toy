@@ -25,8 +25,8 @@ $names = explode("\n", $names);
 // $models = explode("\n", $models);
 // $colors = val($_REQUEST['colors']);
 // $colors = explode("\n", $colors);
-$variation1 = val($_REQUEST['variation1']);
-$variation2 = val($_REQUEST['variation2']);
+$salPropKey1 = val($_REQUEST['salPropKey1']);
+$salPropKey2 = val($_REQUEST['salPropKey2']);
 
 $saleprop1s = val($_REQUEST['mass_saleprop1s']);
 $saleprop1s = explode("\n", $saleprop1s);
@@ -147,6 +147,7 @@ if($accessToken) {
 
         case 'massUpdate':
             $response['mymessage'] = [];
+            $product = null;
             foreach($skus as $i=>$sku) {
                 $arr = explode("~", $sku);
                 $sku = $arr[0];
@@ -156,21 +157,24 @@ if($accessToken) {
                 if(empty($skuid) || strlen($skuid)<2) {
                     continue;
                 }
-                $product = getTemplateProduct(null, $skuid);
+
+                if($i==0) {
+                    $product = getTemplateProduct(null, $skuid);
+                } else {
+                    $skuDict = [];
+                    $skuDict['SkuId'] = $skuid;
+                    array_splice($product['Skus'], 0, 0, [$skuDict]); //insert new skuDict at position 0
+                }
+                
                 if(isset($names[$i])) {
                     $product = setProductName($product, $names[$i]); 
                 }
-                // if(isset($models[$i])) {
-                //     $product = setProductModel($product, $models[$i]); 
-                // }
-                // if(isset($colors[$i])) {
-                //     $product = setProductColor($product, $colors[$i]); 
-                // }
-                if(isset($saleprop1s[$i])) {
-                    $product = setProductSaleProp($product, $variation1, $saleprop1s[$i]);
+
+                if(isset($saleprop1s[$i]) && !empty($salPropKey1)) {
+                    $product = setProductSaleProp($product, $salPropKey1, $saleprop1s[$i]);
                 }
-                if(isset($saleprop2s[$i])) {
-                    $product = setProductSaleProp($product, $variation2, $saleprop2s[$i]);
+                if(isset($saleprop2s[$i]) && !empty($salPropKey2)) {
+                    $product = setProductSaleProp($product, $salPropKey2, $saleprop2s[$i]);
                 }
                 if(isset($prices[$i])) {
                     $tmp = explode("/", $prices[$i]);
@@ -188,18 +192,22 @@ if($accessToken) {
                     migrateImages($accessToken, $images, $cache);
                     $product = setProductImages($product, $images); 
                 }
-                //var_dump($product);
-
-                $retry=3;
-                do{
-                    $r = saveProduct($accessToken, $product);
-                } while($r["code"] != "0" && $retry-- > 1);
-
-                $response['mymessage'][] = messageFromResponse($r, $action, $skus[$i]);
-
-                // if error , check error message
-                // var_dump($r["detail"]["message"]);
             }
+            //var_dump($product);
+
+            $retry=3;
+            do{
+                $r = [];
+                $r = saveProduct($accessToken, $product);
+                $retry--;
+            } while($r["code"] != "0" && $retry > 1);
+
+            $response['mymessage'][] = messageFromResponse($r, $action, $skus[$i]);
+            // $response['shen1'] = $salPropKey1;
+            // $response['shen2'] = $salPropKey2;
+
+            // if error , check error message
+            //var_dump($r);
             break;
 
         case 'massFixOL':

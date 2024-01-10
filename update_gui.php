@@ -487,8 +487,8 @@ date_default_timezone_set("UTC");
               skuids = skuids + $(this).text() + "\n";
           });
 
-        var variation1 = $("#tableProducts").find(".variation1").first().text();
-        var variation2 = $("#tableProducts").find(".variation2").first().text();
+        var salPropKey1 = $("#tableProducts").find(".variation1").first().text();
+        var salPropKey2 = $("#tableProducts").find(".variation2").first().text();
 
         var saleprop1 = "";
           $("#tableProducts").find("td.saleprop1").each(function(){
@@ -517,8 +517,8 @@ date_default_timezone_set("UTC");
             item_id: item_id,
             saleprop1: saleprop1,
             saleprop2: saleprop2,
-            variation1: variation1,
-            variation2: variation2,
+            salPropKey1: salPropKey1, 
+            salPropKey2: salPropKey2,
             prices: prices,
             sku_images: skuImages
         });        

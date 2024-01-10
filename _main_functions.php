@@ -1215,84 +1215,6 @@ function fixProducts($accessToken, $skus, $options)
     }
 }
 
-function massUpdateProducts($accessToken, $skus, $data, $preview = 1) {
-    $skus = pre_process_skus($skus);
-    
-    $cache = array();
-    $success = array();
-    foreach($skus as $index => $sku) {
-        $product = getProduct($accessToken, $sku);
-        
-        if($product) {
-            $product = prepareProductForUpdating($product);
-            
-            if(isset($data["names"][$index])) {
-                $val = $data["names"][$index];
-                if(!empty($val)) {
-                    $product = setProductName($product, $val);
-                }   
-            }
-            
-            if(isset($data["prices"][$index])) {
-                $value = $data["prices"][$index];
-                $product = setProductPrice($product, $value);
-            }
-
-            if(isset($data["models"][$index])) {
-                $value = $data["models"][$index];
-                $product = setProductModel($product, $value);
-            }
-            
-            if(isset($data["colors"][$index])) {
-                $value = $data["colors"][$index];
-                $product = setProductColor($product, $value);
-            }
-
-            if(isset($data["qty"][$index])) {
-                $value = $data["qty"][$index];
-                $product = setProductQuantity($product, $value);
-            }
-
-            //myvar_dump($product);
-            
-            if(isset($data["images"][$index])) {
-                $imageindex = isset($data["imageindex"]) ? $data["imageindex"] - 1 : 0;
-                $imageindex = ($imageindex > 0 && $imageindex < 9) ? $imageindex : 0;
-                
-                $images = $data["images"][$index];
-                migrateImages($accessToken, $images, $cache);
-                $product = setProductSKUImages($product, $images, FALSE, $imageindex);
-            }
-            
-            if(isset($data["actives"][$index])) {
-                $value = $data["actives"][$index];
-                $product = setProductActive($product, $value);
-            }
-
-            if(!intval($preview)) {
-                $r = saveProduct($accessToken, $product);
-                usleep(50000);
-            } else {
-                myecho("PREVIEWING ...");
-                $r = array(
-                    "code" => "0"
-                    );
-            }
-            
-            if($r["code"] == "0") {
-                $success[] = $product;
-            } else {
-                echo $sku . " ";
-                myvar_dump($r);
-            }
-        }
-    }
-    
-    foreach($success as $product) {
-        printProduct($product);
-    }
-}
-
 function saveProduct($accessToken, $product) {
     // create XML payload
     $request = array("Product" => $product);
@@ -1303,12 +1225,16 @@ function saveProduct($accessToken, $product) {
     $c = getClient();
     $request = new LazopRequest('/product/update');
     $request->addApiParam('payload', $payload);
-    $res = $c->execute($request, $accessToken);
-    //var_dump($res);
-    $res = json_decode($res, true);
 
-    debug_log("update request id: " . $res["request_id"]);
-    
+    $retry = 3;
+    do{
+        $res = $c->execute($request, $accessToken);
+        //var_dump($res);
+        $res = json_decode($res, true);
+        $retry--;
+    }while($res['code'] != "0" && $retry > 0);
+
+    debug_log("update request id: " . $res["request_id"]);  
     return $res;
 }
 

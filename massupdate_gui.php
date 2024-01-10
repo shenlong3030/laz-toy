@@ -10,10 +10,12 @@ $skuids = val($_REQUEST['skuids']);
 // $colors = val($_REQUEST['colors']);
 $saleprop1 = val($_REQUEST['saleprop1']);
 $saleprop2 = val($_REQUEST['saleprop2']);
-$variation1 = val($_REQUEST['variation1']);
-$variation2 = val($_REQUEST['variation2']);
+
 $prices = val($_REQUEST['prices']);
 $skuImages = val($_REQUEST['sku_images']);
+
+$salPropKey1 = val($_REQUEST["salPropKey1"]);
+$salPropKey2 = val($_REQUEST["salPropKey2"]);
 
 ?>
 
@@ -34,8 +36,24 @@ $skuImages = val($_REQUEST['sku_images']);
      <th>SKUs</th>
      <th>SkuIds</th>
      <th>Names</th>
-     <th>Variation1= <span id="variation1"><?php echo $variation1;?></span></th>
-     <th>Variation2= <span id="variation2"><?php echo $variation2;?></span></th>
+     <th>
+        Variation1 <select class="saleprop_key" name="attr[]">
+          <option value="color_family">color_family</option>
+          <option value="compatibility_by_model" selected>compatibility_by_model</option>
+          <option value="Variation">Variation</option>
+          <option value="type_screen_guard">type_screen_guard</option>
+          <option value="smartwear_size">smartwear_size</option>
+        </select>
+     </th>
+     <th>
+        Variation2<select class="saleprop_key" name="attr[]">
+          <option value="color_family" selected>color_family</option>
+          <option value="compatibility_by_model" >compatibility_by_model</option>
+          <option value="Variation">Variation</option>
+          <option value="type_screen_guard">type_screen_guard</option>
+          <option value="smartwear_size">smartwear_size</option>
+        </select>
+     </th>
      <th>Prices</th>
      <th>Product Images</th>
      <th>Images</th>
@@ -44,7 +62,7 @@ $skuImages = val($_REQUEST['sku_images']);
     <tbody>
         <tr>
             <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_skus" rows="20" cols="60"><?php echo $skus;?></textarea></td>
-            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_skuids" rows="20" cols="3"><?php echo $skuids;?></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_skuids" rows="20" cols="9"><?php echo $skuids;?></textarea></td>
             <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_names" rows="20" cols="50"></textarea></td>
             <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_saleprop1s" rows="20" cols="20"><?php echo $saleprop1;?></textarea></td>
             <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_saleprop2s" rows="20" cols="20"><?php echo $saleprop2;?></textarea></td>
@@ -75,13 +93,14 @@ $skuImages = val($_REQUEST['sku_images']);
         var lines = $(this).val().split("\n");  
         $(this).prev().prev().text(lines.length);
     });
-
-
     //######### AJAX QUEUE ######################################################################################
     ajaxManager = getAjaxManager();
     ajaxManager.run(); 
     
     //##########################################################################################################
+    $(".saleprop_key").first().val("<?php echo $salPropKey1 ?>");
+    $(".saleprop_key").last().val("<?php echo $salPropKey2 ?>");
+
     $("#btn_qty500").click(function() {
         var myFrame = $("#responseIframe").contents().find('body'); 
         var d = new Date();
@@ -131,14 +150,14 @@ $skuImages = val($_REQUEST['sku_images']);
         var saleprop1s = $('#txt_saleprop1s').val().split('\n');
         var saleprop2s = $('#txt_saleprop2s').val().split('\n');
 
-        var variation1 = $('#variation1').text();
-        var variation2 = $('#variation2').text();
+        var salPropKey1 = $(".saleprop_key").first().val();
+        var salPropKey2 = $(".saleprop_key").last().val();
 
         var prices = $('#txt_prices').val().split('\n');
         var skuImages = $('#txt_sku_images').val().split('\n');
         var pImages = $('#txt_product_images').val().split('\n');
 
-        var chunksize = 1;
+        var chunksize = 10;
         do {
             var set10 = lines.slice(0, chunksize); // get 10 left
             lines = lines.slice(chunksize);        // renove 10 left 
@@ -179,8 +198,8 @@ $skuImages = val($_REQUEST['sku_images']);
                 mass_names: paramNames, 
                 mass_saleprop1s: paramSaleprop1s, 
                 mass_saleprop2s: paramSaleprop2s,
-                variation1: variation1,
-                variation2: variation2,
+                salPropKey1: salPropKey1,
+                salPropKey2: salPropKey2,
                 mass_prices: paramPrices,
                 mass_sku_images: paramSkuImages,
                 mass_product_images: paramProductImages
