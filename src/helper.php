@@ -144,21 +144,26 @@ function make_short_sku($sku) {
     $sku = strtoupper($sku);
 
     $dict = array(
+    '__' => '_',
     'COMBO' => 'CB',
 
     'TRONG.SUOT' => 'TRONG',
-
     'KINH.TRONG' => 'KT',
     'KINH.FULL' => 'KF',
-    
-    'BAO.VE.CAMERA' => 'BVC',
+    'KINH.CHONG.NHIN.TROM' => 'CNT',
+    'FULL.DEO.CERAMIC' => 'CERAMIC',
+    'DUONG.KINH.' => '',
+    'CUONG.LUC' => 'CL',
+    'CAMERA' => 'CAM',
+
+    'KHONG' => '0',
     'BAO.VE.CAM' => 'BVC',
     'OP.DEO' => 'OD',
     'OP.LUNG' => 'OL',
+    'DEO.TRONG' => 'DT',
     'CHONG.SOC' => 'CS',
-    'CUONG.LUC' => 'CL',
     'BAO.DA' => 'BD',
-    'DUONG.KINH.' => '',
+    'ODT.CS' => 'OCS',
 
     'IPHONE' => 'IP', 
     'SAMSUNG' =>'SAM',

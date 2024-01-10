@@ -64,6 +64,8 @@ function productCreateWithAjaxQueue(params) {
             if(data.trim().length) {
                 console.log(data);
                 var res = JSON.parse(data); // data is string, convert to obj
+                console.log(JSON.stringify(res, null, 3));
+                
                 const randomColor = Math.floor(Math.random() * 16777215).toString(16);
                 const htmlColor = "#" + randomColor;
                 //myFrame.append('<pre style="background-color:' + getRandomColor() + '">' + ntime + ";" + JSON.stringify(res["mymessage"], null, 3).replaceAll('"', '') + '</pre>');
@@ -93,6 +95,7 @@ function productUpdateWithAjaxQueue(params) {
             if(data.trim().length) {
                 console.log(data);
                 var res = JSON.parse(data); // data is string, convert to obj
+                console.log(JSON.stringify(res, null, 3));
 
                 const randomColor = Math.floor(Math.random() * 16777215).toString(16);
                 const htmlColor = "#" + randomColor;
@@ -124,6 +127,7 @@ function productDeleteWithAjaxQueue(params) {
             if(data.trim().length) {
                 console.log(data);
                 var res = JSON.parse(data); // data is string, convert to obj
+                console.log(JSON.stringify(res, null, 3));
 
                 const randomColor = Math.floor(Math.random() * 16777215).toString(16);
                 const htmlColor = "#" + randomColor;
