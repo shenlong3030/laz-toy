@@ -23,11 +23,6 @@ function prepareProduct($product) {
     ////////////////////////////////////////////////////
     // fix bug API khong the update
     unset($product['variation']);
-    // $product['variation']['Variation1']['hasImage'] = true;
-    // $product['variation']['variation1'] = $product['variation']['Variation1'];
-    // $product['variation']['variation2'] = $product['variation']['Variation2'];
-    unset($product['variation']['Variation1']);
-    unset($product['variation']['Variation2']);
 
     // fix bug API khong the copyInfo
     unset($product['Attributes']['warranty_type']);
@@ -329,27 +324,28 @@ function getTemplateProduct($sku, $skuid, $status=null) {
     return $product;
 }
 
-function getProductSku($product) {
-    $val = val($product['Skus'][0]['SellerSku'], $product['skus'][0]['SellerSku']);
+function getProductSku($product, $skuIndex=0) {
+    $val = val($product['Skus'][$skuIndex]['SellerSku'], $product['skus'][$skuIndex]['SellerSku']);
     return $val;
 }
 
-function getProductSkuid($product) {
-    $val = val($product['Skus'][0]['SkuId'], $product['skus'][0]['SkuId']);
+function getProductSkus($product, $delimiter=";") {
+    $list = [];
+    $skus = val($product['skus'], $product['Skus']);
+    foreach($skus as $skuIndex=>$sku) {
+        $list[] = $sku['SellerSku'];
+    }
+    return implode($delimiter, $list);
+}
+
+function getProductSkuid($product, $skuIndex=0) {
+    $val = val($product['Skus'][$skuIndex]['SkuId'], $product['skus'][$skuIndex]['SkuId']);
     return $val;
 }
 
 function getProductName($product) {
     $val = val($product["Attributes"]["name"], $product["attributes"]["name"]);
     return $val;
-}
-
-function getProductSaleProp($product, $key) {
-    return $product['Skus'][0]['saleProp'][$key];
-}
-
-function getProductSaleProps($product) {
-    return $product['Skus'][0]['saleProp'];
 }
 
 function getProductItemId($product) {

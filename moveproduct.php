@@ -71,42 +71,44 @@ if($action == "move"){
         $parentSkuid = getProductSkuid($parent);
         $parentProductImages = getProductImages($parent);
         $skuCount = count($source["skus"]);
+
+
+        $delList = [];
+        $newProduct = $source;
+        $newProduct['skus'] = [];
         for($i=0; $i<$skuCount; $i++) { // every sku
-            $newProduct = $source;
-            $newProduct['skus'] = array_slice($source['skus'], $i, 1); // get first SKU
-            $soucesSku = getProductSku($newProduct);
-            $soucesSkuid = getProductSkuid($newProduct);
-            $sourceItemid = getProductItemId($newProduct);
+            $soucesSku = getProductSku($source, $i);
+            $soucesSkuid = getProductSkuid($source, $i);
+            $sourceItemid = getProductItemId($source);
             $sourceFullSku = "{$soucesSku}~{$soucesSkuid}~{$sourceItemid}";
 
-            if(!in_array($sourceFullSku, $selectedSkus)){
-                continue;
+            if(in_array($sourceFullSku, $selectedSkus)){
+                $newProduct['skus'][] = $source['skus'][$i];
             }
-
-            // backup source (1 sku)
-            $jsonBackupDelectedProducts[] = $newProduct;
 
             // delete source (1 sku)
-            $skuList = [$sourceFullSku];
-            delProducts($accessToken, $skuList);
-
-            // create new product
-            $newProduct = prepareProduct($newProduct); 
-            $newProduct = setProductAssociatedSku($newProduct, $parentSkuid);
-            if($keepName == "1") {
-                $parentName = getProductName($parent);
-                $newProduct = setProductName($newProduct, $parentName);
-            }
-            $newProduct = setProductImages($newProduct, $parentProductImages, true);
-            $response = createProductFromApi($accessToken, $newProduct);
-            if($response["code"] == "0"){
-                myecho('<p style="color:green">MOVE THÀNH CÔNG</p>');
-            } else {
-                myvar_dump($response);
-                myecho('<p style="color:red">MOVE THẤT BẠI</p>');
-            }
-            echo "<hr>";
+            $delList[] = $sourceFullSku;
         }
+
+        $jsonBackupDelectedProducts[] = $newProduct;
+        delProducts($accessToken, $delList);
+
+        // create new product
+        $newProduct = prepareProduct($newProduct); 
+        $newProduct = setProductAssociatedSku($newProduct, $parentSkuid);
+        if($keepName == "1") {
+            $parentName = getProductName($parent);
+            $newProduct = setProductName($newProduct, $parentName);
+        }
+        $newProduct = setProductImages($newProduct, $parentProductImages, true);
+        $response = createProductFromApi($accessToken, $newProduct);
+        if($response["code"] == "0"){
+            myecho('<p style="color:green">MOVE THÀNH CÔNG</p>');
+        } else {
+            myvar_dump($response);
+            myecho('<p style="color:red">MOVE THẤT BẠI</p>');
+        }
+        echo "<hr>";
 
         $jsonBackupDelectedProducts["time"] = time();
         file_put_contents('jsonBackupDelectedProducts.json', json_encode($jsonBackupDelectedProducts)); //save dict to file
@@ -154,7 +156,7 @@ if($action == "move"){
                 continue;
             }
             $link = "<a target=_blank href=moveproduct.php?action=restore&index={$i}>restore ";
-            $link.= getProductSku($product)." - ".getProductName($product);
+            $link.= getProductName($product)." - ".getProductSkus($product);
             $link.="</a>";
             echo "<br>{$link}";
         }
