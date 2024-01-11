@@ -150,7 +150,7 @@ function make_short_sku($sku) {
     'TRONG.SUOT' => 'TRONG',
     'KINH.TRONG' => 'KT',
     'KINH.FULL' => 'KF',
-    'KINH.CHONG.NHIN.TROM' => 'CNT',
+    'CHONG.NHIN.TROM' => 'CNT',
     'FULL.DEO.CERAMIC' => 'CERAMIC',
     'DUONG.KINH.' => '',
     'CUONG.LUC' => 'CL',

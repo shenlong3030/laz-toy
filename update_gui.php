@@ -213,7 +213,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     </ul>
 <hr>
     <div>
-    <h3>Product Images</h3> <textarea id="productimages" class="nowrap" name="product_images" rows="6" cols="80"><?php echo implode("\n", $productImages);?></textarea>
+    <h3>Product Images</h3> <textarea style="background:lightyellow;" id="productimages" class="nowrap" name="product_images" rows="6" cols="80"><?php echo implode("\n", $productImages);?></textarea>
     <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
     <a href="https://github.com/shenlong3030/temp/issues/new" target="_blank" rel="noopener">Git</a>
     <button id="btn_updateProductImages">Update product images</button>
