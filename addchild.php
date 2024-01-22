@@ -29,49 +29,20 @@ $skuprefix = val($_POST['skuprefix'], $initskuprefix);
 $newName = val($_REQUEST['name']);
 $jsonProduct = val($_REQUEST['json_product']);
 
-$saleProps = array();
-foreach ($_REQUEST['attr'] as $i => $prop) {
-    $input = $_POST['col'][$i];
-    if(!empty($input)) {
-        $lines = explode("\n", str_replace("\r", "", $input)); // lines is array
-        $saleProps[$prop] = $lines;
-        // $saleProps['compatibility_by_model'] = $lines
-    }
-}
-
-$selectedSaleProps = val($_REQUEST['attr']);
-
-// move Variation to index 0 --> fix SKU format
-// $variationPos = array_search('Variation', $attrList);
-// if($variationPos) {
-//     repositionArrayElement($attrList, $variationPos, 0);
-//     repositionArrayElement($attrValues, $variationPos, 0);
-// }
-
-$input = $_POST['col'][2];
-$qtys = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
-
-$input = $_POST['col'][3];
-$prices = array_filter(explode("\n", str_replace("\r", "", $input)), "strlen");
-
-$input = $_POST['col'][4];
-$images = array_filter(explode("\n", str_replace("\r", "", $input)));
+$salePropKey1 = val($_REQUEST['saleprop_key1']);
+$salePropKey2 = val($_REQUEST['saleprop_key2']);
 
 $childLines = trim(val($_REQUEST['child_lines']));
 $childLines = explode("\r\n", $childLines);
 
 $inputdata = array(
     "kiotids" => $kiotids,
-    "saleProps" => $saleProps,
-    "images" => $images,
-    "appendtime" => $appendtime,
     "skuprefix" => $skuprefix,
     "newname" => $newName,
-    "qtys" => $qtys,
-    "prices" => $prices,
     "jsonProduct" => $jsonProduct,
-    "childLines" => $childLines,
-    "selectedSaleProps" => $selectedSaleProps,
+    "salePropKey1" => $salePropKey1,
+    "salePropKey2" => $salePropKey2,
+    "childLines"  => $childLines
     );
 
 

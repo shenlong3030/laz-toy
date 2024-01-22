@@ -60,7 +60,7 @@ New child name: <input type="text" name="name" size="80" value="<?php echo $newN
 <br>
 Possible Attributes : <?php echo implode(",", $attrNames)?><br><br>
 
-Variation1 <select class="saleprop_key" name="attr[]">
+Variation1 <select class="saleprop_key" name="saleprop_key1">
   <option value="color_family">color_family</option>
   <option value="compatibility_by_model" selected>compatibility_by_model</option>
   <option value="Variation">Variation</option>
@@ -68,7 +68,7 @@ Variation1 <select class="saleprop_key" name="attr[]">
   <option value="smartwear_size">smartwear_size</option>
 </select> ; 
 
-Variation2<select class="saleprop_key" name="attr[]">
+Variation2<select class="saleprop_key" name="saleprop_key2">
   <option value="color_family" selected>color_family</option>
   <option value="compatibility_by_model" >compatibility_by_model</option>
   <option value="Variation">Variation</option>
