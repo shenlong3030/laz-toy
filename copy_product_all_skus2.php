@@ -13,8 +13,6 @@ $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : "";
 
 $newName = val($_REQUEST["new_name"], "");
 $selectedModels = val($_REQUEST["models"], []);
-$inputVariations = val($_REQUEST["variations"]);
-$inputVariations = array_filter(explode("\r\n", $inputVariations));
 
 $newSkuPrefix = val($_REQUEST["new_sku_prefix"], "");
 
@@ -41,13 +39,9 @@ $parentSaleProp2 = explode("\r\n", $parentSaleProp2);
 $parentSaleProp = array_merge($parentSaleProp1, $parentSaleProp2);
 $parentSalePropKey1 = val($_REQUEST["parentSalePropKey1"]);
 $parentSalePropKey2 = val($_REQUEST["parentSalePropKey2"]);
-// if($parentSalePropKey1 = "type_screen_guard") {
-//     $tmp = $parentSalePropKey1;
-//     $parentSalePropKey1 = $parentSalePropKey2;
-//     $parentSalePropKey2 = $tmp;
-// }
-// var_dump($parentSalePropKey1);
-// var_dump($parentSalePropKey2);
+
+$inputVariations = val($_REQUEST["variations"], implode("\n", $parentSaleProp2));
+$inputVariations = array_filter(explode("\r\n", $inputVariations));
 
 if($sku) {
     $product = getProduct($accessToken, null, $itemId);
@@ -79,20 +73,23 @@ if($sku) {
 
 
                     // sku = "AAA__BBBBBBB__CCC.CC"  => postfix = CCC.CC
-                    preg_match('/_([^_]+$)/', $dict['SellerSku'], $match);
-                    $postfix = count($match) ? $match[1] : "";
-                    $newSku = trim($newSkuPrefix) . "_" . trim($postfix);
-                    $newSku = make_short_sku($newSku);
-                    $dict['SellerSku'] = $newSku;
+                    //preg_match('/_([^_]+$)/', $dict['SellerSku'], $match);
+                    //$postfix = count($match) ? $match[1] : "";
+                    //$newSku = trim($newSkuPrefix) . "_" . trim($postfix);
+                    //$newSku = make_short_sku($newSku);
+                    //$dict['SellerSku'] = $newSku;
 
                     //handle input saleProp
                     if(!empty($salePropKeys[1]) && count($inputVariations)>0) {
                         foreach ($inputVariations as $inputVariation) {
                             $dict['saleProp'][$salePropKeys[1]] = trim($inputVariation);
-                            $dict['SellerSku'] = $newSku . "_" . make_short_sku(trim($inputVariation));
+                            $newSku = trim($newSkuPrefix) . generateSkuFromSaleprops($dict['saleProp']);
+                            $dict['SellerSku'] = make_short_sku($newSku);
                             $product['Skus'][] = $dict; // dict have 2 saleProp
                         }
                     } else {
+                        $newSku = trim($newSkuPrefix) . generateSkuFromSaleprops($dict['saleProp']);
+                        $dict['SellerSku'] = make_short_sku($newSku);
                         $product['Skus'][] = $dict; // dict have 1 saleProp
                     }
                 }
@@ -103,7 +100,7 @@ if($sku) {
             $newName = getProductName($parentProduct);
             $productImages = getProductImages($parentProduct);
 
-            preg_match('/(.+_)/', $parentSku, $match);
+            preg_match('/([^_]+_)/', $parentSku, $match);
             $newSkuPrefix = count($match) ? $match[1] : "";
         }
 
@@ -152,17 +149,9 @@ if($sku) {
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
     <?php include('src/head.php');?>
-
-    <style>
-    .mainContent{
-      margin-top: 50px;
-    }
-    </style>
-
 </head>
 <body>
     <div class="mainContent">
-
 <hr>
     <h1>Copy all SKU to new product</h1>
     <form action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
@@ -176,16 +165,17 @@ if($sku) {
     Parent Product Images<br><textarea id="productimages" class="nowrap" name="product_images" rows="6" cols="90"><?php echo implode("\n", $productImages);?></textarea>
 
 <hr>
-    Điều chỉnh<input type="checkbox" id="cb_fix_saleprop">&nbsp;&nbsp;&nbsp;Đảo chiều<input type="checkbox" id="cb_switch_saleprop"><br>
+
+<hr>
     <select class="saleprop_key" name="attr[]">
       <option value="color_family">color_family</option>
       <option value="compatibility_by_model" selected>compatibility_by_model</option>
       <option value="Variation">Variation</option>
       <option value="type_screen_guard">type_screen_guard</option>
       <option value="smartwear_size">smartwear_size</option>
-    </select><br/>
+    </select><input type="button" id="btn_uncheck_all_saleprop1" value="Bỏ chọn hết"><br><br/>
     <?php foreach($srcSkuList as $key=>$value):?>
-        <input type="checkbox" name="models[]" value="<?php echo $value;?>" <?php echo in_array($variationList[$key], $parentSaleProp)?"checked":""?>/>
+        <input class="cb_saleProp1" type="checkbox" name="models[]" value="<?php echo $value;?>" <?php echo in_array($variationList[$key], $parentSaleProp)?"checked":""?>/>
         <?php echo $variationList[$key]?>
         <?php echo htmlLinkImages($variationImageList[$key]) ?>
         <br>
@@ -227,19 +217,9 @@ if($sku) {
             $("input[name=parent_sku]").val("");
         }
     });
-    $("#cb_fix_saleprop").change(function() {
-        if(this.checked) {
-            $(".saleprop_key").first().val("compatibility_by_model");
-            $(".saleprop_key").last().val("type_screen_guard");
-        } else {
-            $(".saleprop_key").first().val("Variation");
-            $(".saleprop_key").last().val("compatibility_by_model");
-        }
-    });
-    $("#cb_switch_saleprop").change(function() {
-        value = $(".saleprop_key").first().val();
-        $(".saleprop_key").first().val($(".saleprop_key").last().val());
-        $(".saleprop_key").last().val(value);
+
+    $("#btn_uncheck_all_saleprop1").click(function() {
+        $('.cb_saleProp1').prop('checked', false); // uncheck others
     });
 
 </script>

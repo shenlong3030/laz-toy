@@ -51,9 +51,11 @@ if($sku) {
                 }
 
                 // sku = "AAA__BBBBBBB__CCC.CC"  => postfix = CCC.CC
-                preg_match('/_([^_]+$)/', $item['SellerSku'], $match);
-                $postfix = count($match) ? $match[1] : "";
-                $newSku = trim($newSkuPrefix) . trim($postfix);
+                //preg_match('/_([^_]+$)/', $item['SellerSku'], $match);
+                //$postfix = count($match) ? $match[1] : "";
+                //$newSku = trim($newSkuPrefix) . trim($postfix); 
+
+                $newSku = trim($newSkuPrefix) . generateSkuFromSaleprops($product['Skus'][$i]['saleProp']);
                 $newSku = strtoupper($newSku);
                 $newSku = make_short_sku($newSku);
 

@@ -84,7 +84,6 @@ if($itemId) {
 }
 
 $cloneLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku={$sku}~{$skuid}~{$itemId}";
-$copyLink = "https://$_SERVER[HTTP_HOST]/lazop/copy_product.php?sku={$sku}~{$skuid}~{$itemId}";
 $copyToLink = "https://$_SERVER[HTTP_HOST]/lazop/copyinfo.php?sourcesku=$sku";
 $copyFromCLMau = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus.php?sku=CL.ALL__MAU.XX__KT~~1980685997&parent_sku={$sku}~{$skuid}~{$itemId}";
 $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?sku=CL.ALL__MAU.XX__KT~~1980685997&parent_sku={$sku}~{$skuid}~{$itemId}";
@@ -150,9 +149,8 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
 
     <a id="linkAddChild" style="color:red" href="">Add Child</a>
     <a id="linkMassUpdate" style="color:red;padding-left: 20px" href="">Mass Update</a>
-    <a style="color:red;padding-left: 20px" href="<?php echo $copyLink?>" target="_blank">Copy</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyToLink?>" target="_blank">Copy info to</a>
-    <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Copy all SKU</a>
+    <a style="color:red;padding-left: 20px" href="<?php echo $cloneLink?>" target="_blank">Copy to</a>
     <a id="linkMoveTo" style="color:red;padding-left: 20px" href="#">Move to</a>
     <a style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau?>" target="_blank">Copy from CL mẫu</a>
     <a id="link_copy_from_cl_mau2" style="color:red;padding-left: 20px" href="<?php echo $copyFromCLMau2?>" target="_blank">Copy from CL mẫu 2</a>
@@ -279,10 +277,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     <textarea id="txt_json" rows="90" cols="180"><?php echo json_encode($product,JSON_PRETTY_PRINT);?></textarea>
 <hr>
 
-    <form action="del.php" method="POST" name="delForm" target="responseIframe">
-    <input type="hidden" name="skus" value="<?php echo $sku;?>" />
-    <input type="submit" value="Xoá SP này"/>
-    </form>
+    <a target="_blank" href="del.php?skus=<?php echo "{$sku}~{$skuid}~{$itemId}"?>" class="fa fa-trash" style="color: green; display: inline-block;" tabindex="-1"></a>
 <?php
 
 // Pay no attention to this statement.

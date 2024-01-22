@@ -475,6 +475,11 @@ function generateProductSku($product){
     return join(".", $product['Skus'][0]['saleProp']);
 }
 
+// $saleProp = $product['Skus'][0]['saleProp']
+function generateSkuFromSaleprops($saleProp){
+    return join(".", $saleProp);
+}
+
 
 function unsetQuantity($product){
     foreach($product['Skus'] as $skuIndex=>$sku) {
