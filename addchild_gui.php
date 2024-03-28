@@ -37,12 +37,13 @@ $product = json_decode($json, true);
 
 $salPropKey1 = val($_REQUEST["salPropKey1"]);
 $salPropKey2 = val($_REQUEST["salPropKey2"]);
+$selectedSkuIndex = val($_REQUEST["selectedSkuIndex"]);
 
-$variation1 = val($product['skus'][0]['saleProp'][$salPropKey1]);
-$variation2 = val($product['skus'][0]['saleProp'][$salPropKey2]);
-$qty = val($product['skus'][0]['quantity']);
-$sprice = val($product['skus'][0]['special_price']);
-$image1 = val($product['skus'][0]['Images'][0]);
+$variation1 = val($product['skus'][$selectedSkuIndex]['saleProp'][$salPropKey1]);
+$variation2 = val($product['skus'][$selectedSkuIndex]['saleProp'][$salPropKey2]);
+$qty = val($product['skus'][$selectedSkuIndex]['quantity']);
+$sprice = val($product['skus'][$selectedSkuIndex]['special_price']);
+$image1 = val($product['skus'][$selectedSkuIndex]['Images'][0]);
 
 $example = [$variation1, $variation2, $qty, $sprice, $image1];
 $exHeader = ["Variation1","Variation2","Qty","Price","image_url1 image_url2"];

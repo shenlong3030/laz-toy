@@ -541,7 +541,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             
             $nameForm = '<form action="update.php" method="POST" name="nameForm" target="responseIframe"><input name="sku" type="hidden" value="'.$sellersku.'"/><input name="name" type="text" size="50" value="'.$name.'"/><input type="submit" tabindex="-1" value="↵" hidden/></form>';
             
-            echo '<tr class="'. $cssclass .'">';
+            echo '<tr class="'. $cssclass .'" sku-index='. $index .'>';
             //echo '<td class="sku on padding">'. ($isGrouped?"<i class='grouped-icon fa fa-code-fork' style='color:red'></i>":"") .$sellersku.'</td>';
 
             $groupLink = "https://$_SERVER[HTTP_HOST]/lazop/products.php?item_id=$item_id";

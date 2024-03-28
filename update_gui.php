@@ -462,12 +462,12 @@ date_default_timezone_set("UTC");
         //window.open(url, '_blank');
 
         var json = $('#txt_json').val();
-
         var salPropKey1 = $("#tableProducts").find(".variation1").first().text();
         var salPropKey2 = $("#tableProducts").find(".variation2").first().text();
+        var selectedSkuIndex = $("#tableProducts").find("tr.selected").attr("sku-index");
 
-        dopost(url, {json_product: json, salPropKey1: salPropKey1, salPropKey2: salPropKey2});        
-    }); 
+        dopost(url, {json_product: json, salPropKey1: salPropKey1, salPropKey2: salPropKey2, selectedSkuIndex: selectedSkuIndex});        
+    });
 
     $("#linkMassUpdate").click(function(e) {
         e.preventDefault();
