@@ -76,9 +76,9 @@ function getOrderLinkPostfix(){
 }
 
 // valid status : pending, canceled, ready_to_ship, delivered, returned, shipped and failed
-function getOrders($accessToken, $status = 'pending', $limit = '100', $sortBy = 'created_at', $needOrderItems = null, $sortDirection = 'DESC'){
-    $initPageSize = 50;
-    $i = 0;
+function getOrders($accessToken, $status = 'pending', $offset = 0, $limit = '100', $sortBy = 'created_at', $needOrderItems = null, $sortDirection = 'DESC'){
+    $initPageSize = 100; // if initPageSize=20 and limit=100 ==> call api 5 times with limit=20 to get data.
+    $i = $offset;
     $all = array();
     do {
         $pageSize = min($initPageSize, $limit - count($all)); // Ex: limit=120, last pageSize=20 (not 50)

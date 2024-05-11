@@ -7,8 +7,8 @@ require_once('_main_functions.php');
 
 $count = 0;
 
-$offset = $_GET['offset'] ? $_GET['offset'] : 0;
-$limit = $_GET['limit'] ? $_GET['limit'] : 0;
+$offset = val($_REQUEST['offset'], 0);
+$limit = val($_REQUEST['limit'], 0);
 
 // pending, canceled, ready_to_ship, delivered, returned, shipped, failed
 $status = $_GET['status'] ? $_GET['status'] : 'pending';
@@ -103,7 +103,7 @@ echo "<div class='canceledList' style='font:14px/21px Arial,tahoma,sans-serif; h
 echo "<p><b>10 đơn hàng bị huỷ gần đây nhất<b></p>";
 
 $token = $GLOBALS["accessToken"];
-$list = getOrders($token, 'canceled', 10, 'updated_at', 1);
+$list = getOrders($token, 'canceled', 0, 10, 'updated_at', 1);
 printOrders($token, $list , 0, $status);
 echo "</div>";
 //========================================================================
@@ -124,10 +124,10 @@ switch ($status) {
         if(empty($limit)) {
             $limit = 500;
         }
-        $list1 = getOrders($accessToken, "pending", $limit, $sortBy, $needFullOrderInfo, "ASC");
-        $list2 = getOrders($accessToken, "repacked", 30, $sortBy, $needFullOrderInfo, "ASC");
+        $list1 = getOrders($accessToken, "pending", $offset, $limit, $sortBy, $needFullOrderInfo, "ASC");
+        $list2 = getOrders($accessToken, "repacked", $offset, 30, $sortBy, $needFullOrderInfo, "ASC");
         //$readyOrders = getAllOrders($accessToken, "ready_to_ship", $sortBy, $needFullOrderInfo);
-        $list3 = getOrders($accessToken, "toship", $limit, $sortBy, $needFullOrderInfo, "ASC");
+        $list3 = getOrders($accessToken, "toship", $offset, $limit, $sortBy, $needFullOrderInfo, "ASC");
         
         $list = array_merge($list1, $list2, $list3);
         break;
@@ -137,13 +137,13 @@ switch ($status) {
         if(empty($limit)) {
             $limit = 500;
         }
-        $list = getOrders($accessToken, $status, $limit, $sortBy, $needFullOrderInfo, "ASC");
+        $list = getOrders($accessToken, $status, $offset, $limit, $sortBy, $needFullOrderInfo, "ASC");
         break;
     default:
         if(empty($limit)) {
             $limit = 100;
         }
-        $list = getOrders($accessToken, $status, $limit, $sortBy, $needFullOrderInfo);
+        $list = getOrders($accessToken, $status, $offset, $limit, $sortBy, $needFullOrderInfo);
 }
 
 // resort merged list
