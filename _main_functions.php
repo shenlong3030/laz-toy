@@ -160,7 +160,7 @@ function getOrderItemsInfo($data) {
             $kiotid = " Kiotviet:" . $kiotid;
         }
 
-        $info["order_items_name"] .= '<p item-id="'.$item['order_item_id'].'" class="'.$item['status'].'"><a href="'.$product_detail_url.'">'.$item['name'].' '.$variation.$price.$kiotid.$editHtml.'</a></p>';
+        $info["order_items_name"] .= '<p item-id="'.$item['order_item_id'].'" class="'.$item['status'].'"><a href="'.$product_detail_url.'">'.$item['name'].'</a>'.'<br><strong>'.$variation.'</strong>'.$price.$kiotid.$editHtml.'</p>';
         
         if(empty($info["order_items_tracking_code"])) {
             $info["order_items_tracking_code"] = $item['tracking_code'];
