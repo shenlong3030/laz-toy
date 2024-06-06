@@ -144,7 +144,7 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
     SKU id: <input type="text" id="skuid" name="skuid" value="<?php echo $skuid;?>"><br>
     Item id <input type="text" id="item_id" name="item_id" value="<?php echo $itemId;?>">
     <input type="submit" value="Reload"/>
-    <input id="btn_change_sku" type="button" value="Change"/>
+    <input id="btn_change_sku" type="button" value="Change SKU"/>
     </form>
 
     <a id="linkAddChild" style="color:red" href="">Add Child</a>
@@ -212,8 +212,8 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
 <hr>
     <div>
     <h3>Product Images</h3> <textarea style="background:lightyellow;" id="productimages" class="nowrap" name="product_images" rows="6" cols="80"><?php echo implode("\n", $productImages);?></textarea>
-    <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
-    <a href="https://github.com/shenlong3030/temp/issues/new" target="_blank" rel="noopener">Git</a>
+    <a title="Editor" href="https://saohoa.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">saohoa.phukiensh</a> - 
+    <a href="https://sellercenter.lazada.vn/apps/product/publish?productId=100886290" target="_blank" rel="noopener">laz</a>
     <button id="btn_updateProductImages">Update product images</button>
     </div>
 <?php
@@ -224,8 +224,8 @@ $copyFromCLMau2 = "https://$_SERVER[HTTP_HOST]/lazop/copy_product_all_skus2.php?
 <hr>
     <div>
     <h3>SKU Images</h3> <textarea id="skuimages" class="nowrap" name="images" rows="6" cols="80"><?php echo implode("\n", $images);?></textarea>
-    <a title="Editor" href="https://wm.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">Get images</a>
-    <a href="https://github.com/shenlong3030/temp/issues/new" target="_blank" rel="noopener">Git</a>
+    <a title="Editor" href="https://saohoa.phukiensh.com/wp-admin/upload.php" target="_blank" rel="noopener">saohoa.phukiensh</a> - 
+    <a href="https://sellercenter.lazada.vn/apps/product/publish?productId=100886290" target="_blank" rel="noopener">laz</a>
     <button id="btn_updateimages">Update images</button>
     <input type="button" id="btn_update_children" value="Update all children"/>
     <input type="button" id="btn_copy_single_line" value="Copy images single line"/>
@@ -383,8 +383,9 @@ date_default_timezone_set("UTC");
     });
     $('#btn_updateprice').click(function() {
         var skuid = $('#skuid').val();
+        var price = $(this).parent().find('input[name="price"]').val(); 
         var sprice = $(this).parent().find('input[name="sale_price"]').val(); 
-        productUpdateWithAjaxQueue({ skuid: skuid, action: "price", sprice: sprice});
+        productUpdateWithAjaxQueue({ skuid: skuid, action: "price", sprice: sprice, price: price});
     });
     //###########################
 
@@ -500,9 +501,18 @@ date_default_timezone_set("UTC");
              prices = prices + $(this).text() + "\n";
           });
 
+          // var skuImages = "";
+          // $("#tableProducts").find("td.sku-image.first a").each(function(){
+          //    skuImages = skuImages + $(this).attr('href') + "\n";
+          // });
+
           var skuImages = "";
-          $("#tableProducts").find("td.sku-image.first a").each(function(){
-             skuImages = skuImages + $(this).attr('href') + "\n";
+          $("#tableProducts tr").each(function(){
+            $list = [];
+            $(this).find("td.sku-image a").each(function(){
+                $list.push($(this).attr('href'));
+            });
+            skuImages = skuImages + $list.join(" ") + "\n";
           });
 
         var url = "massupdate_gui.php";
