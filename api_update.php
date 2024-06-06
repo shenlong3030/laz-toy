@@ -38,8 +38,10 @@ $saleprop2s = array_filter($saleprop2s);
 
 $prices = val($_REQUEST['mass_prices']);
 $prices = explode("\n", $prices);
-$skuImages = val($_REQUEST['mass_sku_images']);
-$skuImages = explode("\n", $skuImages);
+$massSkuImages = val($_REQUEST['mass_sku_images']);
+$massSkuImages = explode("\n", $massSkuImages);
+$massSkuMainImages = val($_REQUEST['mass_sku_main_images']);
+$massSkuMainImages = explode("\n", $massSkuMainImages);
 $massProductImages = val($_REQUEST['mass_product_images']);
 $massProductImages = explode("\n", $massProductImages);
 
@@ -182,11 +184,17 @@ if($accessToken) {
                     $price = $tmp[1];
                     $product = setProductPrice($product, $price, $salePrice); 
                 }
-                if(isset($skuImages[$i])) {
-                    $images = $skuImages[$i];
+
+                $originalImages = $massSkuImages[$i];
+                migrateImages($accessToken, $originalImages, $cache);
+                $product = setProductSKUImages($product, $originalImages); 
+                if(isset($massSkuMainImages[$i])) {
+                    $images = $massSkuMainImages[$i];
                     migrateImages($accessToken, $images, $cache);
                     $product = setProductSKUImages($product, $images); 
                 }
+                $response['shen1'][] = $massSkuMainImages;
+
                 if(isset($massProductImages[$i])) {
                     $images = $massProductImages[$i];
                     migrateImages($accessToken, $images, $cache);

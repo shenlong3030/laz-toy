@@ -56,7 +56,8 @@ $salPropKey2 = val($_REQUEST["salPropKey2"]);
      </th>
      <th>Prices</th>
      <th>Product Images</th>
-     <th>Images</th>
+     <th>SKU First Images</th>
+     <th>SKU Images</th>
      <th>Actives</th>
     </tr>
     <tbody>
@@ -68,6 +69,7 @@ $salPropKey2 = val($_REQUEST["salPropKey2"]);
             <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_saleprop2s" rows="20" cols="20"><?php echo $saleprop2;?></textarea></td>
             <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_prices" rows="20" cols="10"><?php echo $prices;?></textarea></td>
             <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_product_images" rows="20" cols="20"><?php echo $productImages;?></textarea></td>
+            <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_sku_main_images" rows="20" cols="20"></textarea></td>
             <td><span class="linecount"></span><br><textarea class="nowrap" id="txt_sku_images" rows="20" cols="20"><?php echo $skuImages;?></textarea></td>
             <td><span class="linecount"></span><br><textarea class="nowrap" name="col[]" rows="20" cols="5"></textarea></td>
         </tr>
@@ -154,6 +156,7 @@ $salPropKey2 = val($_REQUEST["salPropKey2"]);
         var salPropKey2 = $(".saleprop_key").last().val();
 
         var prices = $('#txt_prices').val().split('\n');
+        var skuMainImages = $('#txt_sku_main_images').val().split('\n');
         var skuImages = $('#txt_sku_images').val().split('\n');
         var pImages = $('#txt_product_images').val().split('\n');
 
@@ -183,6 +186,10 @@ $salPropKey2 = val($_REQUEST["salPropKey2"]);
             prices = prices.slice(chunksize);        // renove 10 left 
             var paramPrices = set10.join('\n');     // create string 
 
+            set10 = skuMainImages.slice(0, chunksize); // get 10 left
+            skuMainImages = skuMainImages.slice(chunksize);        // renove 10 left 
+            var paramSkuMainImages = set10.join('\n');     // create string 
+
             set10 = skuImages.slice(0, chunksize); // get 10 left
             skuImages = skuImages.slice(chunksize);        // renove 10 left 
             var paramSkuImages = set10.join('\n');     // create string 
@@ -202,6 +209,7 @@ $salPropKey2 = val($_REQUEST["salPropKey2"]);
                 salPropKey2: salPropKey2,
                 mass_prices: paramPrices,
                 mass_sku_images: paramSkuImages,
+                mass_sku_main_images: paramSkuMainImages,
                 mass_product_images: paramProductImages
             });
         } while(skus.length);
