@@ -710,10 +710,15 @@ date_default_timezone_set("UTC");
       });
 
       $('#btn_copy_all').click(function (e) {
-        var numberOfInfoColumns = 17;
+        var numberOfInfoColumns = 24;
         var text = "";
-        $("table.main").find("td.info").each(function(index, value){
-            text = text + $(this).text();
+        $("table.main").find(".info").each(function(index, value){
+            var cellText = $(this).text();
+            if(cellText) {
+                text = text + cellText;
+            } else {
+                text = text + $(this).find("img").attr("src");
+            }
             mod = (index+1)%numberOfInfoColumns;
             if(mod == 0) {
                 text += "\n";

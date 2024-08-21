@@ -455,22 +455,23 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
     /* cột 2 */echo '<th>&#x25BC QTY</th>';
     /* cột 3 */echo '<th></th>';  //quantity form
 
-    /* cột 4 */echo '<th class="editmode on">&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
-    /* cột 5 */echo '<th class="editmode name form">&#x25BC NAME Form<b>'; // name form
+    /* cột 4 */echo '<th>&#x25BC NAME<b>(<span id="count" style="color:red">0</span>)</b></th>';
+    /* cột 5 */echo '<th class="saleprop1">&#x25BC SaleProp1=<br><span class="variation1">'.$variation1.'</span></th>'; 
+    /* cột 6 */echo '<th class="saleprop2">&#x25BC SaleProp2=<br><span class="variation2">'.$variation2.'</span></th>'; 
+    /* cột 7 */echo '<th class="saleprop3"></th>'; 
+    /* cột 8 */echo '<th class="price">&#x25BCPRICE</th>';
+    /* cột 9 */echo '<th></th>'; // edit button
+    /* cột 10 */echo '<th></th>'; // active button
 
-    /* cột 6 */echo '<th class="saleprop1">&#x25BC SaleProp1=<br><span class="variation1">'.$variation1.'</span></th>'; 
-    /* cột 7 */echo '<th class="saleprop1">&#x25BC SaleProp2=<br><span class="variation2">'.$variation2.'</span></th>'; 
-    /* cột 8 */echo '<th class="saleprop3"></th>'; 
-    
-    /* cột 9 */echo '<th class="price">&#x25BCPRICE</th>'; // price form, display:none
-
-    echo '<th></th>'; // edit button
-    echo '<th></th>'; // active button
+    /* cột 11-16: extra info */
     echo '<th class="ex status">&#x25BCstatus</th>';
     echo '<th class="ex item_id">item_id</th>';
     echo '<th class="ex shop_sku">shop_sku</th>';
     echo '<th class="ex primary_category">primary_category</th>';
     echo '<th class="ex link">Url</th>';
+    echo '<th class="ex link">Url</th>';
+
+    /* cột 17-XX: copy btn, product images, copy btn, sku images */
     echo '</tr></thead>';
 
     echo '<tbody>';
@@ -496,25 +497,6 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             $skuFull = "{$sellersku}~{$skuid}~{$item_id}";
             $nameLink = '<a target="_blank" tabindex="-1" href="'.$url.'">'.$name.'</a>';
             $imgs = $sku['Images'];
-            
-            // todo remove  
-            // $color = $sku['saleProp']['color_family'];
-            // $model = $sku['saleProp']['compatibility_by_model'] ? $sku['saleProp']['compatibility_by_model'] : "";
-            
-            // unset($sku['saleProp']['color_family']);
-            // unset($sku['saleProp']['compatibility_by_model']);
-            // $otherAttributes = implode(",", $sku['saleProp']);     
-            // $variation = $sku['_compatible_variation_'];
-            // switch ($primary_category) {
-            //     case 4523: // op lung dien thoai
-            //     case 10100418: // CL đồng hồ
-            //     case 4528: // mieng dan DT
-            //         $variation = $color . " " . $model;
-            //         break;
-            //     default:
-            //         // do nothing
-            //         break;
-            // }
 
             $saleprop1 = $sku['saleProp'][$variation1];
             $saleprop2 = $sku['saleProp'][$variation2];
@@ -558,21 +540,20 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
             /* cột 2 */echo '<td class="info">'.$qty.'</td>';
             /* cột 3 */echo '<td>'.$reservedTxt.$qtyForm.'</td>';
             /* cột 4 */echo '<td class="editmode name on padding info">'.$nameLink.$lazEditHtml.'</td>';
-            /* cột 5 */echo '<td class="editmode name form">'.$nameForm.'</td>';
             
-            /* cột 6 */echo '<td class="saleprop1 info">'.$saleprop1.'</td>';
-            /* cột 7 */echo '<td class="saleprop2 info">'.$saleprop2.'</td>';
-            /* cột 8 */echo '<td class="saleprop3 info"></td>';
+            /* cột 5 */echo '<td class="saleprop1 info">'.$saleprop1.'</td>';
+            /* cột 6 */echo '<td class="saleprop2 info">'.$saleprop2.'</td>';
+            /* cột 7 */echo '<td class="saleprop3 info"></td>';
             
             // visible
-            /* cột 9, price*/
+            /* cột 8, price*/
             echo '<td class="price-cell">';
             echo '<span class="price text" >'.$price2.'</span>';
             echo ' <s>'.$price1.'</s>&nbsp;';
             echo '<span class="price form" style="display:none">'.$priceForm.'</span>';
             echo '</td>';
 
-            /* cột 10 */
+            /* cột 9 */
             // edit button + del button
             echo '<td>
                 <a target="" href="'.$editLink.'" class="fa fa-edit" style="color:red" tabindex="-1"></a>
@@ -580,7 +561,8 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
                 </td>';
 
             // Active toggle button
-            /* cột 13 *///bootstrap code (need bootstrap css and bootstraptoggle css + js)
+            /* cột 10, toggle active button */
+            //bootstrap code (need bootstrap css and bootstraptoggle css + js)
             $status = ($sku['Status'] == "active") ? "checked" : "";
             echo '<td><input id="'. $skuid .'" type="checkbox" data-toggle="toggle" '. $status .'></td>';
 
@@ -603,7 +585,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
                 $thumb = empty($thumbLink) ? "" : $thumb;
 
                 $firstImageClass = ($i == 0) ? "first" : "";
-                array_push($thumbNailElements, '<td class="product-image thumb on '.$firstImageClass.'">'.$thumb.'</td>');
+                array_push($thumbNailElements, '<td class="info product-image thumb on '.$firstImageClass.'">'.$thumb.'</td>');
             }
 
             // Generate sku images thumbnail
@@ -621,7 +603,7 @@ function printProducts($products, $nochild=false, $selectedSku=null) {
                 $thumb = empty($thumbLink) ? "" : $thumb;
 
                 $firstImageClass = ($i == 0) ? "first" : "";
-                array_push($thumbNailElements, '<td class="sku-image thumb on '.$firstImageClass.'">'.$thumb.'</td>');
+                array_push($thumbNailElements, '<td class="info sku-image thumb on '.$firstImageClass.'">'.$thumb.'</td>');
             }
 
             // print extra column
