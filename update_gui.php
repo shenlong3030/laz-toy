@@ -349,7 +349,7 @@ date_default_timezone_set("UTC");
     //### UPDATE SKU AJAX ###
     $('#btn_change_sku').click(function() {
         var skuid = $('#skuid').val();
-        var sku = $('#sku').val();
+        var sku = $('#sku').val().split("~")[0];
         console.log(sku);
         productUpdateWithAjaxQueue({ skuid: skuid, action: "sku", sku: sku});
     });
